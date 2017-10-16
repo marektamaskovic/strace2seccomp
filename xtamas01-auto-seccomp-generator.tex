@@ -11,9 +11,9 @@
 % zpracování / processing: make, make pdf, make clean
 %==============================================================================
 % Soubory, které je nutné upravit: / Files which have to be edited:
-%   projekt-20-literatura-bibliography.bib - literatura / bibliography
-%   projekt-01-kapitoly-chapters.tex - obsah práce / the thesis content
-%   projekt-30-prilohy-appendices.tex - přílohy / appendices
+%   xtamas01-auto-seccomp-generator-20-literatura-bibliography.bib - literatura / bibliography
+%   xtamas01-auto-seccomp-generator-01-kapitoly-chapters.tex - obsah práce / the thesis content
+%   xtamas01-auto-seccomp-generator-30-prilohy-appendices.tex - přílohy / appendices
 %==============================================================================
 \documentclass[english]{fitthesis} % bez zadání - pro začátek práce, aby nebyl problém s překladem
 %\documentclass[english]{fitthesis} % without assignment - for the work start to avoid compilation problem
@@ -93,23 +93,23 @@
   year=2017,             %rok odevzdání / year of submission
   date=\today,           %datum odevzdani / submission date
   %Nazev prace / thesis title
-  title.cs={Název práce},  %nazev prace v cestine ci slovenstine (dle zadani) / thesis title in czech language (according to assignment)
-  title.en={Thesis title}, %nazev prace v anglictine / thesis title in english
+  title.cs={Automatický generátor politiky systémového volání},  %nazev prace v cestine ci slovenstine (dle zadani) / thesis title in czech language (according to assignment)
+  title.en={Automatic Seccomp Syscall Policy Generator}, %nazev prace v anglictine / thesis title in english
   %Autor / Author
-  author={Jméno Příjmení},   %cele jmeno a prijmeni autora / full name and surname of the author
-  author.name={Jméno},   %jmeno autora (pro citaci) / author name (for reference) 
-  author.surname={Příjmení},   %prijmeni autora (pro citaci) / author surname (for reference) 
+  author={Marek Tamaškovič},   %cele jmeno a prijmeni autora / full name and surname of the author
+  author.name={Marek},   %jmeno autora (pro citaci) / author name (for reference) 
+  author.surname={Tamaškovič},   %prijmeni autora (pro citaci) / author surname (for reference) 
   %author.title.p=Bc., %titul pred jmenem (nepovinne) / title before the name (optional)
   %author.title.a=PhD, %titul za jmenem (nepovinne) / title after the name (optional)
   %Ustav / Department
-  department=UPGM, % doplnte prislusnou zkratku dle ustavu na zadani: UPSY/UIFS/UITS/UPGM
+  department=UITS, % doplnte prislusnou zkratku dle ustavu na zadani: UPSY/UIFS/UITS/UPGM
   %                  fill in appropriate abbreviation of the department according to assignment: UPSY/UIFS/UITS/UPGM
   %Skolitel / supervisor
-  supervisor=Jméno Příjmení, %cele jmeno a prijmeni skolitele / full name and surname of the supervisor
-  supervisor.name={Jméno},   %jmeno skolitele (pro citaci) / supervisor name (for reference) 
-  supervisor.surname={Příjmení},   %prijmeni skolitele (pro citaci) / supervisor surname (for reference) 
-  supervisor.title.p=Doc. RNDr.,   %titul pred jmenem (nepovinne) / title before the name (optional)
-  supervisor.title.a={Ph.D.},    %titul za jmenem (nepovinne) / title after the name (optional)
+  supervisor=Lenka Turoňová, %cele jmeno a prijmeni skolitele / full name and surname of the supervisor
+  supervisor.name={Lenka},   %jmeno skolitele (pro citaci) / supervisor name (for reference) 
+  supervisor.surname={Turoňová},   %prijmeni skolitele (pro citaci) / supervisor surname (for reference) 
+  supervisor.title.p=Ing.,   %titul pred jmenem (nepovinne) / title before the name (optional)
+  supervisor.title.a={},    %titul za jmenem (nepovinne) / title after the name (optional)
   %Klicova slova, abstrakty, prohlaseni a podekovani je mozne definovat 
   %bud pomoci nasledujicich parametru nebo pomoci vyhrazenych maker (viz dale)
   %Keywords, abstracts, declaration and acknowledgement can be defined by following 
@@ -201,7 +201,7 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
 
   % Text prace / Thesis text
   % ----------------------------------------------
-  \input{projekt-01-kapitoly-chapters} % viz. obsah.tex / see obsah.tex
+  \input{xtamas01-auto-seccomp-generator-01-kapitoly-chapters} % viz. obsah.tex / see obsah.tex
 
   % Pouzita literatura / Bibliography
   % ----------------------------------------------
@@ -225,7 +225,7 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
   \fi
 \fi
   \begin{flushleft}
-  \bibliography{projekt-20-literatura-bibliography}
+  \bibliography{xtamas01-auto-seccomp-generator-20-literatura-bibliography}
   \end{flushleft}
 
   % vynechani stranky v oboustrannem rezimu
@@ -282,5 +282,5 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
   \iftwoside
     \cleardoublepage
   \fi
-  \input{projekt-30-prilohy-appendices} % viz. prilohy.tex / see prilohy.tex
+  \input{xtamas01-auto-seccomp-generator-30-prilohy-appendices} % viz. prilohy.tex / see prilohy.tex
 \end{document}

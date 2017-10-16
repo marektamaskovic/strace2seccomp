@@ -1,0 +1,16 @@
+ SYSCALLS:
+===========
+
+
+ SECCOMP:
+==========
+- https://www.kernel.org/doc/Documentation/prctl/seccomp_filter.txt
+
+ eBPF:
+=======
+- https://www.kernel.org/doc/Documentation/networking/filter.txt
+- https://github.com/iovisor/bpf-docs/blob/master/eBPF.md
+- https://cilium.readthedocs.io/en/latest/bpf/#bpf-users
+
+ a:
+====
