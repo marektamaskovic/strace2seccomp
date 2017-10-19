@@ -2,11 +2,45 @@
 % (c) Michal Bidlo, Bohuslav Křena, 2008
 
 \chapter{Introduction}
+Nowadays, when the malicious code or malware is becoming more and more sophisticated and pressing security risk, is really needed to control the program behaviour and monitor what the program is doing in the system.
+Monitoring program behaviour can be done in many ways and one of the easiest ways is using Intrusion Detection System (IDS).
+IDS is an out of the box solution and this system can monitor i.e. where program wrote or read something and it shouldn't be done that.
+After that IDS is reporting this violation. %TODO and and
 
-\chapter{System calls}
-\section{Profiling}
+Another way is to monitor and block system calls (syscalls).
+Monitoring is done by tools mentioned in next chapter.
+The actual blocking can be done with mandatory control access (MAC) (Apparmor, SELinux), sandboxing (seccomp) or others.
+MAC refers to a type of access control by which the operating system constrains the ability of a subject or initiator to access or generally perform some sort of operation on an object or target.
+Seccomp is a Linux kernel module which allows to a process one-way transition to secure state where the process can only use 4 syscalls.
+When process tries to call another syscall then one from the four members set is terminated with SIGKILL.
+The set of allowed system calls can be extended by using seccomp-bpf.
+This extension allows filtering system calls using a configurable policy implemented with Berkley Packet Filter (BPF) rules.
+This last part is an area where I want to focus my thesis.
+
+This thesis is about designing and developing a tool which helps the developers using libseccomp and seccomp-bpf by creating policies for a specific program in a format readable by libseccomp or seccomp-bpf.
+
+The first part of this thesis is about describing syscalls and how to monitor them.
+In the next section of the thesis, I will illustrate how security facilities in Linux, like systrace and seccomp, work.
+After this theoretical part will follow the design and development of a tool which was mentioned few lines above.
+In conclusion, is described methodology how this tool was tested.
+
+
+\chapter{System calls and tools monitoring them}
+In this chapter, I will describe term system call and I will make an overview of tools which can monitor the system calls.
+We will have detailed lookup on strace tool, which will be used for input to my tool. The other tools are described briefly not as detailed as strace.
+
+\section{System calls}
+System calls or syscalls is a mechanism used by processes to use operating system functions typically in monolithic kernels.
+We can find them on every UNIX system.
+In computer terminology, the term syscall is the programmatic way in which a computer program requests a service from the kernel of the operating system it is executed on.
+
+%The system calls are generated using interrupt i.e. on Linux/i86 with interrupt no. 0x80. These interrupts are handled by ...
+
+\section{Monitoring}
 \subsection{Strace -- trace system calls and signals}
 \subsection{Ftrace -- trace system calls, function calls and signals}
+\subsection{Ltrace}
+\subsection{Dtrace}
 \subsection{Autrace -- linux audit}
 
 \chapter{Security facility in Linux}
