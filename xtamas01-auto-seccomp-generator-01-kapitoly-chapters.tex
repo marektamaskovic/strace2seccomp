@@ -2,37 +2,39 @@
 % (c) Michal Bidlo, Bohuslav Křena, 2008
 
 \chapter{Introduction}
-Nowadays, when the malicious code or malware is becoming more and more sophisticated and pressing security risk, is really needed to control the program behaviour and monitor what the program is doing in the system.
-Monitoring program behaviour can be done in many ways and one of the easiest ways is using Intrusion Detection System (IDS).
-IDS is an out of the box solution and this system can monitor i.e. where program wrote or read something and it shouldn't be done that.
-After that IDS is reporting this violation. %TODO and and
+Nowadays, when malicious code or malware is becoming more and more sophisticated and pressing security risk, it is really needed to control a program behaviour and monitor what the program is doing in a system.
+Monitoring program behaviour can be done in many ways and one of the easiest ways is to use Intrusion Detection System (IDS).
+IDS is an out-of-the-box solution which can monitor i.e. where program wrote or read something and it is not allowed.
+After that, IDS is reporting this violation. %TODO and and
 
 Another way is to monitor and block system calls (syscalls).
-Monitoring is done by tools mentioned in next chapter.
-The actual blocking can be done with mandatory control access (MAC) (Apparmor, SELinux), sandboxing (seccomp) or others.
-MAC refers to a type of access control by which the operating system constrains the ability of a subject or initiator to access or generally perform some sort of operation on an object or target.
-Seccomp is a Linux kernel module which allows to a process one-way transition to secure state where the process can only use 4 syscalls.
-When process tries to call another syscall then one from the four members set is terminated with SIGKILL.
-The set of allowed system calls can be extended by using seccomp-bpf.
+Monitoring is performed using tools mentioned in the next chapter.
+The actual blocking can be performed with mandatory control access (MAC) (Apparmor, SELinux), sandboxing (seccomp) or others mechanisms.
+MAC refers to a type of access control by which the operating system constraints the ability of a subject or initiator to access or generally perform some sort of operation on an object or target.
+Seccomp is a Linux kernel module which allows to a process one-way transition to secure a state where the process can only use four syscalls.
+When the process tries to call another syscall then one of the four members set is terminated with SIGKILL.
+The set of allowed system calls can be extended using seccomp-bpf.
 This extension allows filtering system calls using a configurable policy implemented with Berkley Packet Filter (BPF) rules.
-This last part is an area where I want to focus my thesis.
+This last part is an area on which I would like to focus in my thesis.
 
-This thesis is about designing and developing a tool which helps the developers using libseccomp and seccomp-bpf by creating policies for a specific program in a format readable by libseccomp or seccomp-bpf.
+I aim to design and develop a tool which helps developers using libseccomp and seccomp-bpf.
+I plan to create policies for a specific program in a format readable by libseccomp or seccomp-bpf.
 
-The first part of this thesis is about describing syscalls and how to monitor them.
-In the next section of the thesis, I will illustrate how security facilities in Linux, like systrace and seccomp, work.
-After this theoretical part will follow the design and development of a tool which was mentioned few lines above.
-In conclusion, is described methodology how this tool was tested.
+Chapter 1 \todo{add reference to the chapter} describes syscalls and how to monitor them.
+In the next chapter of the thesis, I will illustrate how security facilities in Linux, such as systrace and seccomp, work.
+After the theoretical part, the design and development of a tool will follow.
+In conclusion, methodology how this tool was tested is described.
 
 
 \chapter{System calls and tools monitoring them}
-In this chapter, I will describe term system call and I will make an overview of tools which can monitor the system calls.
-We will have detailed lookup on strace tool, which will be used for input to my tool. The other tools are described briefly not as detailed as strace.
+In this chapter, I will describe a term system call and I will make an overview of tools which can monitor the system calls.
+We will red focus in detail on a strace tool which will be used as an input to my tool.
+The other tools are described briefly not as detailed as strace.
 
 \section{System calls}
 System calls or syscalls is a mechanism used by processes to use operating system functions typically in monolithic kernels.
 We can find them on every UNIX system.
-In computer terminology, the term syscall is the programmatic way in which a computer program requests a service from the kernel of the operating system it is executed on.
+In computer terminology, the term syscall is a programmatic way in which a computer program requests a service from the kernel of the operating system it is executed on.
 
 %The system calls are generated using interrupt i.e. on Linux/i86 with interrupt no. 0x80. These interrupts are handled by ...
 
