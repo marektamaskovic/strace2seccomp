@@ -857,7 +857,7 @@
 
 % Příkazy pro TODO
 % commands for TODO
-\newcommand{\todo}[1]{\textcolor{red}{\textbf{[[#1]]}}}
+% \newcommand{\todo}[1]{\textcolor{red}{\textbf{[[#1]]}}}
 \newcommand{\phony}[1]{\textcolor{gray}{#1}}
 \newcommand{\blind}[1]{\textcolor{gray}{\Blindtext[#1]}}
 

@@ -1,6 +1,6 @@
  SYSCALLS:
 ===========
-
+- http://www.tldp.org/LDP/khg/HyperNews/get/syscall/syscall86.html
 
  SECCOMP:
 ==========

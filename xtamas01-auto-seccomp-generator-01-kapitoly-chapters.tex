@@ -20,13 +20,14 @@ This last part is an area on which I would like to focus in my thesis.
 I aim to design and develop a tool which helps developers using libseccomp and seccomp-bpf.
 I plan to create policies for a specific program in a format readable by libseccomp or seccomp-bpf.
 
-Chapter 1 \todo{add reference to the chapter} describes syscalls and how to monitor them.
+\Cref{chap:syscalls} describes syscalls and how to monitor them.
 In the next chapter of the thesis, I will illustrate how security facilities in Linux, such as systrace and seccomp, work.
 After the theoretical part, the design and development of a tool will follow.
 In conclusion, methodology how this tool was tested is described.
 
 
 \chapter{System calls and tools monitoring them}
+\label{chap:syscalls}
 In this chapter, I will describe a term system call and I will make an overview of tools which can monitor the system calls.
 We will red focus in detail on a strace tool which will be used as an input to my tool.
 The other tools are described briefly not as detailed as strace.
@@ -34,9 +35,18 @@ The other tools are described briefly not as detailed as strace.
 \section{System calls}
 System calls or syscalls is a mechanism used by processes to use operating system functions typically in monolithic kernels.
 We can find them on every UNIX system.
-In computer terminology, the term syscall is a programmatic way in which a computer program requests a service from the kernel of the operating system it is executed on.
+In computer terminology, the term syscall is the programmatic way in which a computer program requests a service from the kernel of the operating system it is executed on. The system calls are generated using interrupt i.e. on Linux/i86 with interrupt no. \texttt{0x80}. and these syscalls are handled by the kernel in privileged mode.
+When a user invokes a system call, execution flow is as follows:
+\begin{itemize}
+	\item Each call is vectored through a stub in libc. Some system calls are more complex than others because of variable length of arguments. But every syscall has the same entry point and the same exit point. Only overhead in more complex syscalls is processing more parameters on entry.
+	\item Each syscall is expanded to assembly routine. This routine also sets up the stack frame and calls \texttt{\_system\_call\(\)} through an interrupt \( \texttt{int \$0x80} \).
+	\item There was not executed any code of syscall. Not until int \texttt{\$0x80} is executed, this interrupt does the call transfer to the kernel entry point. The entry point is the same for every system call. Now is saved the state of CPU, saved all of the registers, checked if is valid syscall called. Transfering control to a valid syscall is done through the offset in the \texttt{\_sys\_call\_table}.
+	\item At the end of the syscall is called \texttt{\_ret\_from\_sys\_call\(\)}. This is done before returning to user space. It checks if the scheduler should be run, and if so, calls it.
+	\item Immediately after return from the system call, \texttt{syscallX()} macro checks for a negative return value from the syscall, if so it puts a positive copy to a global variable \texttt{\_errno}, for accessing from code like \texttt{perror()}.
+\end{itemize}
 
-%The system calls are generated using interrupt i.e. on Linux/i86 with interrupt no. 0x80. These interrupts are handled by ...
+\missingfigure{Make a sketch of the calling a syscall}
+% \input{obrazky-figures/Diagram1.tex}
 
 \section{Monitoring}
 \subsection{Strace -- trace system calls and signals}
