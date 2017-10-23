@@ -1,6 +1,8 @@
 %=========================================================================
 % (c) Michal Bidlo, Bohuslav Křena, 2008
 
+\listoftodos
+
 \chapter{Introduction}
 Nowadays, when malicious code or malware is becoming more and more sophisticated and pressing security risk, it is really needed to control a program behaviour and monitor what the program is doing in a system.
 Monitoring program behaviour can be done in many ways and one of the easiest ways is to use Intrusion Detection System (IDS).
@@ -25,7 +27,6 @@ In the next chapter of the thesis, I will illustrate how security facilities in 
 After the theoretical part, the design and development of a tool will follow.
 In conclusion, methodology how this tool was tested is described.
 
-
 \chapter{System calls and tools monitoring them}
 \label{chap:syscalls}
 In this chapter, I will describe a term system call and I will make an overview of tools which can monitor the system calls.
@@ -40,15 +41,30 @@ When a user invokes a system call, execution flow is as follows:
 \begin{itemize}
 	\item Each call is vectored through a stub in libc. Some system calls are more complex than others because of variable length of arguments. But every syscall has the same entry point and the same exit point. Only overhead in more complex syscalls is processing more parameters on entry.
 	\item Each syscall is expanded to assembly routine. This routine also sets up the stack frame and calls \texttt{\_system\_call\(\)} through an interrupt \( \texttt{int \$0x80} \).
-	\item There was not executed any code of syscall. Not until int \texttt{\$0x80} is executed, this interrupt does the call transfer to the kernel entry point. The entry point is the same for every system call. Now is saved the state of CPU, saved all of the registers, checked if is valid syscall called. Transfering control to a valid syscall is done through the offset in the \texttt{\_sys\_call\_table}.
+	\item There was not executed any code of syscall. Not until int \texttt{\$0x80} is executed, this interrupt does the call transfer to the kernel entry point. The entry point is the same for every system call. Now is saved the state of central process unit (CPU), saved all of the registers, checked if is valid syscall called. Transfering control to a valid syscall is done through the offset in the \texttt{\_sys\_call\_table}.
 	\item At the end of the syscall is called \texttt{\_ret\_from\_sys\_call\(\)}. This is done before returning to user space. It checks if the scheduler should be run, and if so, calls it.
 	\item Immediately after return from the system call, \texttt{syscallX()} macro checks for a negative return value from the syscall, if so it puts a positive copy to a global variable \texttt{\_errno}, for accessing from code like \texttt{perror()}.
+
+	\todo{Decide which one}
+
+	\item Each syscall is vectored through a stub in libc. Some syscalls are more complex than others because of variable length of arguments, but the entry point and end point of syscall is still the same. Only overhead is processing more arguments.
+	\item In libc is then set the number of the syscall to \texttt{eax} register and the stack frame is also set up.
+	\item Interrupt number \texttt{0x80} is called and transfered to kernel entry point. The entry point is the same for every system call.
+	\item In table of interrupts is found a pointer to interrupt handler. After that follows the execution of the interrupt handler. Now in the handler is stored the content of the CPU registers, checked if is valid syscall called.
+	\item The handler finds the corresponding offset in table of interrupts \texttt{\_sys\_call\_table}, where is stored pointer to syscall service.
+	\item Control is transfered to the syscall service.
+	\item Syscall returned return value to register \texttt{EAX} on 32-bit architecture or \texttt{RAX} on 64-bit architecture.
+	\item At the end of the syscall is called \texttt{\_ret\_from\_sys\_call\(\)}. This is done before returning to user space. It checks if the scheduler should be run, and if so, calls it.
+	\item Immediately after return from the system call to interrupt handler, \texttt{syscallX()} macro checks for a negative return value from the syscall, if so it puts a positive copy to a global variable \texttt{\_errno}, for accessing from code like \texttt{perror()}.
 \end{itemize}
 
 \missingfigure{Make a sketch of the calling a syscall}
+\todo[color=green, inline]{Make description to the above figure \ldots}
 % \input{obrazky-figures/Diagram1.tex}
 
 \section{Monitoring}
+The most used method for monitoring is tracing, in other words watching what a program is doing. Tracing involves a specialized logging to record information, useful for debugging, about a program's execution. This can be done in multiple layers, from tracing which lines in the program was executed to individual instructions executed on CPU. Collecting of this information can be done with multiple tools i.e strace, ftrace and a lot more.
+
 \subsection{Strace -- trace system calls and signals}
 \subsection{Ftrace -- trace system calls, function calls and signals}
 \subsection{Ltrace}
