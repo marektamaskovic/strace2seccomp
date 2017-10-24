@@ -1,6 +1,8 @@
 %=========================================================================
 % (c) Michal Bidlo, Bohuslav Křena, 2008
 
+% tikzit regex: (,)?\s*style=\w*(,)?\s*
+
 \listoftodos
 
 \chapter{Introduction}
@@ -59,7 +61,17 @@ When a user invokes a system call, execution flow is as follows:
 \end{itemize}
 
 \missingfigure{Make a sketch of the calling a syscall}
+
+\begin{figure}
+  \center
+  % \includestandalone[width=\textwidth]{obrazky-figures/mytikz}%     without .tex extension
+  \input{obrazky-figures/mytikz}
+  \caption{Interrupt handling}
+  \label{fig:tikz:int_handling}
+\end{figure}
+
 \todo[color=green, inline]{Make description to the above figure \ldots}
+
 % \input{obrazky-figures/Diagram1.tex}
 
 \section{Monitoring}

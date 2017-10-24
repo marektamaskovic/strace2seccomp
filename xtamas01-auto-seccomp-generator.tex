@@ -162,6 +162,15 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
 \usepackage{cleveref}
 \usepackage{tikz}
 \usepackage{todonotes}
+\usepackage{standalone}
+
+\usetikzlibrary{arrows,backgrounds,shadows}
+
+% define layers
+    \pgfdeclarelayer{edgelayer}
+    \pgfdeclarelayer{nodelayer}
+% tell TikZ how to stack them (back to front)
+    \pgfsetlayers{nodelayer,edgelayer}
 
 \begin{document}
   % Vysazeni titulnich stran / Typesetting of the title pages
