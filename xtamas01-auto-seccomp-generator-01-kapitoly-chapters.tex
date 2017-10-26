@@ -3,7 +3,7 @@
 
 % tikzit regex: (,)?\s*style=\w*(,)?\s*
 
-\listoftodos
+% \listoftodos
 
 \chapter{Introduction}
 Nowadays, when malicious code or malware is becoming more and more sophisticated and pressing security risk, it is really needed to control a program behaviour and monitor what the program is doing in a system.
@@ -66,15 +66,15 @@ When a user invokes a system call, execution flow is as follows:
 
 This procedure is illustrated in figure \ref{fig:tikz:int_handling} on page \pageref{fig:tikz:int_handling}.
 
-\begin{figure}[H]
+\begin{figure}[]
   \centering
-  \includestandalone[]{obrazky-figures/mytikz}%     without .tex extension
-  % \input{obrazky-figures/mytikz}
+  % \includestandalone[]{obrazky-figures/mytikz}%     without .tex extension
+  \input{obrazky-figures/mytikz}
   \caption{Interrupt handling in Linux}
   \label{fig:tikz:int_handling}
 \end{figure}
 
-\todo[color=green, inline]{Make description to the above figure \ldots}
+\todo{Make description to the above figure \ldots}
 
 % \input{obrazky-figures/Diagram1.tex}
 
@@ -101,14 +101,28 @@ Also, it doesn't matter if the program is statically or dynamically linked.
 This is really useful because we only need executable binary.
 These features are really useful for mine tool but this will be more described in another chapter.
 
-This tool is really simple i.e. when you want to run \texttt{ls} with strace you type in command line \texttt{\$ strace ls}
+This tool is really simple i.e. when you want to run \texttt{ls} with strace you type in command line:\\
+\texttt{>\$ strace ls}
+
 In this case, the strace executes the \texttt{ls} command and on the output occurs which system calls were called.
 Example of the strace output is in next figure. \todo{Add here the small output}
-\missingfigure{Strace output}
 
 \subsection{Ftrace -- trace system calls, function calls and signals}
+
 \subsection{Ltrace}
 \subsection{Dtrace}
+DTrace (shortcut for Dynamic Tracing) is a performance analysis and troubleshooting tool.
+It is included in a various operating system, including FreeBSD, Mac OS, Solaris and Linux port is in development.
+This tool instruments all software. Not just user-level software but also operating system kernel and device drivers.
+Supports the dynamic tracing which means dynamically patching while running instructions with instrumentation code.
+Static tracing is as well supported but it needs to add tracepoints to code.
+DTrace provides a scripting language called 'D', for writing scripts and one-liners.
+It is similar to C with AWK elements.
+With this script, you can create filters and you can summarize data in the kernel before passing to user-space.
+This design can really decrease the overhead in performance sensitive systems.
+
+For our purposes, DTrace is too complicated to setup or gather the information about syscalls. You need to write some scripts to define which syscalls you want to be informed and in our use case, we need every syscall.
+
 \subsection{Autrace -- linux audit}
 
 \chapter{Security facility in Linux}
@@ -118,6 +132,7 @@ Systrace and seccomp\cite{Pravidla}
 
 \section{Seccomp}
 321
+% \missingfigure{Strace output}
 \subsection{Seccomp-bpf}
 
 \subsection{Berkeley packet filter}

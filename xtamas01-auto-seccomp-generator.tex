@@ -23,12 +23,12 @@
 %\documentclass[zadani,cprint]{fitthesis} % pro barevný tisk - odkazy jsou černé, znak VUT barevný
 %\documentclass[english,zadani,print]{fitthesis} % for the color print - links are black
 %\documentclass[english,zadani,cprint]{fitthesis} % for the print - links are black, logo is color
-% * Je-li prace psana v anglickem jazyce, je zapotrebi u tridy pouzit 
+% * Je-li prace psana v anglickem jazyce, je zapotrebi u tridy pouzit
 %   parametr english nasledovne:
-%   If thesis is written in english, it is necessary to use 
+%   If thesis is written in english, it is necessary to use
 %   parameter english as follows:
 %      \documentclass[english]{fitthesis}
-% * Je-li prace psana ve slovenskem jazyce, je zapotrebi u tridy pouzit 
+% * Je-li prace psana ve slovenskem jazyce, je zapotrebi u tridy pouzit
 %   parametr slovak nasledovne:
 %      \documentclass[slovak]{fitthesis}
 
@@ -54,7 +54,7 @@
 % problém je, že balíček hyperref musí být uveden jako poslední, takže nemůže
 % být v šabloně
 % "hyperref" package create clickable links in pdf if you are using pdflatex.
-% Problem is that this package have to be introduced as the last one so it 
+% Problem is that this package have to be introduced as the last one so it
 % can not be placed in the template file.
 \ifWis
 \ifx\pdfoutput\undefined % nejedeme pod pdflatexem / we are not using pdflatex
@@ -97,8 +97,8 @@
   title.en={Automatic Seccomp Syscall Policy Generator}, %nazev prace v anglictine / thesis title in english
   %Autor / Author
   author={Marek Tamaškovič},   %cele jmeno a prijmeni autora / full name and surname of the author
-  author.name={Marek},   %jmeno autora (pro citaci) / author name (for reference) 
-  author.surname={Tamaškovič},   %prijmeni autora (pro citaci) / author surname (for reference) 
+  author.name={Marek},   %jmeno autora (pro citaci) / author name (for reference)
+  author.surname={Tamaškovič},   %prijmeni autora (pro citaci) / author surname (for reference)
   %author.title.p=Bc., %titul pred jmenem (nepovinne) / title before the name (optional)
   %author.title.a=PhD, %titul za jmenem (nepovinne) / title after the name (optional)
   %Ustav / Department
@@ -106,13 +106,13 @@
   %                  fill in appropriate abbreviation of the department according to assignment: UPSY/UIFS/UITS/UPGM
   %Skolitel / supervisor
   supervisor=Lenka Turoňová, %cele jmeno a prijmeni skolitele / full name and surname of the supervisor
-  supervisor.name={Lenka},   %jmeno skolitele (pro citaci) / supervisor name (for reference) 
-  supervisor.surname={Turoňová},   %prijmeni skolitele (pro citaci) / supervisor surname (for reference) 
+  supervisor.name={Lenka},   %jmeno skolitele (pro citaci) / supervisor name (for reference)
+  supervisor.surname={Turoňová},   %prijmeni skolitele (pro citaci) / supervisor surname (for reference)
   supervisor.title.p=Ing.,   %titul pred jmenem (nepovinne) / title before the name (optional)
   supervisor.title.a={},    %titul za jmenem (nepovinne) / title after the name (optional)
-  %Klicova slova, abstrakty, prohlaseni a podekovani je mozne definovat 
+  %Klicova slova, abstrakty, prohlaseni a podekovani je mozne definovat
   %bud pomoci nasledujicich parametru nebo pomoci vyhrazenych maker (viz dale)
-  %Keywords, abstracts, declaration and acknowledgement can be defined by following 
+  %Keywords, abstracts, declaration and acknowledgement can be defined by following
   %parameters or using dedicated macros (see below)
   %===========================================================================
   %Klicova slova / keywords
@@ -161,9 +161,9 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
 
 \usepackage{cleveref}
 \usepackage{tikz}
-\usepackage{todonotes}
-\usepackage{standalone}
 \usepackage{float}
+\usepackage{xcolor}
+\usepackage[obeyFinal]{todonotes}
 
 \usetikzlibrary{arrows,backgrounds,shadows}
 
@@ -182,7 +182,7 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
   \setlength{\parskip}{0pt}
 
   {\hypersetup{hidelinks}\tableofcontents}
-  
+
   % Seznam obrazku a tabulek (pokud prace obsahuje velke mnozstvi obrazku, tak se to hodi)
   % List of figures and list of tables (if the thesis contains a lot of pictures, it is good)
   \ifczech
@@ -192,14 +192,14 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
     \renewcommand\listfigurename{Zoznam obrázkov}
   \fi
   % \listoffigures
-  
+
   \ifczech
     \renewcommand\listtablename{Seznam tabulek}
   \fi
   \ifslovak
     \renewcommand\listtablename{Zoznam tabuliek}
   \fi
-  % \listoftables 
+  % \listoftables
 
   \ifODSAZ
     \setlength{\parskip}{0.5\bigskipamount}
@@ -230,7 +230,7 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
     \def\@openbib@code{\addcontentsline{toc}{chapter}{Literatura}}
     \makeatother
     \bibliographystyle{bib-styles/czechiso}
-  \else 
+  \else
     \makeatletter
     \def\@openbib@code{\addcontentsline{toc}{chapter}{Bibliography}}
     \makeatother
@@ -268,7 +268,7 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
 %\iftwoside
 %  \cleardoublepage
 %\fi
-  
+
 \ifslovak
 %  \section*{Zoznam príloh}
 %  \addcontentsline{toc}{section}{Zoznam príloh}
@@ -285,13 +285,13 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
   \setlength{\parskip}{0pt}
   % seznam příloh / list of appendices
   % \printcontents[chapters]{l}{0}{\setcounter{tocdepth}{2}}
-  
+
   \ifODSAZ
     \setlength{\parskip}{0.5\bigskipamount}
   \else
     \setlength{\parskip}{0pt}
   \fi
-  
+
   % vynechani stranky v oboustrannem rezimu
   \iftwoside
     \cleardoublepage
