@@ -7,6 +7,7 @@
  SECCOMP:
 ==========
 - https://www.kernel.org/doc/Documentation/prctl/seccomp_filter.txt
+- https://sysdig.com/blog/selinux-seccomp-falco-technical-discussion/
 
  eBPF:
 =======

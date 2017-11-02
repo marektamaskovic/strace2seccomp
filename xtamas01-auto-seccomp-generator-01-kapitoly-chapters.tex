@@ -74,9 +74,6 @@ This procedure is illustrated in figure \ref{fig:tikz:int_handling} on page \pag
   \label{fig:tikz:int_handling}
 \end{figure}
 
-\todo{Make description to the above figure \ldots}
-
-% \input{obrazky-figures/Diagram1.tex}
 
 \section{Monitoring}
 The most used and common method for monitoring is tracing, in other words watching what a program is doing during the execution.
@@ -86,7 +83,7 @@ Collecting this information can be done with multiple tools i.e strace, ftrace a
 
 \subsection{Strace -- trace system calls and signals}
 
-Strace is a simple diagnostic, instructional and debugging tool.
+Strace\cite{strace_man} is a simple diagnostic, instructional and debugging tool.
 You can monitor every syscall or signal made by the program you are monitoring.
 So with this tool is possible to log what observed program demanded from the kernel.
 The individual logged operations can be i.e. an attempt to open a file or delete the content of CPU caches.
@@ -102,18 +99,44 @@ This is really useful because we only need executable binary.
 These features are really useful for mine tool but this will be more described in another chapter.
 
 This tool is really simple i.e. when you want to run \texttt{ls} with strace you type in command line:\\
-\texttt{>\$ strace ls}
-
+\\
+\texttt{>\$ strace ls}\\
+\\
 In this case, the strace executes the \texttt{ls} command and on the output occurs which system calls were called.
-Example of the strace output is in next figure. \todo{Add here the small output}
+Example of the strace output is in next figure.\\[2mm]
+
+\fontfamily{lmtt}\selectfont\noindent
+execve("/usr/bin/ls", ["ls"], 0x7ffd0cf4ba60 /* 59 vars */) = 0\linebreak
+open("/etc/ld.so.cache", O\_RDONLY|O\_CLOEXEC) = 3\linebreak
+fstat(3, $\{$ st\_mode=S\_IFREG|0644, st\_size=202163, ...$\}$) = 0\linebreak
+mmap(NULL, 202163, PROT\_READ, MAP\_PRIVATE, 3, 0) = 0x7fd781293000\linebreak
+close(3)\linebreak
+\fontfamily{\familydefault}\selectfont
+
+\subsubsection{Ptrace}
+Strace is using ptrace\cite{ptrace_man} system call.
+The ptrace is used to  implement debuggers and other tools for process monitoring.
+Basically the strace call ptrace and attach to a tracee (monitored process).
+When the connection is established the tracee is halt before and after syscall.
+Now the tracer (strace) can observe and control the execution as well as inspect memory and registers of (tracee).
+With this information strace can determine which syscall was called.
+With the second halt after syscall, the strace can get information of return value from syscall.
 
 \subsection{Ftrace -- trace system calls, function calls and signals}
+Ftrace\cite{ftrace_man} is an internal tracer which traces events in kernel.
+It is designed for developers to examine kernel events. 
+Main feature of this tool is to measure latencies and find issues that takes place outside of the user-space.
+Ftrace is typically considered as a function tracker, but it is really a frame work of several different tracing utilities.
+One cool feature of ftrace is measurement latency among interrupts, latency between the time when task is woken up and time when the task is scheduled in.
+Other common use of ftrace is event tracing.
+In the kernel is a huge amount of static event points that can be enabled with tracefs file system. 
+The event points provide a interface to observe what is going on in the various part of kernel.
 
-\subsection{Ltrace}
-\subsection{Dtrace}
-DTrace (shortcut for Dynamic Tracing) is a performance analysis and troubleshooting tool.
+\subsection{Dtrace -- Dynamic Tracing}
+DTrace\cite{dtrace_man}\cite{dtrace_about} (shortcut for Dynamic Tracing) is a performance analysis and troubleshooting tool.
 It is included in a various operating system, including FreeBSD, Mac OS, Solaris and Linux port is in development.
-This tool instruments all software. Not just user-level software but also operating system kernel and device drivers.
+This tool instruments all software.
+Not just user-level software but also operating system kernel and device drivers.
 Supports the dynamic tracing which means dynamically patching while running instructions with instrumentation code.
 Static tracing is as well supported but it needs to add tracepoints to code.
 DTrace provides a scripting language called 'D', for writing scripts and one-liners.
@@ -121,25 +144,63 @@ It is similar to C with AWK elements.
 With this script, you can create filters and you can summarize data in the kernel before passing to user-space.
 This design can really decrease the overhead in performance sensitive systems.
 
-For our purposes, DTrace is too complicated to setup or gather the information about syscalls. You need to write some scripts to define which syscalls you want to be informed and in our use case, we need every syscall.
+For our purposes, DTrace is too complicated to setup or gather the information about syscalls.
+You need to write some scripts to define which syscalls you want to be informed with and in our use case, we need every system call.
 
 \subsection{Autrace -- linux audit}
+The Linux Auditing System helps system administrators create an audit trail.
+Every action on workstation or server is logged into log file.
+This tool can track security relevant events, record the events and detect misuse or unauthorized activities by inspecting the audit log.
+You can also set which actions should or should not be reported. 
+
+Audit System is composed of two main parts.
+The first one \(autrace\) is kernel component which intercept system calls, records event and sends these audit messages to the next part.
+The second component is audit daemon.
+This part of this tool is collecting the information emitted by kernel component.
+Emitted information are then stored as entries in a log file.
+
+As you can see this tool is not for monitoring one specific program but it is designed to monitor whole system.
+In the output is specified who executed the syscall and when, next are current working directory, uid, gid, etc., \ldots
+%Above specified functionality is useful for server administrators but not for our work.
+
+Entry example in log file:
+
+\noindent
+\texttt{type=SYSCALL msg=audit(1434371271.277:135496): arch=c000003e syscall=2}\linebreak
+\texttt{success=yes exit=3 a0=7fff0054e929 a1=0 a2=1fffffffffff0000 a3=7fff0054c390 }\linebreak
+\texttt{items=1 ppid=6265pid=6266 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 }\linebreak
+\texttt{egid=0 sgid=0 fsgid=0 tty=pts0 ses=113 comm="cat" }\linebreak
+\texttt{exe="/usr/bin/cat" key="sshconfigchange"}
+
+
 
 \chapter{Security facility in Linux}
-Systrace and seccomp\cite{Pravidla}
+Systrace\cite{systrace_web} and seccomp\cite{seccomp_sandbox}
+
 \section{Systrace}
-123
+Systrace is security facility which limits an application's access to the system
 
 \section{Seccomp}
-321
-% \missingfigure{Strace output}
-\subsection{Seccomp-bpf}
+In most contemporary distribution is enabled kernel module named Seccomp\cite{seccomp_sandbox}.
+Seccomp stands for shortcut of Secure Computing Mode.
+This module provide one way transition to a secure mode, which restricts a thread to a small amount of system calls \( \texttt{read()},\ \texttt{write()},\ \texttt{exit()},\ \texttt{sigreturn()}\ \).
+If the thread tries to call other system call then the one from the 4 member set, the whole process is terminated with signal \texttt{SIGTERM}. 
+The drawback of this solution is that these four system calls are not enough for application to run correctly.
 
-\subsection{Berkeley packet filter}
+\subsection{Seccomp-bpf}
+\subsubsection{Berkeley packet filter}
 \subsubsection{Classic BPF}
 \subsubsection{Extended BPF}
 
 \subsection{libseccomp}
+
+
+
+\chapter{Design of TODO: tool-name}
+\section{parser}
+\section{optimizer}
+\section{translator}
+
 
 
 \chapter{Development of TODO: tool-name}
