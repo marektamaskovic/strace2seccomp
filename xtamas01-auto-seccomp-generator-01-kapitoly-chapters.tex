@@ -31,36 +31,32 @@ In conclusion, methodology how this tool was tested is described.
 
 \chapter{System calls and tools monitoring them}
 \label{chap:syscalls}
-In this chapter, I will describe a term system call and I will make an overview of tools which can monitor the system calls.
-We will red focus in detail on a strace tool which will be used as an input to my tool.
-The other tools are described briefly not as detailed as strace.
+In this chapter, I will describe a term system call and make an overview of tools which can monitor the system calls.
+We will focus in detail on a strace tool which will be used as an input to my tool.
+The other tools are described briefly not as detailed as the strace tool.
 
 \section{System calls}
 
-In computer terminology, the term syscall is the programmatic way in which a computer program requests a service from the kernel of the operating system it is executed on.
+In computer terminology, the term syscall is a programmatic way in which a computer program requests a service from a kernel of the operating system on which is executed on.
 In other words, the system calls are functions used in the kernel itself.
-To the programmer, the system call appears as a normal C function call.
-This is typical for monolithic kernels and we can find them on every UNIX system.
-The system calls are generated using interrupt i.e. on Linux/i86 with interrupt no. \texttt{0x80} and these syscalls are handled by the kernel in privileged mode.
-When a user invokes a system call, execution flow is as follows:
+The system call appears to a standard developer as a C function call.
+This is typical for monolithic kernels.
+We can find them on every UNIX system.
+The system calls are generated using interrupt, i.e., on Linux/i86 with an interrupt no. \texttt{0x80} and these syscalls are handled by the kernel in a privileged mode.
+When a user invokes a system call, an execution flow is as follows:
 \begin{itemize}
-	%\item Each call is vectored through a stub in libc. Some system calls are more complex than others because of variable length of arguments. But every syscall has the same entry point and the same exit point. Only overhead in more complex syscalls is processing more parameters on entry.
-	%\item Each syscall is expanded to assembly routine. This routine also sets up the stack frame and calls \texttt{\_system\_call\(\)} through an interrupt \( \texttt{int \$0x80} \).
-	%\item There was not executed any code of syscall. Not until int \texttt{\$0x80} is executed, this interrupt does the call transfer to the kernel entry point. The entry point is the same for every system call. Now is saved the state of central process unit (CPU), saved all of the registers, checked if is valid syscall called. Transfering control to a valid syscall is done through the offset in the \texttt{\_sys\_call\_table}.
-	%\item At the end of the syscall is called \texttt{\_ret\_from\_sys\_call\(\)}. This is done before returning to user space. It checks if the scheduler should be run, and if so, calls it.
-	%\item Immediately after return from the system call, \texttt{syscallX()} macro checks for a negative return value from the syscall, if so it puts a positive copy to a global variable \texttt{\_errno}, for accessing from code like \texttt{perror()}.
-
-	% \todo{Decide which one}
-	% \missingfigure{Make a sketch of the calling a syscall}
-
-	\item Each syscall is vectored through a stub in libc. Some syscalls are more complex than others because of variable length of arguments, but the entry point and end point of syscall is still the same. Only overhead is processing more arguments.
-	\item In libc is then set the number of the syscall to \texttt{eax} register and the stack frame is also set up.
-	\item Interrupt number \texttt{0x80} is called and transfered to kernel entry point. The entry point is the same for every system call.
-	\item In table of interrupts is found a pointer to interrupt handler. After that follows the execution of the interrupt handler. Now in the handler is stored the content of the CPU registers, checked if is valid syscall called.
-	\item The handler finds the corresponding offset in table of interrupts \texttt{\_sys\_call\_table}, where is stored pointer to syscall service.
+	\item Each syscall is vectored through a stub in libc.
+    		Some syscalls are more complex than others because of a variable length of the arguments, but the entry point and end point of syscall is still the same.
+	\item In libc, the number of the syscall is then set to an \texttt{eax} register and the stack frame is also set up.
+	\item An interrupt number \texttt{0x80} is called and transfered to the kernel entry point.
+    		The entry point is the same for every system call.
+	\item In table of interrupts, a pointer to interrupt handler is found. After that the execution of the interrupt handler follows.
+    		Now in the handler, the content of the CPU registers is stored and checked if a valid syscall is called.
+	\item The handler finds the corresponding offset in the table of interrupts \texttt{\_sys\_call\_table}, where pointer to syscall service is stored.
 	\item Control is transfered to the syscall service.
-	\item Syscall returned return value to register \texttt{EAX} on 32-bit architecture or \texttt{RAX} on 64-bit architecture.
-	\item At the end of the syscall is called \texttt{\_ret\_from\_sys\_call\(\)}. This is done before returning to user space. It checks if the scheduler should be run, and if so, calls it.
+	\item Syscall returns a value to the register \texttt{EAX} on 32-bit architecture or \texttt{RAX} on 64-bit architecture.
+	\item At the end of the syscall, \texttt{\_ret\_from\_sys\_call\(\)} is called.
+    		This is done before returning to user space. It checks if the scheduler should be run, and if so, it calls it.
 	\item Immediately after return from the system call to interrupt handler, \texttt{syscallX()} macro checks for a negative return value from the syscall, if so it puts a positive copy to a global variable \texttt{\_errno}, for accessing from code like \texttt{perror()}.
 \end{itemize}
 
@@ -78,32 +74,38 @@ This procedure is illustrated in figure \ref{fig:tikz:int_handling} on page \pag
 \section{Monitoring}
 The most used and common method for monitoring is tracing, in other words watching what a program is doing during the execution.
 Tracing involves a specialized logging to record information, useful for debugging, about a program's execution.
-This can be done in multiple layers, from tracing which lines in the program was executed to individual instructions executed on CPU.
-Collecting this information can be done with multiple tools i.e strace, ftrace and a lots of more.
+This can be done in multiple layers, from tracing which lines in the program was executed to individual instructions executed on a CPU.
+Collecting this information can be done with multiple tools, i.e, strace, ftrace and a lots of more.
 
 \subsection{Strace -- trace system calls and signals}
 
 Strace\cite{strace_man} is a simple diagnostic, instructional and debugging tool.
 You can monitor every syscall or signal made by the program you are monitoring.
-So with this tool is possible to log what observed program demanded from the kernel.
-The individual logged operations can be i.e. an attempt to open a file or delete the content of CPU caches.
-Strace also shows arguments for the called syscall.
-As well you can perform a fault injection for the specified set of syscalls, to simulate program in faulty test cases.
-Next feature is that the strace can trace child processes of the observing program.
-So the log on the output will be containing the syscalls from the main process and its child processes.
+Using this tool, it is possible to log what an observed program demanded from the kernel.
+The individual logged operations can be, i.e., an attempt to open a file or delete a content of CPU caches.
+The strace also shows arguments for the called syscall.
+Developer can perform a fault injection for the specified set of syscalls as well, to simulate the program in faulty test cases.
+The next feature is that the Strace can trace child processes of the observing program.
+The log on the output will be containing the system calls from the main process and its child processes.
 
 The main advantage of Strace tool is that it does not need any source codes.
-The observing program hasn't to be compiled with extra flags nor object files.
-Also, it doesn't matter if the program is statically or dynamically linked.
+The observing program has not to be compiled with extra flags nor object files.
+Also, it does not matter if the program is statically or dynamically linked.
+% * <tamaskovic.marek@gmail.com> 2017-11-04T13:42:43.653Z:
+% 
+% Niesom si isty ako to povedat ale v podstate potrebujem len spustitelnu binarku.
+% This is really useful because we do not need a custom binary to run strace with it.
+% 
+% ^.
 This is really useful because we only need executable binary.
-These features are really useful for mine tool but this will be more described in another chapter.
+These features are really useful for my tool but this will be more described in another chapter.
 
-This tool is really simple i.e. when you want to run \texttt{ls} with strace you type in command line:\\
+This tool is really simple, i.e., when one want to run \texttt{ls} with strace he types in command line:\\
 \\
 \texttt{>\$ strace ls}\\
 \\
-In this case, the strace executes the \texttt{ls} command and on the output occurs which system calls were called.
-Example of the strace output is in next figure.\\[2mm]
+In this case, the strace executes the \texttt{ls} command and on the output, it occurs which system calls were called.
+An example of the strace output is in the next figure.\\[2mm]
 
 \fontfamily{lmtt}\selectfont\noindent
 execve("/usr/bin/ls", ["ls"], 0x7ffd0cf4ba60 /* 59 vars */) = 0\linebreak
@@ -134,14 +136,13 @@ The event points provide a interface to observe what is going on in the various 
 
 \subsection{Dtrace -- Dynamic Tracing}
 DTrace\cite{dtrace_man}\cite{dtrace_about} (shortcut for Dynamic Tracing) is a performance analysis and troubleshooting tool.
-It is included in a various operating system, including FreeBSD, Mac OS, Solaris and Linux port is in development.
-This tool instruments all software.
-Not just user-level software but also operating system kernel and device drivers.
-Supports the dynamic tracing which means dynamically patching while running instructions with instrumentation code.
-Static tracing is as well supported but it needs to add tracepoints to code.
-DTrace provides a scripting language called 'D', for writing scripts and one-liners.
+It is included in various operating systems, including FreeBSD, Mac OS, Solaris and Linux port is in development.
+This tool instruments all software, not just user-level software but also operating system kernel and device drivers.
+It supports dynamic tracing which means dynamically patching while running instructions with an instrumentation code.
+Static tracing is supported as well but it needs to add tracepoints to the code.
+DTrace provides a scripting language called 'D' for writing scripts and one-liners.
 It is similar to C with AWK elements.
-With this script, you can create filters and you can summarize data in the kernel before passing to user-space.
+With this script, you can create filters and summarize data in the kernel before passing to user-space.
 This design can really decrease the overhead in performance sensitive systems.
 
 For our purposes, DTrace is too complicated to setup or gather the information about syscalls.
@@ -175,16 +176,30 @@ Entry example in log file:
 
 
 \chapter{Security facility in Linux}
+
 Systrace\cite{systrace_web} and seccomp\cite{seccomp_sandbox}
 
 \section{Systrace}
-Systrace is security facility which limits an application's access to the system
+Systrace is security facility which limits an application's access to the system.
+It is really similar to a newer tool named seccomp-bpf, which is described later.
+The limitations are provided via system call blocking. 
+The policy is generated interactively.
+Operations not covered by the defined policy raise an alarm.
+When alarm is raised, user can refine the current policy.
+Systrace provides option to generate policies automatically. 
+These automatically generated policies can be immediately used in sandboxing.
+But sometimes is needed minimal manual post-processing.
+
+This tool provides cyber security by providing intrusion prevention. 
+One of the use cases is that you run systrace on server.
+The systrace is monitoring all running daemons and can generate warning when some incident occurs.
+These warnings can be sent to a system administrator and can provide informations what happened.
 
 \section{Seccomp}
 In most contemporary distribution is enabled kernel module named Seccomp\cite{seccomp_sandbox}.
 Seccomp stands for shortcut of Secure Computing Mode.
 This module provide one way transition to a secure mode, which restricts a thread to a small amount of system calls \( \texttt{read()},\ \texttt{write()},\ \texttt{exit()},\ \texttt{sigreturn()}\ \).
-If the thread tries to call other system call then the one from the 4 member set, the whole process is terminated with signal \texttt{SIGTERM}. 
+If the thread tries to call other system call then the one from the 4 member set, the whole process is terminated with signal \texttt{SIGTERM} . 
 The drawback of this solution is that these four system calls are not enough for application to run correctly.
 
 \subsection{Seccomp-bpf}
