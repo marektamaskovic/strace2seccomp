@@ -1,0 +1,55 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [ label=below:{32}] (0) at (0, -0) {};
+		\node [] (1) at (2, -0) {};
+		\node [ label=below:{16}] (2) at (4, -0) {};
+		\node [ label=below:{12}] (3) at (5, -0) {};
+		\node [] (4) at (-2, -0) {};
+		\node [] (5) at (-4, -0) {};
+		\node [] (6) at (-6, -0) {};
+		\node [ label=below:{8}] (7) at (6, -0) {};
+		\node [ label=below:{0}] (8) at (8, -0) {};
+		\node [ label=above:{LSB}] (9) at (8, 2) {};
+		\node [] (10) at (6, 2) {};
+		\node [] (11) at (4, 2) {};
+		\node [] (12) at (0, 2) {};
+		\node [] (13) at (2, 2) {};
+		\node [] (14) at (5, 2) {};
+		\node [] (15) at (-2, 2) {};
+		\node [] (16) at (-4, 2) {};
+		\node [] (17) at (-6, 2) {};
+		\node [ label=below:{64}] (18) at (-8, -0) {};
+		\node [ label=above:{MSB}] (19) at (-8, 2) {};
+		\node [] (20) at (2, 1) {offset};
+		\node [] (21) at (4.5, 1) {src};
+		\node [] (22) at (5.5, 1) {dst};
+		\node [] (23) at (7, 1) {opcode};
+		\node [] (24) at (-4, 1) {immediate};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw (19.center) to (18.center);
+		\draw (6.center) to (5.center);
+		\draw (5.center) to (4.center);
+		\draw (4.center) to (0.center);
+		\draw (0.center) to (1.center);
+		\draw (13.center) to (12.center);
+		\draw (15.center) to (12.center);
+		\draw (16.center) to (15.center);
+		\draw (17.center) to (16.center);
+		\draw (13.center) to (11.center);
+		\draw (11.center) to (14.center);
+		\draw (14.center) to (10.center);
+		\draw (8.center) to (7.center);
+		\draw (3.center) to (7.center);
+		\draw (1.center) to (2.center);
+		\draw (2.center) to (3.center);
+		\draw (10.center) to (7.center);
+		\draw (12.center) to (0.center);
+		\draw (19.center) to (17.center);
+		\draw (6.center) to (18.center);
+		\draw (11.center) to (2.center);
+		\draw (9.center) to (8.center);
+		\draw (9.center) to (10.center);
+		\draw (14.center) to (3.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

@@ -1,0 +1,35 @@
+int myapp_seccomp_raw_start(void)
+{
+struct sock_filter filter[] = {
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 4),
+	BPF_STMT(BPF_JMP+BPF_JEQ+BPF_K, AUDIT_ARCH_X86_64, 0x00, 0x12),
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 0),
+	BPF_STMT(BPF_JMP+BPF_JGE+BPF_K, 0x40000000, 0x10, 0x00),
+	BPF_STMT(BPF_JMP+BPF_JEQ+BPF_K, __NR_open , 0x0e, 0x00),
+	BPF_STMT(BPF_JMP+BPF_JEQ+BPF_K, __NR_close, 0x0d, 0x00),
+	BPF_STMT(BPF_JMP+BPF_JEQ+BPF_K, __NR_read, 0x00, 0x0d),
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 20),
+	BPF_STMT(BPF_JMP+BPF_JEQ+BPF_K, 0, 0x00, 0x0b),
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 16),
+	BPF_STMT(BPF_JMP+BPF_JEQ+BPF_K, 0, 0x00, 0x09),
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 28),
+	BPF_STMT(BPF_JMP+BPF_JEQ+BPF_K, 0, 0x00, 0x02),
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 24),
+	BPF_STMT(BPF_JMP+BPF_JEQ+BPF_K, 0, 0x05, 0x00),
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 36),
+	BPF_STMT(BPF_JMP+BPF_JEQ+BPF_K, (SSIZE_MAX >> 32), 0x00, 0x02),
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 32),
+	BPF_STMT(BPF_JMP+BPF_JEQ+BPF_K, (SSIZE_MAX & 0xffffffff), 0x01, 0x00),
+	BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW),
+	BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_KILL),
+};
+struct sock_fprog prog = {
+	.len = (unsigned short)(sizeof(filter)/sizeof(filter[0])),
+	.filter = filter,
+};
+if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) < 0)
+	return -errno;
+if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog) < 0)
+	return -errno;
+return 0;
+}

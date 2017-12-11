@@ -1,4 +1,4 @@
-%=========================================================================
+\%=========================================================================
 % (c) Michal Bidlo, Bohuslav Křena, 2008
 
 % tikzit regex: (,)?\s*style=\w*(,)?\s*
@@ -33,31 +33,32 @@ In conclusion, methodology how this tool was tested is described.
 \label{chap:syscalls}
 In this chapter, I will describe a term system call and make an overview of tools which can monitor the system calls.
 We will focus in detail on a strace tool which will be used as an input to my tool.
-The other tools are described briefly not as detailed as the strace tool.
+The other applications are described briefly not as detailed as the strace tool.
 
 \section{System calls}
 
 In computer terminology, the term syscall is a programmatic way in which a computer program requests a service from a kernel of the operating system on which is executed on.
 In other words, the system calls are functions used in the kernel itself.
 The system call appears to a standard developer as a C function call.
-This is typical for monolithic kernels.
+This design is typical for monolithic kernels.
 We can find them on every UNIX system.
 The system calls are generated using interrupt, i.e., on Linux/i86 with an interrupt no. \texttt{0x80} and these syscalls are handled by the kernel in a privileged mode.
 When a user invokes a system call, an execution flow is as follows:
 \begin{itemize}
 	\item Each syscall is vectored through a stub in libc.
-    		Some syscalls are more complex than others because of a variable length of the arguments, but the entry point and end point of syscall is still the same.
-	\item In libc, the number of the syscall is then set to an \texttt{eax} register and the stack frame is also set up.
-	\item An interrupt number \texttt{0x80} is called and transfered to the kernel entry point.
-    		The entry point is the same for every system call.
-	\item In table of interrupts, a pointer to interrupt handler is found. After that the execution of the interrupt handler follows.
-    		Now in the handler, the content of the CPU registers is stored and checked if a valid syscall is called.
-	\item The handler finds the corresponding offset in the table of interrupts \texttt{\_sys\_call\_table}, where pointer to syscall service is stored.
-	\item Control is transfered to the syscall service.
+    	  Some syscalls are more complicated than others because of a variable length of the arguments, but the entry point and end point of syscall are still the same.
+	\item In libc, the number of the syscall is then set to an \texttt{eax} register, and the stack frame is also set up.
+	\item An interrupt number \texttt{0x80} is called and transferred to the kernel entry point.
+    	  The entry point is the same for every system call.
+	\item In the table of interrupts, a pointer to interrupt handler is found.
+    	  After that, the execution of the interrupt handler follows which stores the content of the CPU registers and check if a valid syscall is called.
+	\item The handler finds the corresponding offset in the table of interrupts \texttt{\_sys\_call\_table}, where a pointer to syscall service is stored.
+	\item Control is transferred to the syscall service.
 	\item Syscall returns a value to the register \texttt{EAX} on 32-bit architecture or \texttt{RAX} on 64-bit architecture.
 	\item At the end of the syscall, \texttt{\_ret\_from\_sys\_call\(\)} is called.
-    		This is done before returning to user space. It checks if the scheduler should be run, and if so, it calls it.
-	\item Immediately after return from the system call to interrupt handler, \texttt{syscallX()} macro checks for a negative return value from the syscall, if so it puts a positive copy to a global variable \texttt{\_errno}, for accessing from code like \texttt{perror()}.
+    	  This call is done before returning to userspace.
+          It checks if the scheduler should be run, and if so, it calls it.
+	\item Immediately after return from the system call to interrupt handler, \texttt{syscallX()} macro checks for a negative return value from the syscall, if so it puts a positive copy of a return value to a global variable \texttt{\_errno}, for accessing from code like \texttt{perror()}.
 \end{itemize}
 
 This procedure is illustrated in figure \ref{fig:tikz:int_handling} on page \pageref{fig:tikz:int_handling}.
@@ -72,39 +73,32 @@ This procedure is illustrated in figure \ref{fig:tikz:int_handling} on page \pag
 
 
 \section{Monitoring}
-The most used and common method for monitoring is tracing, in other words watching what a program is doing during the execution.
-Tracing involves a specialized logging to record information, useful for debugging, about a program's execution.
-This can be done in multiple layers, from tracing which lines in the program was executed to individual instructions executed on a CPU.
-Collecting this information can be done with multiple tools, i.e, strace, ftrace and a lots of more.
+The most used and conventional method for monitoring is tracing, in other words watching what a program is doing during the execution.
+Tracing involves a specialised logging to record information, useful for debugging, about a program's execution.
+This can be done in multiple layers, from tracing which lines in the program was executed to individual instructions run on a CPU.
+Collecting this information can be done with various tools, i.e., strace, ftrace and a lots of more.
 
 \subsection{Strace -- trace system calls and signals}
 
 Strace\cite{strace_man} is a simple diagnostic, instructional and debugging tool.
-You can monitor every syscall or signal made by the program you are monitoring.
-Using this tool, it is possible to log what an observed program demanded from the kernel.
-The individual logged operations can be, i.e., an attempt to open a file or delete a content of CPU caches.
+You can monitor every syscall or signal made by the program you are tracking.
+Using this tool is possible to log what an observing program demanded from the kernel.
+The individual recorded operations can be, i.e., an attempt to open a file or delete a content of CPU caches.
 The strace also shows arguments for the called syscall.
-Developer can perform a fault injection for the specified set of syscalls as well, to simulate the program in faulty test cases.
+The developer can perform a fault injection for the specified set of syscalls as well, to simulate the program in faulty test cases.
 The next feature is that the Strace can trace child processes of the observing program.
-The log on the output will be containing the system calls from the main process and its child processes.
+The log on the output will contain the system calls from the primary process and its child processes.
 
 The main advantage of Strace tool is that it does not need any source codes.
 The observing program has not to be compiled with extra flags nor object files.
-Also, it does not matter if the program is statically or dynamically linked.
-% * <tamaskovic.marek@gmail.com> 2017-11-04T13:42:43.653Z:
-% 
-% Niesom si isty ako to povedat ale v podstate potrebujem len spustitelnu binarku.
-% This is really useful because we do not need a custom binary to run strace with it.
-% 
-% ^.
-This is really useful because we only need executable binary.
-These features are really useful for my tool but this will be more described in another chapter.
-
-This tool is really simple, i.e., when one want to run \texttt{ls} with strace he types in command line:\\
+Also, it does not matter if the application is statically or dynamically linked.
+This is useful because we only need executable binary.
+These features are helpful for my tool, but this will be more described in another chapter.
+Strace tool is straightforward, i.e., when one wants to run ls with strace he types in a command line:\\
 \\
 \texttt{>\$ strace ls}\\
 \\
-In this case, the strace executes the \texttt{ls} command and on the output, it occurs which system calls were called.
+In this case, the strace executes the \texttt{ls} command, and on the output, it occurs which system calls were called.
 An example of the strace output is in the next figure.\\[2mm]
 
 \fontfamily{lmtt}\selectfont\noindent
@@ -118,50 +112,50 @@ close(3)\linebreak
 \subsubsection{Ptrace}
 Strace is using ptrace\cite{ptrace_man} system call.
 The ptrace is used to  implement debuggers and other tools for process monitoring.
-Basically the strace call ptrace and attach to a tracee (monitored process).
+Basically, the strace call ptrace and attach to a tracee (monitored process).
 When the connection is established the tracee is halt before and after syscall.
 Now the tracer (strace) can observe and control the execution as well as inspect memory and registers of (tracee).
-With this information strace can determine which syscall was called.
+With this information, strace can determine which syscall was called.
 With the second halt after syscall, the strace can get information of return value from syscall.
 
 \subsection{Ftrace -- trace system calls, function calls and signals}
-Ftrace\cite{ftrace_man} is an internal tracer which traces events in kernel.
-It is designed for developers to examine kernel events. 
-Main feature of this tool is to measure latencies and find issues that takes place outside of the user-space.
-Ftrace is typically considered as a function tracker, but it is really a frame work of several different tracing utilities.
-One cool feature of ftrace is measurement latency among interrupts, latency between the time when task is woken up and time when the task is scheduled in.
-Other common use of ftrace is event tracing.
-In the kernel is a huge amount of static event points that can be enabled with tracefs file system. 
-The event points provide a interface to observe what is going on in the various part of kernel.
+Ftrace\cite{ftrace_man} is an internal tracer which traces events in the kernel.
+It is designed for developers to examine kernel events.
+The main feature of this tool is to measure latencies and find issues that take place outside of the user-space.
+Ftrace is typically considered as a function tracker,
+but it is really a framework of several different tracing utilities.
+One neat feature of ftrace is measurement latency among interrupts, the lag between the time when the task is woken up and time when the task is scheduled in.
+Another frequent use of ftrace is event tracing.
+In the kernel is a massive amount of static event points that can be enabled with a tracefs file system.
+The event points provide an interface to observe what is going on in the various part of the kernel.
 
 \subsection{Dtrace -- Dynamic Tracing}
 DTrace\cite{dtrace_man}\cite{dtrace_about} (shortcut for Dynamic Tracing) is a performance analysis and troubleshooting tool.
 It is included in various operating systems, including FreeBSD, Mac OS, Solaris and Linux port is in development.
 This tool instruments all software, not just user-level software but also operating system kernel and device drivers.
 It supports dynamic tracing which means dynamically patching while running instructions with an instrumentation code.
-Static tracing is supported as well but it needs to add tracepoints to the code.
+Static tracing is supported as well, but it needs to add tracepoints to the code.
 DTrace provides a scripting language called 'D' for writing scripts and one-liners.
 It is similar to C with AWK elements.
-With this script, you can create filters and summarize data in the kernel before passing to user-space.
-This design can really decrease the overhead in performance sensitive systems.
+With this script, you can create filters and summarise data in the kernel before passing to user-space.
+This design can decrease the overhead in performance sensitive systems.
 
 For our purposes, DTrace is too complicated to setup or gather the information about syscalls.
 You need to write some scripts to define which syscalls you want to be informed with and in our use case, we need every system call.
 
-\subsection{Autrace -- linux audit}
+\subsection{Autrace -- Linux audit}
 The Linux Auditing System helps system administrators create an audit trail.
-Every action on workstation or server is logged into log file.
-This tool can track security relevant events, record the events and detect misuse or unauthorized activities by inspecting the audit log.
-You can also set which actions should or should not be reported. 
+Every action on workstation or server is logged into a log file.
+This tool can track security-relevant events, record the events and detect misuse or unauthorised activities by inspecting the audit log.
+You can also set which actions should or should not be reported.
 
 Audit System is composed of two main parts.
-The first one \(autrace\) is kernel component which intercept system calls, records event and sends these audit messages to the next part.
+The first one \(autrace\) is kernel component which intercepts system calls, records event and sends these audit messages to the next part.
 The second component is audit daemon.
 This part of this tool is collecting the information emitted by kernel component.
-Emitted information are then stored as entries in a log file.
-
-As you can see this tool is not for monitoring one specific program but it is designed to monitor whole system.
-In the output is specified who executed the syscall and when, next are current working directory, uid, gid, etc., \ldots
+Emitted data is then stored as entries in a log file.
+As you can see this tool is not for monitoring one specific program, but it is designed to monitor the whole system.
+In the output is specified who and when executed the syscall, next is a current working directory, uid, gid, etc.
 %Above specified functionality is useful for server administrators but not for our work.
 
 Entry example in log file:
@@ -176,40 +170,122 @@ Entry example in log file:
 
 
 \chapter{Security facility in Linux}
+This chapter describes security facilities in GNU Linux operating system.
+Firstly we mention old tool named Systrace\cite{systrace_web}.
+Later will be mentioned a secure computing module named Seccomp\cite{seccomp_sandbox}.
+The next topic will be Berkley Packet Filter (BPF) because it is used in seccomp-bpf.
+The seccomp-bpf is an extension to basic seccomp.
+This extension can better describe the behavior of seccomp.
+In the end, there will be a description of libseccomp, which is a easy to use library to the kernel syscall filtering.
 
-Systrace\cite{systrace_web} and seccomp\cite{seccomp_sandbox}
 
 \section{Systrace}
 Systrace is security facility which limits an application's access to the system.
-It is really similar to a newer tool named seccomp-bpf, which is described later.
-The limitations are provided via system call blocking. 
+It is similar to a newer tool named seccomp-bpf, which is described later.
+The limitations are provided via system call blocking.
 The policy is generated interactively.
-Operations not covered by the defined policy raise an alarm.
-When alarm is raised, user can refine the current policy.
-Systrace provides option to generate policies automatically. 
-These automatically generated policies can be immediately used in sandboxing.
-But sometimes is needed minimal manual post-processing.
+Operations not covered by the defined policy raise the alarm.
+When an alarm is raised, the user can refine the current policy.
+Systrace provides an option to generate policies automatically which can be immediately used in sandboxing.
+It is not flawless, so it sometimes needs minimal manual post-processing.
 
-This tool provides cyber security by providing intrusion prevention. 
-One of the use cases is that you run systrace on server.
-The systrace is monitoring all running daemons and can generate warning when some incident occurs.
-These warnings can be sent to a system administrator and can provide informations what happened.
+This tool provides cybersecurity by providing intrusion prevention.
+One of the use cases is that you run systrace on the server.
+The systrace is monitoring all running daemons and can generate a warning when some incident occurs.
+These alerts can be sent to a system administrator and can provide information what happened.
 
 \section{Seccomp}
+A large number of syscalls are exposed to every user space of a process.
+Many of this syscalls are unused for the entire lifetime of the process.
+This generates small possibility to misuse some syscalls to corrupt process itself.
+A particular subset of applications benefits from a reduced set of syscalls, by reducing exposed kernel surface to process.
+The filtering is done by seccomp.
+Seccomp filtering provides a means for a process to reduce the set of syscalls available to process\cite{seccomp_kernel_doc}.
+
 In most contemporary distribution is enabled kernel module named Seccomp\cite{seccomp_sandbox}.
-Seccomp stands for shortcut of Secure Computing Mode.
-This module provide one way transition to a secure mode, which restricts a thread to a small amount of system calls \( \texttt{read()},\ \texttt{write()},\ \texttt{exit()},\ \texttt{sigreturn()}\ \).
-If the thread tries to call other system call then the one from the 4 member set, the whole process is terminated with signal \texttt{SIGTERM} . 
-The drawback of this solution is that these four system calls are not enough for application to run correctly.
-
-\subsection{Seccomp-bpf}
-\subsubsection{Berkeley packet filter}
-\subsubsection{Classic BPF}
-\subsubsection{Extended BPF}
-
-\subsection{libseccomp}
+Sec-comp stands for the shortcut of Secure Computing Mode.
+This module provides one way transition to a secure mode, which restricts a thread to a few system calls \texttt{read()},\ \texttt{write()},\ \texttt{exit()},\ \texttt{sigreturn()}.
+If the thread tries to call another system call then the one from the four-member set, the whole process is terminated with signal \texttt{SIGTERM}.
+The 8drawback of this solution is that these four system calls are not enough for application to
+run correctly.
 
 
+\section{Berkeley packet filter and seccomp}
+The seccomp filter mode that allows developers to write BPF programs that determine a given syscall will be allowed or not.
+That allowance can be based on system call number or specific syscall argument values.
+Only the values passed are available, as any pointer are not dereferenced by the BPF.
+Filters can be installed using \texttt{seccomp()} or \texttt{prctl()}.
+The BPF program should be constructed first, then installed in the kernel.
+After that, every system call triggers the filter code.
+The installed filter cannot be removed or modified.
+Another property of applied filter is that the filter is inherited from parent process to every child process when using \texttt{fork(2)} or \texttt{exec(2)}.
+
+A BPF language came in 1992 for a program called tcpdump, which is monitoring tool for network packets.
+The volume of packet can be colossal, so it makes the transfer to user-space expensive.
+The BPF provided a way to do filtering in the kernel and the user space only handles those packets it was interested in.
+
+The seccomp filter developers realised that they wanted very similar task.
+After that, the BPF was generalised to allow system call filtering.
+After the update, there is a tiny BPF virtual machine in kernel space that interprets the BPF instructions.
+
+The next update of BPF was to eBPF which stands for extended BPF.
+This update was released in Linux Kernel 3.18 for tracepoints later in 3.19 for raw sockets and in 4.1 for performance monitors.
+The eBPF brought the performance improvements and new capabilities.
+
+The eBPF virtual machine is widely used in the kernel for various filtering:
+\begin{itemize}
+	\item eXpress Data Path (XDP) \textit{is a high performance, programmable network data path in the Linux Kernel}
+    \item Traffic control
+    \item Sockets
+    \item Firewalling \textit{\(xpf\_bpf module\)}
+    \item Tracing
+    \item Tracepoints
+    \item kprobe \textit{dynamic tracing of a kernel function call}
+    \item cgroups
+\end{itemize}
+
+\subsection{eBPF - specification}
+The eBPF virtual machine has 64-bit RISC architecture designed for one to one mapping to 64-bit CPUs. The instructions are similar to classic BPF for simple conversion to eBPF. The old format has 2 registers A and X instead of current 11 registers, grouped, by function as described below \cite{kernel_bpf_specification}.
+
+\begin{itemize}
+\item R0 exit value for eBPF
+\item R1 - R5 function call arguments to in-kernel functions
+\item R6 - R9 callee-saved registers preserved by in-kernel functions
+\item R10 stack frame pointer (read only)
+\end{itemize}
+
+So far 87 internal BPF instructions were implemented. Opcode field has room for new instructions. Some of them may use 16/24/32 byte encoding.  
+
+Just like the original BPF, the new format runs within controlled environment, is deterministic and the kernel can easily prove that.
+The safety of a program can be verified in two steps.
+First step does depth-first-search to forbid  loops and CFG\footnote{Control flow graph} validations.
+The second step starts from first instruction and descend all possible paths in CFG. It simulates execution of every instruction and examine the state of registers and stack \cite{kernel_bpf_specification}.
+
+\subsection{eBPF - Instruction encoding}
+An eBPF program is a sequence of 64-bit instructions.
+All eBPF instruction use the same design of instruction encoding which is shown in \ref{fig:tikz:eBPF_instruction}.
+As you can see in the figure there are 5 parts that are opcode (operation code), dst (destination), src (source), offset, immediate~\cite{kernel_bpf_specification}.
+
+\begin{figure}[h]
+  \centering
+  % \includestandalone[width=\textwidth]{obrazky-fig/ures/bpf_cmd_scheme}%     without .tex extension
+  \resizebox {\textwidth} {!} {
+    \input{obrazky-figures/bpf_cmd_scheme}
+  }
+  \caption{Interrupt handling in Linux}
+  \label{fig:tikz:eBPF_instruction}
+\end{figure}
+
+\subsection{Libseccomp}
+Libseccomp\cite{libseccomp_git} is a easy to use library which provides a platform-independent interface to the Linux Kernel's syscall filtering.
+The libseccomp API is designed to abstract user from underlying BPF based syscall filtering and present a more conventional function-call based filtering interface.
+The interface should be more familiar to and quickly adopted by, application developers.
+The comparison of libseccomp and raw bpf filter is shown in figures \ref{lst:raw_bpf} and \ref{lst:libseccomp}.
+
+One of the advantages of libseccomp is that it has a permissive mode in which every syscall violation is reported to the user.
+This feature can be helpful if you want to obtain the which syscalls was called.
+This use case is really similar to the syscall monitoring.
+But it is really tough to depend on this output because it is in development.
 
 \chapter{Design of TODO: tool-name}
 \section{parser}

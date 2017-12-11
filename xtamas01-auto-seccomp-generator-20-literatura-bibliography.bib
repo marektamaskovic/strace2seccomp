@@ -1,27 +1,27 @@
 @manual{strace_man,
- title      = "strace(1) Linux User's Manual",
- edition   = "4.19",
+ title      = "{strace(1) Linux User's Manual}",
+ note		= "Version {\it 4.19}",
  year       = "2017",
  month      = "November"
 }
 
 @manual{ptrace_man,
- title      = "ptrace(2) Linux User's Manual",
- edition	= "4.09",
+ title      = "{ptrace(2) Linux User's Manual}",
+ note		= "Version {\it 4.09}",
  year       = "2017",
  month      = "November"
 }
 
 @manual{ftrace_man,
- title      = "ftrace(1) Linux User's Manual",
- edition	= "0.4-56.fc26",
+ title      = "{ftrace(1) Linux User's Manual}",
+ note		= "Version {\it 0.4-56.fc26}",
  year       = "2017",
  month      = "November"
 }
 
 @manual{dtrace_man,
- title      = "dtrace(1) Linux User's Manual",
- edition	= "3.1-5.fc26",
+ title      = "{dtrace(1) Linux User's Manual}",
+ note		= "Version {\it 3.1-5.fc26}",
  year       = "2017",
  month      = "November"
 }
@@ -35,7 +35,7 @@
 
 @manual{autrace_man,
  title      = "autrace(8) Linux User's Manual",
- edition	= "3.1-5.fc26",
+ edition	= "Version 3.1-5.fc26",
  year       = "2017",
  month      = "November"
 }
@@ -48,12 +48,29 @@
     note =		"[Online, accessed 2.10.2017]"
 }
 
+
+@MISC{libseccomp_git,
+	author =	"Paul Moore",
+    title = 	"{\it Libseccomp}",
+    url =		"https://github.com/seccomp/libseccomp",
+    note =		"[Online, accessed 30.11.2017]"
+}
+
 @MISC{seccomp_sandbox,
 	author =	"markus@chromium.org",
     title = 	"{\it seccompsandbox - overview.wiki}",
     url =		"https://code.google.com/archive/p/seccompsandbox/wikis/overview.wiki",
     note =		"[Online, accessed 2.10.2017]"
 }
+
+@MISC{seccomp_kernel_doc,
+	author =	"Will Drewry",
+    title = 	"{\it SECure COMPuting with filters}",
+    url =		"https://www.kernel.org/doc/Documentation/prctl/seccomp_filter.txt",
+    note =		"[Online, accessed 27.11.2017]"
+}
+
+
 
 @BOOK{Eikh,
   author =       "Victor Eikhout",
@@ -68,4 +85,24 @@
     title =        "{\it Československé sdružení uživatelů {\TeX}u}",
     url =          "http://www.cstug.cz",
     note =         "[Online; accessed 12.05.2016]"
+}
+
+@MISC{toctou_attack,
+	series="{29}",
+    title="{\it Modeling and preventing TOCTTOU vulnerabilities in Unix-style file systems}",
+    volume="{8}",
+    DOI="{10.1016/j.cose.2010.09.004}",
+    journal="{Computers & Security}",
+    ISSN="{0167-4048}",
+    author="{Wei, Jinpeng and Pu, Calton}",
+    year="{2010}",
+    pages="{815–830}",
+    collection="{8}"
+    } 
+    
+@MISC{kernel_bpf_specification,
+	author =	"Jay Schulist and Daniel Borkmann and Alexei Starovoitov,",
+    title = 	"{\it Linux Socket Filtering aka Berkeley Packet Filter (BPF)}",
+    url =		"https://www.kernel.org/doc/Documentation/networking/filter.txt",
+    note =		"[Online, accessed 11.12.2017]"
 }
