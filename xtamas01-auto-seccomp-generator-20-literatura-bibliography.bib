@@ -1,29 +1,29 @@
 @manual{strace_man,
- title      = "{strace(1) Linux User's Manual}",
- note		= "Version {\it 4.19}",
- year       = "2017",
- month      = "November"
+    title      = "{strace(1) Linux User's Manual}",
+    note       = "Version {\it 4.19}",
+    year       = "2017",
+    month      = "November"
 }
 
 @manual{ptrace_man,
- title      = "{ptrace(2) Linux User's Manual}",
- note		= "Version {\it 4.09}",
- year       = "2017",
- month      = "November"
+    title      = "{ptrace(2) Linux User's Manual}",
+    note       = "Version {\it 4.09}",
+    year       = "2017",
+    month      = "November"
 }
 
 @manual{ftrace_man,
- title      = "{ftrace(1) Linux User's Manual}",
- note		= "Version {\it 0.4-56.fc26}",
- year       = "2017",
- month      = "November"
+    title      = "{ftrace(1) Linux User's Manual}",
+    note       = "Version {\it 0.4-56.fc26}",
+    year       = "2017",
+    month      = "November"
 }
 
 @manual{dtrace_man,
- title      = "{dtrace(1) Linux User's Manual}",
- note		= "Version {\it 3.1-5.fc26}",
- year       = "2017",
- month      = "November"
+    title      = "{dtrace(1) Linux User's Manual}",
+    note       = "Version {\it 3.1-5.fc26}",
+    year       = "2017",
+    month      = "November"
 }
 
 @MISC{dtrace_about,
@@ -34,10 +34,10 @@
 }
 
 @manual{autrace_man,
- title      = "autrace(8) Linux User's Manual",
- edition	= "Version 3.1-5.fc26",
- year       = "2017",
- month      = "November"
+    title      = "autrace(8) Linux User's Manual",
+    edition	   = "Version 3.1-5.fc26",
+    year       = "2017",
+    month      = "November"
 }
 
 
@@ -73,11 +73,11 @@
 
 
 @BOOK{Eikh,
-  author =       "Victor Eikhout",
-  title =        "{\it {\TeX}by Topics, a {\TeX}nitian's Reference }",
-  publisher =    "Addison-Wesley UK",
-  year =         "2001",
-  isbn =         "0-201-56882-9"
+    author =       "Victor Eikhout",
+    title =        "{\it {\TeX}by Topics, a {\TeX}nitian's Reference }",
+    publisher =    "Addison-Wesley UK",
+    year =         "2001",
+    isbn =         "0-201-56882-9"
 }
 
 @MISC{cstugWeb,
@@ -87,7 +87,7 @@
     note =         "[Online; accessed 12.05.2016]"
 }
 
-@MISC{toctou_attack,
+@ARTICLE{toctou_attack,
 	series="{29}",
     title="{\it Modeling and preventing TOCTTOU vulnerabilities in Unix-style file systems}",
     volume="{8}",
@@ -98,11 +98,78 @@
     year="{2010}",
     pages="{815–830}",
     collection="{8}"
-    } 
-    
+}
+
+@ARTICLE{PEG_def,
+    title="{\it Derivatives of parsing expression grammars}",
+    volume="{2}",
+    DOI="{10.4204/EPTCS.252.18}",
+    journal="{Electronic Proceedings in Theoretical Computer Science, EPTCS}",
+    ISSN="{20752180}",
+    author="{A. Moss}",
+    year="{2017}",
+    pages="{180-194}",
+    collection="{252}"
+}
+
 @MISC{kernel_bpf_specification,
-	author =	"Jay Schulist and Daniel Borkmann and Alexei Starovoitov,",
+	author =	"Jay Schulist and Daniel Borkmann and Alexei Starovoitov",
     title = 	"{\it Linux Socket Filtering aka Berkeley Packet Filter (BPF)}",
     url =		"https://www.kernel.org/doc/Documentation/networking/filter.txt",
     note =		"[Online, accessed 11.12.2017]"
+}
+
+@techreport{ISO14882,
+    type = {Standard},
+    key = {ISO/IEC 14882:2014},
+    month = mar,
+    year = {2014},
+    title = {Information technology - Programming languages - C++},
+    volume = {2016},
+    address = {Geneva, CH},
+    institution = "{International Organization for Standardization}"
+}
+
+@techreport{ISO9899,
+    type = {Standard},
+    key = {ISO/IEC 9899:2011},
+    month = mar,
+    year = {2011},
+    title = {Information technology - Programming languages - C},
+    volume = {2011},
+    address = {Geneva, CH},
+    institution = "{International Organization for Standardization}"
+}
+
+@article{PipeAndFilter,
+	series="{10}",
+    title="{\it ArchMatE: from architectural styles to object-oriented models through exploratory tool support}",
+    volume="{40}",
+    DOI="{10.1145/1103845.1094821}",
+    journal="{ACM SIGPLAN Notices}",
+    ISSN="{03621340}",
+    author="{J. Andrés Díaz-Pace and Marcelo, R, Campo}",
+    year="{2005}",
+    pages="{117}",
+    collection="{40}"
+}
+
+@article{Ford:PEG,
+    author = {Ford, Bryan},
+    title = {Packrat Parsing:: Simple, Powerful, Lazy, Linear Time, Functional Pearl},
+    journal = {SIGPLAN Not.},
+    issue_date = {September 2002},
+    volume = {37},
+    number = {9},
+    month = sep,
+    year = {2002},
+    issn = {0362-1340},
+    pages = {36--47},
+    numpages = {12},
+    url = {http://doi.acm.org/10.1145/583852.581483},
+    doi = {10.1145/583852.581483},
+    acmid = {581483},
+    publisher = {ACM},
+    address = {New York, NY, USA},
+    keywords = {Haskell, backtracking, lexical analysis, memoization, parser combinators, scannerless parsing, top-down parsing},
 }

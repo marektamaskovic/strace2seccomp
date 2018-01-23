@@ -1,4 +1,4 @@
-\%=========================================================================
+%=========================================================================
 % (c) Michal Bidlo, Bohuslav Křena, 2008
 
 % tikzit regex: (,)?\s*style=\w*(,)?\s*
@@ -15,7 +15,7 @@ Another way is to monitor and block system calls (syscalls).
 Monitoring is performed using tools mentioned in the next chapter.
 The actual blocking can be performed with mandatory control access (MAC) (Apparmor, SELinux), sandboxing (seccomp) or others mechanisms.
 MAC refers to a type of access control by which the operating system constraints the ability of a subject or initiator to access or generally perform some sort of operation on an object or target.
-Seccomp is a Linux kernel module which allows to a process one-way transition to secure a state where the process can only use four syscalls.
+Seccomp is a Linux kernel module which allows to a process one-way transition to a secure state where the process can only use four syscalls.
 When the process tries to call another syscall then one of the four members set is terminated with SIGKILL.
 The set of allowed system calls can be extended using seccomp-bpf.
 This extension allows filtering system calls using a configurable policy implemented with Berkley Packet Filter (BPF) rules.
@@ -29,13 +29,13 @@ In the next chapter of the thesis, I will illustrate how security facilities in 
 After the theoretical part, the design and development of a tool will follow.
 In conclusion, methodology how this tool was tested is described.
 
-\chapter{System calls and tools monitoring them}
+\chapter{System calls and Monitoring Tools}
 \label{chap:syscalls}
 In this chapter, I will describe a term system call and make an overview of tools which can monitor the system calls.
 We will focus in detail on a strace tool which will be used as an input to my tool.
 The other applications are described briefly not as detailed as the strace tool.
 
-\section{System calls}
+\section{System Calls}
 
 In computer terminology, the term syscall is a programmatic way in which a computer program requests a service from a kernel of the operating system on which is executed on.
 In other words, the system calls are functions used in the kernel itself.
@@ -78,7 +78,8 @@ Tracing involves a specialised logging to record information, useful for debuggi
 This can be done in multiple layers, from tracing which lines in the program was executed to individual instructions run on a CPU.
 Collecting this information can be done with various tools, i.e., strace, ftrace and a lots of more.
 
-\subsection{Strace -- trace system calls and signals}
+\subsection{Strace}
+\label{sec:strace}
 
 Strace\cite{strace_man} is a simple diagnostic, instructional and debugging tool.
 You can monitor every syscall or signal made by the program you are tracking.
@@ -109,7 +110,7 @@ mmap(NULL, 202163, PROT\_READ, MAP\_PRIVATE, 3, 0) = 0x7fd781293000\linebreak
 close(3)\linebreak
 \fontfamily{\familydefault}\selectfont
 
-\subsubsection{Ptrace}
+\subsection{Ptrace}
 Strace is using ptrace\cite{ptrace_man} system call.
 The ptrace is used to  implement debuggers and other tools for process monitoring.
 Basically, the strace call ptrace and attach to a tracee (monitored process).
@@ -118,7 +119,7 @@ Now the tracer (strace) can observe and control the execution as well as inspect
 With this information, strace can determine which syscall was called.
 With the second halt after syscall, the strace can get information of return value from syscall.
 
-\subsection{Ftrace -- trace system calls, function calls and signals}
+\subsection{Ftrace}
 Ftrace\cite{ftrace_man} is an internal tracer which traces events in the kernel.
 It is designed for developers to examine kernel events.
 The main feature of this tool is to measure latencies and find issues that take place outside of the user-space.
@@ -129,7 +130,7 @@ Another frequent use of ftrace is event tracing.
 In the kernel is a massive amount of static event points that can be enabled with a tracefs file system.
 The event points provide an interface to observe what is going on in the various part of the kernel.
 
-\subsection{Dtrace -- Dynamic Tracing}
+\subsection{Dtrace}
 DTrace\cite{dtrace_man}\cite{dtrace_about} (shortcut for Dynamic Tracing) is a performance analysis and troubleshooting tool.
 It is included in various operating systems, including FreeBSD, Mac OS, Solaris and Linux port is in development.
 This tool instruments all software, not just user-level software but also operating system kernel and device drivers.
@@ -143,7 +144,7 @@ This design can decrease the overhead in performance sensitive systems.
 For our purposes, DTrace is too complicated to setup or gather the information about syscalls.
 You need to write some scripts to define which syscalls you want to be informed with and in our use case, we need every system call.
 
-\subsection{Autrace -- Linux audit}
+\subsection{Autrace}
 The Linux Auditing System helps system administrators create an audit trail.
 Every action on workstation or server is logged into a log file.
 This tool can track security-relevant events, record the events and detect misuse or unauthorised activities by inspecting the audit log.
@@ -169,64 +170,63 @@ Entry example in log file:
 
 
 
-\chapter{Security facility in Linux}
+\chapter{Security Facilities in Linux}
 This chapter describes security facilities in GNU Linux operating system.
 Firstly we mention old tool named Systrace\cite{systrace_web}.
-Later will be mentioned a secure computing module named Seccomp\cite{seccomp_sandbox}.
+Later we will mention a secure computing module named Seccomp\cite{seccomp_sandbox}.
 The next topic will be Berkley Packet Filter (BPF) because it is used in seccomp-bpf.
 The seccomp-bpf is an extension to basic seccomp.
 This extension can better describe the behavior of seccomp.
-In the end, there will be a description of libseccomp, which is a easy to use library to the kernel syscall filtering.
-
+In the end, there will be a description of libseccomp which is an easy to use library to the kernel syscall filtering.
 
 \section{Systrace}
 Systrace is security facility which limits an application's access to the system.
-It is similar to a newer tool named seccomp-bpf, which is described later.
+It is similar to a newer tool named seccomp-bpf which is described later.
 The limitations are provided via system call blocking.
 The policy is generated interactively.
 Operations not covered by the defined policy raise the alarm.
-When an alarm is raised, the user can refine the current policy.
+When an alarm is raised the user can refine the current policy.
 Systrace provides an option to generate policies automatically which can be immediately used in sandboxing.
 It is not flawless, so it sometimes needs minimal manual post-processing.
 
 This tool provides cybersecurity by providing intrusion prevention.
-One of the use cases is that you run systrace on the server.
-The systrace is monitoring all running daemons and can generate a warning when some incident occurs.
+One of the uses is that you run systrace on the server.
+The systrace monitors all running daemons and can generate a warning when some incident occurs.
 These alerts can be sent to a system administrator and can provide information what happened.
 
 \section{Seccomp}
-A large number of syscalls are exposed to every user space of a process.
+A large number of syscalls are exposed to user space of a process. % better?
 Many of this syscalls are unused for the entire lifetime of the process.
-This generates small possibility to misuse some syscalls to corrupt process itself.
-A particular subset of applications benefits from a reduced set of syscalls, by reducing exposed kernel surface to process.
+This generates small possibility to misuse some syscalls to corrupt the process itself.
+A particular subset of applications benefits from a reduced set of syscalls by reducing exposed kernel surface to process.
 The filtering is done by seccomp.
-Seccomp filtering provides a means for a process to reduce the set of syscalls available to process\cite{seccomp_kernel_doc}.
+Seccomp filtering provides a means for a process to reduce the set of syscalls available to the process\cite{seccomp_kernel_doc}.
 
-In most contemporary distribution is enabled kernel module named Seccomp\cite{seccomp_sandbox}.
+In most contemporary distribution, kernel module named Seccomp\cite{seccomp_sandbox} is enabled.
 Sec-comp stands for the shortcut of Secure Computing Mode.
-This module provides one way transition to a secure mode, which restricts a thread to a few system calls \texttt{read()},\ \texttt{write()},\ \texttt{exit()},\ \texttt{sigreturn()}.
+This module provides one way transition to a secure mode which restricts a thread to a few system calls \texttt{read()},\ \texttt{write()},\ \texttt{exit()},\ \texttt{sigreturn()}.
 If the thread tries to call another system call then the one from the four-member set, the whole process is terminated with signal \texttt{SIGTERM}.
-The 8drawback of this solution is that these four system calls are not enough for application to
+The drawback of this solution is that these four system calls are not enough for application to
 run correctly.
 
 
-\section{Berkeley packet filter and seccomp}
-The seccomp filter mode that allows developers to write BPF programs that determine a given syscall will be allowed or not.
+\section{Berkeley Packet Filter and Seccomp}
+The seccomp filter mode that allows developers to write BPF programs that determine if a given syscall will be allowed or not.
 That allowance can be based on system call number or specific syscall argument values.
-Only the values passed are available, as any pointer are not dereferenced by the BPF.
+Only the passed values are available, as any pointer are not dereferenced by the BPF.
 Filters can be installed using \texttt{seccomp()} or \texttt{prctl()}.
 The BPF program should be constructed first, then installed in the kernel.
 After that, every system call triggers the filter code.
 The installed filter cannot be removed or modified.
-Another property of applied filter is that the filter is inherited from parent process to every child process when using \texttt{fork(2)} or \texttt{exec(2)}.
+Another property of applied filter is that the filter is inherited from a parent process to every child process when using \texttt{fork(2)} or \texttt{exec(2)}.
 
-A BPF language came in 1992 for a program called tcpdump, which is monitoring tool for network packets.
+A BPF language came in 1992 for a program called tcpdump which is a monitoring tool for network packets.
 The volume of packet can be colossal, so it makes the transfer to user-space expensive.
-The BPF provided a way to do filtering in the kernel and the user space only handles those packets it was interested in.
+The BPF provides a way to do filtering in the kernel and the user space only handles those packets which was interested in.
 
 The seccomp filter developers realised that they wanted very similar task.
 After that, the BPF was generalised to allow system call filtering.
-After the update, there is a tiny BPF virtual machine in kernel space that interprets the BPF instructions.
+After the update, there is a tiny BPF virtual machine in the kernel space that interprets the BPF instructions.
 
 The next update of BPF was to eBPF which stands for extended BPF.
 This update was released in Linux Kernel 3.18 for tracepoints later in 3.19 for raw sockets and in 4.1 for performance monitors.
@@ -244,9 +244,11 @@ The eBPF virtual machine is widely used in the kernel for various filtering:
     \item cgroups
 \end{itemize}
 
-\subsection{eBPF - specification}
-The eBPF virtual machine has 64-bit RISC architecture designed for one to one mapping to 64-bit CPUs. The instructions are similar to classic BPF for simple conversion to eBPF. The old format has 2 registers A and X instead of current 11 registers, grouped, by function as described below \cite{kernel_bpf_specification}.
-
+\subsection{eBPF - Specification}
+The eBPF virtual machine has 64-bit RISC architecture designed for one to one mapping to 64-bit CPUs.
+Instructions are similar to classic BPF for simple conversion to eBPF.
+The old format had registers A and X instead of current 11 registers, grouped by function as described below \cite{kernel_bpf_specification}.
+\pagebreak
 \begin{itemize}
 \item R0 exit value for eBPF
 \item R1 - R5 function call arguments to in-kernel functions
@@ -254,17 +256,17 @@ The eBPF virtual machine has 64-bit RISC architecture designed for one to one ma
 \item R10 stack frame pointer (read only)
 \end{itemize}
 
-So far 87 internal BPF instructions were implemented. Opcode field has room for new instructions. Some of them may use 16/24/32 byte encoding.  
+So far 87 internal BPF instructions were implemented. Opcode field has room for new instructions. Some of them may use 16/24/32 byte encoding.
 
-Just like the original BPF, the new format runs within controlled environment, is deterministic and the kernel can easily prove that.
+Same as the original BPF (the new format runs within controlled environment) is deterministic and the kernel can easily prove that.
 The safety of a program can be verified in two steps.
 First step does depth-first-search to forbid  loops and CFG\footnote{Control flow graph} validations.
-The second step starts from first instruction and descend all possible paths in CFG. It simulates execution of every instruction and examine the state of registers and stack \cite{kernel_bpf_specification}.
+The second step starts from first instruction and descends all possible paths in CFG. It simulates execution of every instruction and examines the state of registers and stack \cite{kernel_bpf_specification}.
 
-\subsection{eBPF - Instruction encoding}
+\subsection{eBPF - Instruction Encoding}
 An eBPF program is a sequence of 64-bit instructions.
-All eBPF instruction use the same design of instruction encoding which is shown in \ref{fig:tikz:eBPF_instruction}.
-As you can see in the figure there are 5 parts that are opcode (operation code), dst (destination), src (source), offset, immediate~\cite{kernel_bpf_specification}.
+All eBPF instructions use the same design of instruction encoding which is shown in \ref{fig:tikz:eBPF_instruction}.
+As you can see in the figure, there are 5 parts that are opcode (operation code), dst (destination), src (source), offset, immediate~\cite{kernel_bpf_specification}.
 
 \begin{figure}[h]
   \centering
@@ -272,39 +274,233 @@ As you can see in the figure there are 5 parts that are opcode (operation code),
   \resizebox {\textwidth} {!} {
     \input{obrazky-figures/bpf_cmd_scheme}
   }
-  \caption{Interrupt handling in Linux}
+  \caption{eBPF instruction encoding}
   \label{fig:tikz:eBPF_instruction}
 \end{figure}
 
-\subsection{Libseccomp}
-Libseccomp\cite{libseccomp_git} is a easy to use library which provides a platform-independent interface to the Linux Kernel's syscall filtering.
-The libseccomp API is designed to abstract user from underlying BPF based syscall filtering and present a more conventional function-call based filtering interface.
+\section{Libseccomp}
+Libseccomp\cite{libseccomp_git} is easy to use library which provides a platform-independent interface to the Linux Kernel's syscall filtering.
+The libseccomp API is designed to abstract an user from underlying BPF based syscall filtering and present a more conventional function-call based filtering interface.
 The interface should be more familiar to and quickly adopted by, application developers.
-The comparison of libseccomp and raw bpf filter is shown in figures \ref{lst:raw_bpf} and \ref{lst:libseccomp}.
+The comparison of libseccomp and raw BPF filter is shown in figures \ref{lst:raw_bpf} and \ref{lst:libseccomp}.
 
 One of the advantages of libseccomp is that it has a permissive mode in which every syscall violation is reported to the user.
-This feature can be helpful if you want to obtain the which syscalls was called.
+This feature can be helpful if you want to obtain information which syscalls was called.
 This use case is really similar to the syscall monitoring.
 But it is really tough to depend on this output because it is in development.
 
-\chapter{Design of TODO: tool-name}
-\section{parser}
-\section{optimizer}
-\section{translator}
+
+\chapter{Solution Design}
+\label{chap:design}
+This chapter will describe to the reader the solution design from architectural and behavioral point of view.
+It will show particular parts of solution, their architecture and issues.
+
+\section{Requirements}
+\label{sec:requirements}
+Specification of requirements for release:
+\begin{enumerate}
+\item Application will have only CLI\footnote{Command Line Interface}.
+\item Implementation of programming part will be in C++14\cite{ISO14882}.
+\item Application will be designed with consideration of good OOP
+\item Application will consist of these main parts:
+	\begin{enumerate}
+    \item Parser
+    \item Optimizer
+    \item Policy generator
+    \item Logger
+	\end{enumerate}
+\item Parser will be implemented using PEG\footnote{Parsing Expression Grammar}\cite{PEG_def} design.
+\item Optimizer will have at least three optimizing methods:
+	\begin{enumerate}
+	\item Strict - No advanced methods used. Interpret internal structure.
+    \item Weak - Allow interval between minimum and maximum value found in set of arguments
+    \item Advanced - Combine above methods.
+	\end{enumerate}
+\item Policy will be generated with libseccomp\cite{libseccomp_git} syntax as C language\cite{ISO9899} code.
+\item Logger will be able to log different log levels (debug, trace, info, error, warning)
+\item Logger will log into user specified files or in predefined files located in current working directory.
+\end{enumerate}
+
+\section{Architecture}
+The architecture of this application is generalized using architectural patterns.
+In this case was used \textit{Pipe-and-Filter}\cite{PipeAndFilter} architectural pattern.
+This pattern was chosen for the best description of a current problem.
+A big inspiration came from compilers.
+They are very similar to this application.
+They've got parser, optimizer, output generator as well and every component is dependent on component before.
+There are two main cases as shown in figure \ref{fig:tikz:architecture}.
+
+\begin{figure}[h]
+  \centering
+  \resizebox {\textwidth} {!} {
+    \input{obrazky-figures/architecture}
+  }
+  \caption{Architecture of strace2seccomp}
+  \label{fig:tikz:architecture}
+\end{figure}
+
+\subsection{Without Optimizer}
+In this case optimizer is not in the pipeline, a raw input is translated into libseccomp commands.
+This pipeline is shown in fig. \ref{fig:tikz:architecture} as a sequence of purple, blue and black arrows.
+There are no optimizations when optimizer is turned off.
+
+The main problem of not using a optimizer is not proper working program.
+There is a way that any minor change in system call parameters can results into a program termination.
+In complex program is no way to be definitely sure if every syscall was caught.
+That can be a big problem in programs which uses seccomp.
+That is the main reason why is this option not recommended.
+But sometimes some users can be found which do not want optimizing the strace.
+It can be found only in small applications which has some limited functionality.
+
+The main disadvantage of this solution is that it is too robust to place it in a code and is very strict.
+It can kill a program even in a false positive case when user change some of the parameters that was not covered in strace input files.
+
+\subsection{With Optimizer}
+In this case when optimizer is turned on \textit{(path: purple, orange, black in fig.} \ref{fig:tikz:architecture}\textit{)}, we can specify which type of optimization we want.
+As mentioned in section \ref{sec:requirements}, there are two optimization variants.
+Those variants can be switched with runtime arguments in CLI.
+
+The pitfalls of this case is allowing program to continue even in inappropriate circumstances.
+Invalid circumstances can be defined as a bad syscall argument treated as a valid.
+It can happen when you allow set of arguments for specific syscall.
+This is not secure however it is more suitable for work than the case without optimizer.
+
+You can minimize these pitfalls by providing a lot of strace input files.
+The best case is when you provide strace files from every major complex test case (with big coverage).
 
 
+\subsection{Logger}
+One of the important part of every component is logging.
+With logging you can see what was the program doing in specific parts.
+The logger should log everything in a log file, print logs on standard output or both.
+It should handle various logging level e.g. debug, trace, info, warning or error.
+The logger must be accessible from every component.
+The output should be written in user specified log files instead of a system logs.
 
-\chapter{Development of TODO: tool-name}
+
+\subsection{Parser}
+The parser is crucial part of the whole application because it will put everything in a IR(intermediate representation).
+As input to the parser is a output from Strace tool.
+The output was described in section \ref{sec:strace}.
+As you can see the output is in structured form and has a unambiguous syntax which means that no error should occur during the parsing part.
+When syntax error occur, the program should inform where the error is located in the input file.
+Next step should be a proper exit.
+Parser should have an option to identify all errors in the input file which can be helpful of identifying more errors on once.
+Another feature the parser will have is a printing structured parsed data.
+
+\subsection{Parsing Expression Grammar}
+Parsing Expression Grammar was introduced by Ford in 2004.
+PEG is a type of analytic formal grammar which describes a formal language in terms of a set of rules for recognizing strings in the language.
+This type of grammar is really similar to a top-down parsing languages.
+As well it looks very similar to context-free grammars.
+
+Parser that parses the PEG is named a Packrat Parser.
+Packrat parser can be easily constructed for any language described by an LL($k$) or LR($k$) grammar, as well as for many languages that require unlimited lookahead and therefore are not LR.
+Packrat parsers ale also much simpler to construct than bottom-up LR parsers, making it practical to build them by hand.
+It can directly and efficiently implement common disambiguation rules such as \textit{longest-match}, \textit{followed-by}, and \textit{not-followed-by}, which are difficult to express unambiguously in a context-free grammar or implement in conventional linear-time.
+Finally, both lexical and hierarchical analysis can be seamlessly integrated into a single unified packrat parser.
+
+The main disadvantage of packrat parsing is memory consumption.
+The worst case asymptotic computational complexity is very similar to the conventional algorithms (linear in the size of the input).
+
+The one of the many problems with right to left parsing algorithm is that it computes many results that are never needed.
+Other inconvenience is that we must carefully determine the order in which the results for a particular column are computed.
+\textit{Packrat parsing} is a lazy derivation of a tabular algorithm that solves both of these problems. It computes results only when thet are needed, in the same order as the original recursive descent parser would.
+\cite{Ford:PEG}
+
+\begin{figure}
+	\begin{center}
+  \begin{tabular}{lcl}
+      Additive  & $\leftarrow$ & Multititve '+' Additive | Multitive \\
+      Multitive & $\leftarrow$ & Primary '*' Multitive | Primary     \\
+      Primary   & $\leftarrow$ & '(' Additive ')' | Decimal          \\
+      Decimal   & $\leftarrow$ & '0' | \ldots | '9'
+  \end{tabular}
+  \end{center}
+  \caption{Example of a grammar for a trivial language}
+  \label{fig:pegtl:example}
+ \end{figure}
+
+\section{Optimizer}
+Optimizer the main part of this tool.
+This part will be reducing the (intermediate data structure, IDS).
+There are three approaches of reducing IDS.
+\begin{itemize}
+  \item \textbf{Strict}
+  \item \textbf{Weak}
+  \item \textbf{Advanced}
+\end{itemize}
+
+% \section{Translator}
+% This part is responsible for translation of IDS output to libseccomp.
+
+\section{Intermediate Data Structure}
+One of the main parts of strace2seccomp is IDS in which are the individual system calls stored.
+The main idea of this ADT (Abstract data type) to be simple, readable with smallest redundancy possible.
+This can be done only with good abstraction and good design.
+
+IDS is represented as a tree structure.
+In this structure are different information about syscall represented on different level in the tree.
+The root node in tree has child elements which represents a individual system calls.
+In this case we are naming these nodes as (system call node, SCD).
+In SCD is stored information about system call number and it have multiple children.
+The nth level represents the nth argument of a specific system call.
+The whole system call with every argument can be read as a path from the root node to the leaf node.
+The IDS representation is shown in figure \ref{fig:tikz:IDStree}.
+
+\begin{figure}[h]
+\centering
+  \begin{tikzpicture}
+  \Tree [.IDS
+          [.read
+            [.fd\_1
+              [.buff\_1 42 ]
+              [.buff\_2 42 84 ]
+            ]
+            [.fd\_2
+              [.buff\_1 15 13 20 ]
+              [.buff\_2 20 ]
+            ]
+          ]
+          [.write
+            [.fd\_1
+              [.buff\_1 27 11 ]
+              [.buff\_2 13 15 ]
+            ]
+            [.fd\_2
+              [.buff\_1 11 31 ]
+              [.buff\_2 17 ]
+            ]
+          ]
+        ]
+  \end{tikzpicture}
+  \caption{Visualized IDS as a tree}
+  \label{fig:tikz:IDStree}
+\end{figure}
+
+\chapter{Development of strace2seccomp}
+%code should be using libseccomp to be secure.
+%test it with some fuzzer
+\section{Logger}
+There are many ways how can logger be implemented.
+One of the first ideas were implement custom logger.
+This idea wasn't bad but it will be a reinventing wheel.
+Another way is using the logger implemented in boost library\footnote{http://www.boost.org/doc/libs/1\_63\_0/libs/log/doc/html/index.html}.
+I decided to use this library because it was audited and tested by community, is widely supported and is well documented.
 \section{Input}
-\section{Intermediate representation}
+\section{Intermediate Representation}
 \section{Output}
-\section{Heuristics and optimizations}
+\section{Heuristics and Optimizations}
 \subsection{Minimax}
 \subsection{Strict}
 \subsection{Smart}
 
 
-\chapter{Testing methods}
+\chapter{Testing}
+\section{Test Requirements}
+\section{Testing Methods}
+\section{Results}
+\section{Test Statistics}
 
 
 %=========================================================================

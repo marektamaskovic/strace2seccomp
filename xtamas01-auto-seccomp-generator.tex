@@ -161,18 +161,19 @@ Uvedl jsem všechny literární prameny a publikace, ze kterých jsem čerpal.}
 
 \usepackage{cleveref}
 \usepackage{tikz}
+\usepackage{tikz-qtree}
 \usepackage{float}
 \usepackage{xcolor}
 \usepackage{listings}
 % \usepackage[obeyFinal]{todonotes}
 
-\usetikzlibrary{arrows,backgrounds,shadows}
+\usetikzlibrary{arrows,backgrounds,shadows, positioning}
 
 % define layers
     \pgfdeclarelayer{edgelayer}
     \pgfdeclarelayer{nodelayer}
 % tell TikZ how to stack them (back to front)
-    \pgfsetlayers{nodelayer,edgelayer}
+    \pgfsetlayers{nodelayer,main,edgelayer}
 
 \begin{document}
   % Vysazeni titulnich stran / Typesetting of the title pages
