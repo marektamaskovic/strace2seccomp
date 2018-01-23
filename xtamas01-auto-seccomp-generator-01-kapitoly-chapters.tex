@@ -312,7 +312,7 @@ Specification of requirements for release:
 \item Parser will be implemented using PEG\footnote{Parsing Expression Grammar}\cite{PEG_def} design.
 \item Optimizer will have at least three optimizing methods:
 	\begin{enumerate}
-	\item Strict - No advanced methods used. Interpret internal structure.
+    \item Strict - No advanced methods used. Interpret internal structure.
     \item Weak - Allow interval between minimum and maximum value found in set of arguments
     \item Advanced - Combine above methods.
 	\end{enumerate}
@@ -426,9 +426,11 @@ Optimizer the main part of this tool.
 This part will be reducing the (intermediate data structure, IDS).
 There are three approaches of reducing IDS.
 \begin{itemize}
-  \item \textbf{Strict}
-  \item \textbf{Weak}
-  \item \textbf{Advanced}
+  \item \textbf{Strict} optimization is defined as 1:1 to strace input file. It means that it will every record in strace interpret as a strict rule. So only that one case is only possible to run. Every minor change in system call will kill the process. This strict way means for optimizer that it is turned off.
+
+  \item \textbf{Weak} optimization is defined as finding minimum and maximum values on specific levels of IDS. It can be found on multiple levels as well.
+
+  \item \textbf{Advanced} optimization is defined as combination of both strict and weak optimizations. In some specific cases it will use only the exact values and in other cases it will use weak optimizations. This combination should be more strict than the weak o. and weaker than the strict o.
 \end{itemize}
 
 % \section{Translator}
@@ -453,23 +455,23 @@ The IDS representation is shown in figure \ref{fig:tikz:IDStree}.
   \begin{tikzpicture}
   \Tree [.IDS
           [.read
-            [.fd\_1
-              [.buff\_1 42 ]
-              [.buff\_2 42 84 ]
+            [.fd1
+              [.buff1 42 ]
+              [.buff2 42 84 ]
             ]
-            [.fd\_2
-              [.buff\_1 15 13 20 ]
-              [.buff\_2 20 ]
+            [.fd2
+              [.buff1 15 13 20 ]
+              [.buff2 20 ]
             ]
           ]
           [.write
-            [.fd\_1
-              [.buff\_1 27 11 ]
-              [.buff\_2 13 15 ]
+            [.fd1
+              [.buff1 27 11 ]
+              [.buff2 13 15 ]
             ]
-            [.fd\_2
-              [.buff\_1 11 31 ]
-              [.buff\_2 17 ]
+            [.fd2
+              [.buff1 11 31 ]
+              [.buff2 17 ]
             ]
           ]
         ]
