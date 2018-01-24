@@ -433,6 +433,34 @@ There are three approaches of reducing IDS.
   \item \textbf{Advanced} optimization is defined as combination of both strict and weak optimizations. In some specific cases it will use only the exact values and in other cases it will use weak optimizations. This combination should be more strict than the weak o. and weaker than the strict o.
 \end{itemize}
 
+\begin{algorithm}[h]
+  \SetKwData{syscall}{sc}
+  \SetKwData{ids}{IDS}
+  \SetKwData{argument}{arg}
+  \SetKwData{level}{lvl}
+  \SetKwData{numArgs}{num\_arg}
+  \SetKwData{intervals}{intervals}
+  \SetKwData{rules}{rules}
+
+  \SetKwFunction{GetNumArgs}{get\_num\_args}
+  \SetKwFunction{Append}{append}
+  \SetKwFunction{getMinMax}{get\_minmax}
+
+  \KwIn{intermediate data structure \ids}
+  \KwOut{list of rules \rules}
+
+  \caption{Weak optimization}\label{algo:weak}
+  \ForEach{syscall \syscall in the \ids}{
+    \ForEach{argument \argument in the syscall \syscall}{
+      \numArgs $\leftarrow$ \GetNumArgs{p}\;
+      \For{$\level \leftarrow 0$ \KwTo \numArgs}{
+        \intervals.\Append{\getMinMax{\argument, \level}}\;
+      }
+      \rules.\Append{\syscall, \intervals}\;
+    }
+  }
+\end{algorithm}
+
 % \section{Translator}
 % This part is responsible for translation of IDS output to libseccomp.
 
