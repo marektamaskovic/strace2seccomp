@@ -1,0 +1,97 @@
+execve("/usr/bin/ls", ["ls"], 0x7ffd5126cba0 /* 60 vars */) = 0
+brk(NULL)                               = 0x55f0bd23e000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=203007, ...}) = 0
+mmap(NULL, 203007, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7fe8a26dd000
+close(3)                                = 0
+open("/lib64/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0`d\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=158312, ...}) = 0
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fe8a26db000
+mmap(NULL, 2258128, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fe8a22c2000
+mprotect(0x7fe8a22e7000, 2093056, PROT_NONE) = 0
+mmap(0x7fe8a24e6000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x24000) = 0x7fe8a24e6000
+mmap(0x7fe8a24e8000, 5328, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7fe8a24e8000
+close(3)                                = 0
+open("/lib64/libcap.so.2", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\200\24\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=19608, ...}) = 0
+mmap(NULL, 2113848, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fe8a20bd000
+mprotect(0x7fe8a20c1000, 2093056, PROT_NONE) = 0
+mmap(0x7fe8a22c0000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x3000) = 0x7fe8a22c0000
+close(3)                                = 0
+open("/lib64/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\240\t\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=2182304, ...}) = 0
+mmap(NULL, 4016416, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fe8a1ce8000
+mprotect(0x7fe8a1eb3000, 2097152, PROT_NONE) = 0
+mmap(0x7fe8a20b3000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1cb000) = 0x7fe8a20b3000
+mmap(0x7fe8a20b9000, 14624, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7fe8a20b9000
+close(3)                                = 0
+open("/lib64/libpcre.so.1", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0@\25\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=471704, ...}) = 0
+mmap(NULL, 2564360, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fe8a1a75000
+mprotect(0x7fe8a1ae6000, 2097152, PROT_NONE) = 0
+mmap(0x7fe8a1ce6000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x71000) = 0x7fe8a1ce6000
+close(3)                                = 0
+open("/lib64/libdl.so.2", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\340\r\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=19496, ...}) = 0
+mmap(NULL, 2109584, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fe8a1871000
+mprotect(0x7fe8a1874000, 2093056, PROT_NONE) = 0
+mmap(0x7fe8a1a73000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7fe8a1a73000
+close(3)                                = 0
+open("/lib64/libpthread.so.0", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\340^\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=153944, ...}) = 0
+mmap(NULL, 2220552, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fe8a1652000
+mprotect(0x7fe8a166b000, 2097152, PROT_NONE) = 0
+mmap(0x7fe8a186b000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x19000) = 0x7fe8a186b000
+mmap(0x7fe8a186d000, 12808, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7fe8a186d000
+close(3)                                = 0
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fe8a26d9000
+arch_prctl(ARCH_SET_FS, 0x7fe8a26da540) = 0
+mprotect(0x7fe8a20b3000, 16384, PROT_READ) = 0
+mprotect(0x7fe8a186b000, 4096, PROT_READ) = 0
+mprotect(0x7fe8a1a73000, 4096, PROT_READ) = 0
+mprotect(0x7fe8a1ce6000, 4096, PROT_READ) = 0
+mprotect(0x7fe8a22c0000, 4096, PROT_READ) = 0
+mprotect(0x7fe8a24e6000, 4096, PROT_READ) = 0
+mprotect(0x55f0bc226000, 8192, PROT_READ) = 0
+mprotect(0x7fe8a270f000, 4096, PROT_READ) = 0
+munmap(0x7fe8a26dd000, 203007)          = 0
+set_tid_address(0x7fe8a26da810)         = 29276
+set_robust_list(0x7fe8a26da820, 24)     = 0
+rt_sigaction(SIGRTMIN, {sa_handler=0x7fe8a1657960, sa_mask=[], sa_flags=SA_RESTORER|SA_SIGINFO, sa_restorer=0x7fe8a1664420}, NULL, 8) = 0
+rt_sigaction(SIGRT_1, {sa_handler=0x7fe8a1657a00, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART|SA_SIGINFO, sa_restorer=0x7fe8a1664420}, NULL, 8) = 0
+rt_sigprocmask(SIG_UNBLOCK, [RTMIN RT_1], NULL, 8) = 0
+prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+statfs("/sys/fs/selinux", 0x7ffe5a8a8e20) = -1 ENOENT (No such file or directory)
+statfs("/selinux", 0x7ffe5a8a8e20)      = -1 ENOENT (No such file or directory)
+brk(NULL)                               = 0x55f0bd23e000
+brk(0x55f0bd25f000)                     = 0x55f0bd25f000
+open("/proc/filesystems", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "nodev\tsysfs\nnodev\trootfs\nnodev\tr"..., 1024) = 369
+read(3, "", 1024)                       = 0
+close(3)                                = 0
+access("/etc/selinux/config", F_OK)     = 0
+open("/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=112847792, ...}) = 0
+mmap(NULL, 112847792, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7fe89aab3000
+close(3)                                = 0
+ioctl(1, TCGETS, {B38400 opost isig icanon echo ...}) = 0
+ioctl(1, TIOCGWINSZ, {ws_row=57, ws_col=211, ws_xpixel=0, ws_ypixel=0}) = 0
+open(".", O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFDIR|0775, st_size=4096, ...}) = 0
+getdents(3, /* 9 entries */, 32768)     = 272
+getdents(3, /* 0 entries */, 32768)     = 0
+close(3)                                = 0
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 0), ...}) = 0
+write(1, "include  json.json  main  main.c"..., 68) = 68
+close(1)                                = 0
+close(2)                                = 0
+exit_group(0)                           = ?
++++ exited with 0 +++
