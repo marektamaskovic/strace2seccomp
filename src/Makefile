@@ -2,7 +2,9 @@ CC=g++
 CXXFLAGS=-Wall -Wextra -pedantic -std=c++17 -Weffc++
 LDFLAGS=-Iinclude/
 
-main:main.o parser.o
+OBJ=main.o parser.o argparse.o
+
+main: $(OBJ)
 
 clean:
 	-rm *.o

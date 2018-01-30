@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "types.hpp"
+
 namespace s2s {
 
 	class straceParser {
