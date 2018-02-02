@@ -1,33 +1,32 @@
-#define TAOCPP_PEGTL_NAMESPACE mylib_pegtl
-
 #include <iostream>
 
 #include "tao/pegtl.hpp"
 // #include "tao/pegtl/contrib/json.hpp"
 
 #include "argparse.hpp"
-#include "parser.hpp"
+#include "straceparser.hpp"
 
-int main(int argc, char *argv[])
-{
-	Params *params = new Params(argc, argv);
+int main(int argc, char* argv[]) {
+    Params* params = new Params(argc, argv);
 
-	// s2s::config_t config = parseArguments(argc, argv);
+    // s2s::config_t config = parseArguments(argc, argv);
 
-	s2s::ids_t a;
+    std::cout << *params << std::endl;
 
-	s2s::straceParser o("strace.out", a);
+    st2se::Ids a;
+    // s2s::straceParser o("strace.out", a);
 
-	std::cout << *params << std::endl;
 
-	for(const auto &fn : params->file_names){
-		std::cout << fn << std::endl;
-	}
+    for (const auto& fn : params->file_names) {
+        // std::cout << fn << std::endl;
+        st2se::StraceParser::parse(fn, a);
 
-	std::cout << o.getFilename() << std::endl;
+    }
 
-	delete params;
+    // std::cout << o.getFilename() << std::endl;
 
-	return 0;
+    delete params;
+
+    return 0;
 
 }
