@@ -453,9 +453,9 @@ FUNCTION {format.names}
             'skip$
           if$
           namesleft #1 >
-            { "; " * t * }
+            { ". " * t * }
             {
-              ";" *
+              "." *
               s nameptr "{ll}" format.name$ duplicate$ "others" =
                 { 't := }
                 { pop$ }
@@ -1577,7 +1577,7 @@ FUNCTION {begin.bib}
   write$ newline$
   "\providecommand{\url}[1]{\texttt{#1}}"
   write$ newline$
-  "\providecommand{\urlprefix}{Retrieved from: }"
+  "\providecommand{\urlprefix}{URL: }"
   write$ newline$
   "\expandafter\ifx\csname urlstyle\endcsname\relax"
   write$ newline$
