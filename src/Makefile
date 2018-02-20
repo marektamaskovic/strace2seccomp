@@ -1,19 +1,32 @@
-CC=g++
-CXXFLAGS=-Wall -Wextra -pedantic -std=c++17 -g -Iinclude/
+CXX=g++
+# CXX=clang++
+CXXFLAGS=-Wall -Wextra -pedantic -Iinclude/ -std=c++17
 LDFLAGS=-Iinclude/
 
-OBJ=main.o straceparser.o argparse.o ids.o
+OBJ=main.o straceparser.o ids.o argparse.o states.o
+LINK.o = $(LINK.cpp)
 
+all: CXXFLAGS += -g
 all: main
+
+release: CXXFLAGS += -O2
+release: main
 
 main: $(OBJ)
 
-run: all
+effc++: CXXFLAGS += -Weffc++
+effc++: all
+
+tracing: CXXFLAGS += -DTRACING
+tracing: all
+
+run:
+	echo $(OS_VER)
 	./main strace_ls.out
 
 astyle: astylerc
-	astyle $(< ./astylerc) *.[ch]pp
+	./astyle_script.sh
 
 clean:
 	-rm *.o
-	-rm main
+	-rm *.orig

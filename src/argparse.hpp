@@ -4,35 +4,27 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
+
+#include <getopt.h>
 
 
 class Params {
-    int argc {0};
-
-    // FIXME to std::vector
-    char** argv {nullptr};
-    std::vector<bool> arg_map {};
-
-    inline int checkForHelpSwitch();
-    int getAllSwitchesAndValues();
-    inline int checkIntegrity();
-
   public:
-    bool help {false};
-    bool weak {false};
-    bool strict {false};
-    bool advanced {false};
-    bool verbose {false};
+    int help {0};
+    int weak {0};
+    int strict {0};
+    int advanced {0};
+    int verbose {0};
+    int debug {0};
     std::vector<std::string> file_names {};
 
-    Params(int argc, char* argv[]);
-    ~Params();
+    Params(int argc, char *argv[]);
+    // ~Params();
 
-    int getFileNames();
-    void initArgMap();
 
 };
 
-std::ostream& operator<< (std::ostream& os, const Params& a);
+std::ostream &operator<< (std::ostream &os, const Params &a);
 
 #endif

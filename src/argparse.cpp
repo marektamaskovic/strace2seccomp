@@ -1,123 +1,100 @@
 #include "argparse.hpp"
 
-bool param_error{false};
+static bool param_error{false};
 
-std::ostream& operator<< (std::ostream& os, const Params& a) {
+std::ostream &operator<< (std::ostream &os, const Params &a) {
     return os << "-h: " << a.help << std::endl
         << "-w: " << a.weak << std::endl
         << "-s: " << a.strict << std::endl
         << "-a: " << a.advanced << std::endl
         << "-v: " << a.verbose << std::endl
+        << "-d: " << a.verbose << std::endl
         << "Err flag: " << param_error;
 }
 
-Params::Params(int argc, char* argv[]) {
+Params::Params(int argc, char *argv[]) {
     std::string help_str{"-h"};
-    this->argc = argc;
-    this->argv = argv;
-    initArgMap();
+    // std::shared_ptr<char*> _argv {argv};
 
-    if (!this->checkForHelpSwitch()) {
-        this->help = true;
-        return;
-    }
+    int c;
 
-    this->getAllSwitchesAndValues();
+    while (1) {
+        static struct option long_options[] = {
+            /* These options set a flag. */
+            {"weak",     no_argument, &this->weak,     1},
+            {"strict",   no_argument, &this->strict,   1},
+            {"advanced", no_argument, &this->advanced, 1},
+            {"verbose",  no_argument, &this->verbose,  1},
+            {"debug",    no_argument, &this->debug,    1},
+            {nullptr,    0,           nullptr,         0}
+        };
+        /* getopt_long stores the option index here. */
+        int option_index = 0;
 
-    if (this->checkIntegrity()) {
-        param_error = true;
-    }
+        c = getopt_long(argc, argv, "wsavd",
+                long_options, &option_index);
 
-    this->getFileNames();
+        /* Detect the end of the options. */
+        if (c == -1) {
+            break;
+        }
 
-}
+        switch (c) {
+        case 0:
 
-Params::~Params() {
-    return;
-}
+            /* If this option set a flag, do nothing else now. */
+            if (long_options[option_index].flag != nullptr) {
+                break;
+            }
 
-int Params::checkForHelpSwitch() {
-    std::string help_str{"-h"};
+            std::cout << "option " << long_options[option_index].name << std::endl;
 
-    for (int i = 0; i < this->argc; ++i) {
-        if (!help_str.compare(this->argv[i])) {
-            return 0;
+            if (optarg) {
+                std::cout << " with arg %s" << optarg << std::endl;
+            }
+
+            std::cout << std::endl;
+            break;
+
+        case 'w':
+            this->weak = 1;
+            break;
+
+        case 's':
+            this->strict = 1;
+            break;
+
+        case 'a':
+            this->advanced = 1;
+            break;
+
+        case 'v':
+            this->verbose = 1;
+            break;
+
+        case 'd':
+            this->debug = 1;
+            break;
+
+        case '?':
+            /* getopt_long already printed an error message. */
+            break;
+
+        default:
+            abort();
         }
     }
 
-    return 1;
-}
+    /* Print any remaining command line arguments (not options). */
+    if (optind < argc) {
+        std::cout << "non-option ARGV-elements: " << std::endl;
 
-int Params::getAllSwitchesAndValues() {
-    // co si jak prerob to na makra
-    // co si jak pridaj tam param_err premennu
-    std::string verbose{"-v"}, weak{"-w"}, strict{"-s"}, advanced{"-a"};
-    std::string where{"Error: Params: Parse: "};
-    bool parse_error = false;
-
-    for (int i = 0; i < this->argc; ++i) {
-        if (!weak.compare(this->argv[i])) {
-            this->weak          = true;
-            this->arg_map[i]    = true;
-            continue;
+        while (optind < argc) {
+            // std::cout << argv[optind] << " " << std::endl;
+            this->file_names.emplace_back(argv[optind++]);
         }
 
-        if (!strict.compare(this->argv[i])) {
-            this->strict        = true;
-            this->arg_map[i]    = true;
-            continue;
-        }
-
-        if (!advanced.compare(this->argv[i])) {
-            this->advanced      = true;
-            this->arg_map[i]    = true;
-            continue;
-        }
-
-        if (!verbose.compare(this->argv[i])) {
-            this->verbose       = true;
-            this->arg_map[i]    = true;
-            continue;
-        }
+        std::cout << std::endl;
     }
 
-    if (parse_error) {
-        exit(1);
-    }
-
-    return 0;
-}
-
-int Params::checkIntegrity() {
-    std::string where{"Error: Params: Integrity: "};
-
-    if (
-        (this->weak == true && this->advanced == true) ||
-        (this->weak == true && this->strict == true) ||
-        (this->strict == true && this->advanced == true)
-    ) {
-        std::cerr << where
-            << "Multiple optimizations turned on! "
-            << "Turn only one at a time!"
-            << std::endl;
-        return 1;
-    }
-
-    return 0;
-}
-
-int Params::getFileNames() {
-    for (unsigned i = 1; i < this->arg_map.size(); ++i) {
-        if (!this->arg_map[i]) {
-            this->file_names.push_back(this->argv[i]);
-        }
-    }
-
-    return 0;
-}
-
-void Params::initArgMap() {
-    for (int i = 0; i < argc; ++i) {
-        this->arg_map.push_back(false);
-    }
 }

@@ -5,14 +5,15 @@
 --indent-labels
 --indent-preproc-block
 --indent-preproc-define
+--indent-preproc-cond
 --indent-col1-comments
 --break-blocks
 --unpad-paren
 --pad-oper
 --pad-comma
 --pad-header
---align-pointer=type
---align-reference=type
+--align-pointer=name
+--align-reference=name
 --break-closing-braces
 --break-one-line-headers
 --break-blocks

@@ -5,12 +5,12 @@ namespace st2se {
     // {
     // }
 
-    bool Ids::insert(syscall_t& sc) {
+    bool Ids::insert(Syscall_t &sc) {
         (void) sc;
         return false;
     }
 
-    void printSyscall() {
+    void Ids::printSyscall() {
         return;
     }
 }
