@@ -42,7 +42,7 @@ In other words, the system calls are functions used in the kernel itself.
 The system call appears to a standard developer as a C function call.
 This design is typical for monolithic kernels.
 We can find them on every UNIX system.
-The system calls are generated using interrupt, i.e., on Linux/i86 with an interrupt no. \texttt{0x80} and these syscalls are handled by the kernel in a privileged mode.
+The system calls are generated using interrupt, i.e., on Linux/i86 with an interrupt no. \texttt{0x80} or with system call named \texttt{syscall()} or \texttt{sysenter()} and these syscalls are handled by the kernel in a privileged mode.
 When a user invokes a system call, an execution flow is as follows:
 \begin{itemize}
 	\item Each syscall is vectored through a stub in libc.
@@ -144,6 +144,27 @@ This design can decrease the overhead in performance sensitive systems.
 For our purposes, DTrace is too complicated to setup or gather the information about syscalls.
 You need to write some scripts to define which syscalls you want to be informed with and in our use case, we need every system call.
 
+\subsection{SystemTap}
+SystemTap\cite{systemtap} is a tracing and probing tool that allows to gather information from probes injected into the kernel.
+It is similar to Dtrace but not so perfect.
+It started as a clone of Dtrace because it has uncompatible licence for using in GNU Linux.
+One of the common thing with Dtrace is that both tools use some type of scripting language.
+In this case is named 'SystemTap'.
+With this language you can specify what happens when some event occurs in the kernel.
+
+SystemTap works as daemon which communicate with stap program.
+Stap is a small program that translates the SystemTap script to a kernel module.
+It is done in a few steps.
+At first it runs semantic analysis on the script.
+After that stap tries to translate it into a C code.
+The next step is to compile it as a kernel module and load it into the kernel.
+After load it is working and doing the useful part.
+When you send a signal to terminate the stap program it will unload the kernel module and stop working.
+
+Similar as Dtrace the SystemTap is too complicated to work as system call monitor and it is not flawless.
+The Systemtap can't dereference the pointer address in system call but the strace tool can. 
+ 
+
 \subsection{Autrace}
 The Linux Auditing System helps system administrators create an audit trail.
 Every action on workstation or server is logged into a log file.
@@ -157,17 +178,16 @@ This part of this tool is collecting the information emitted by kernel component
 Emitted data is then stored as entries in a log file.
 As you can see this tool is not for monitoring one specific program, but it is designed to monitor the whole system.
 In the output is specified who and when executed the syscall, next is a current working directory, uid, gid, etc.
-%Above specified functionality is useful for server administrators but not for our work.
+Above specified functionality is useful for server administrators but not for our work.
 
-Entry example in log file:
-
+\pagebreak
+Entry example in log file:\\
 \noindent
 \texttt{type=SYSCALL msg=audit(1434371271.277:135496): arch=c000003e syscall=2}\linebreak
 \texttt{success=yes exit=3 a0=7fff0054e929 a1=0 a2=1fffffffffff0000 a3=7fff0054c390 }\linebreak
 \texttt{items=1 ppid=6265pid=6266 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 }\linebreak
 \texttt{egid=0 sgid=0 fsgid=0 tty=pts0 ses=113 comm="cat" }\linebreak
 \texttt{exe="/usr/bin/cat" key="sshconfigchange"}
-
 
 
 \chapter{Security Facilities in Linux}
@@ -195,7 +215,7 @@ The systrace monitors all running daemons and can generate a warning when some i
 These alerts can be sent to a system administrator and can provide information what happened.
 
 \section{Seccomp}
-A large number of syscalls are exposed to user space of a process. % better?
+A large number of syscalls are exposed to user space of a process. 
 Many of this syscalls are unused for the entire lifetime of the process.
 This generates small possibility to misuse some syscalls to corrupt the process itself.
 A particular subset of applications benefits from a reduced set of syscalls by reducing exposed kernel surface to process.
