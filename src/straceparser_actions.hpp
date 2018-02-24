@@ -9,18 +9,18 @@
 
 extern int syscalls;
 
+// Val = InputStr.string().substr(index + 1);
 #define divideKV(InputStr,Key,Val)  \
-    do{                                                           \
-        if (states.get_val_format() == val_format_t::KEY_VALUE) { \
-            std::string::size_type index;                         \
-            index = InputStr.string().find_first_of("=");         \
-                                                                  \
-            Key = InputStr.string().substr(0, index);             \
-            Val = InputStr.string().substr(index + 1);            \
-        }                                                         \
-        else {                                                    \
-            Val = InputStr.string();                              \
-        }                                                         \
+    do{                                                             \
+        if (states.get_val_format() == val_format_t::KEY_VALUE) {   \
+            std::string::size_type index;                           \
+            index = InputStr.string().find_first_of("=");           \
+            \
+            Key = InputStr.string().substr(0, index);               \
+        }                                                           \
+        else {                                                      \
+            Val = InputStr.string();                                \
+        }                                                           \
     }while(0)
 
 namespace st2se::grammar {
@@ -125,6 +125,13 @@ namespace st2se::grammar {
 
             states.set_val_format(val_format_t::VALUE);
 
+            if(states.get_val_type() == val_type_t::INTEGER){
+                states.value = std::stoi(in.string());
+            }
+            else{
+                states.value = in.string();
+            }
+
             if (params.debug || params.verbose) {
                 std::cout << "value: " << in.string() << std::endl;
             }
@@ -155,9 +162,25 @@ namespace st2se::grammar {
             // clear states
             states.clear();
 
+            states.set_name(in.string());
+
             if (params.debug || params.verbose) {
                 std::cout << "syscall_name: " << in.string() << std::endl;
-                std::cout << "args:" << std::endl;
+            }
+        }
+    };
+
+    template<>
+    struct action< syscall_line > {
+        template < typename Input >
+        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+            (void) out;
+
+            // process
+            states.process_val(out);
+
+            if (params.debug || params.verbose) {
+                std::cout << "syscall_line: " << in.string() << std::endl;
             }
         }
     };
@@ -168,17 +191,18 @@ namespace st2se::grammar {
         static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
             (void) out;
 
-            std::cout << "Argumnet_action" << std::endl;
-
             std::string key {""};
             std::string val {""};
-
-            divideKV(in,key,val);
-
+            states.arg_num++;
+            divideKV(in, key, val);
+        // fixme if input is integer
             argument_body_t arg {states.get_val_format(), states.get_val_type(), key, val};
-
-            std::cout << "idem pushnut" << std::endl;
             states.push_parsed_val(arg);
+
+            // if (params.debug || params.verbose) {
+            //     std::cout << "idem pushnut" << std::endl;
+            // }
+
 
             if (params.debug || params.verbose) {
                 std::cout << "argument: " << in.string() << std::endl;
@@ -194,17 +218,19 @@ namespace st2se::grammar {
         static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
             (void) states;
             (void) out;
+            (void) in;
 
             ::syscalls++;
 
             if (params.debug || params.verbose) {
-                std::cout << "strace_line: "
-                          << in.string()            << std::endl
-                          << "------------------"   << std::endl
-                          << " pushed arguments: "  << std::endl
-                          << states.argsStr()       << std::endl
-                          << "------------------"   << std::endl
-                          << std::endl << std::endl << std::endl;
+                std::cout
+                //     << "strace_line: "
+                //     << in.string()            << std::endl
+                //     << "------------------"   << std::endl
+                //     << " pushed arguments: "  << std::endl
+                //     << states.argsStr()       << std::endl
+                //     << "------------------"   << std::endl
+                    << std::endl << std::endl << std::endl;
             }
         }
     };

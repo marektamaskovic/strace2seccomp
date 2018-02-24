@@ -5,6 +5,7 @@
 #include "argparse.hpp"
 #include "straceparser.hpp"
 #include "states.hpp"
+#include "ids.hpp"
 
 int main(int argc, char *argv[]) {
     Params *params = new Params(argc, argv);
@@ -19,6 +20,9 @@ int main(int argc, char *argv[]) {
         // std::cout << fn << std::endl;
         o.parse(fn, a, *params, states);
     }
+
+    a.print();
+    a.printSyscall();
 
     delete params;
 

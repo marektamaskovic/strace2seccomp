@@ -26,12 +26,13 @@ Params::Params(int argc, char *argv[]) {
             {"advanced", no_argument, &this->advanced, 1},
             {"verbose",  no_argument, &this->verbose,  1},
             {"debug",    no_argument, &this->debug,    1},
+            {"tracing",  no_argument, &this->tracing,  1},
             {nullptr,    0,           nullptr,         0}
         };
         /* getopt_long stores the option index here. */
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "wsavd",
+        c = getopt_long(argc, argv, "wsavdt",
                 long_options, &option_index);
 
         /* Detect the end of the options. */
@@ -74,6 +75,10 @@ Params::Params(int argc, char *argv[]) {
 
         case 'd':
             this->debug = 1;
+            break;
+
+        case 't':
+            this->tracing = 1;
             break;
 
         case '?':

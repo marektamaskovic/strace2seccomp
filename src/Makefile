@@ -4,15 +4,17 @@ CXXFLAGS=-Wall -Wextra -pedantic -Iinclude/ -std=c++17
 LDFLAGS=-Iinclude/
 
 OBJ=main.o straceparser.o ids.o argparse.o states.o
+BIN=st2se
 LINK.o = $(LINK.cpp)
 
-all: CXXFLAGS += -g
-all: main
+all: CXXFLAGS += -g3
+all: st2se
 
 release: CXXFLAGS += -O2
-release: main
+release: st2se
 
-main: $(OBJ)
+st2se: $(OBJ)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $(BIN)
 
 effc++: CXXFLAGS += -Weffc++
 effc++: all
@@ -21,8 +23,7 @@ tracing: CXXFLAGS += -DTRACING
 tracing: all
 
 run:
-	echo $(OS_VER)
-	./main strace_ls.out
+	./st2se test20
 
 astyle: astylerc
 	./astyle_script.sh
@@ -30,3 +31,5 @@ astyle: astylerc
 clean:
 	-rm *.o
 	-rm *.orig
+	-rm $(BIN)
+	-rm vgcore.*

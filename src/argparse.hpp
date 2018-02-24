@@ -17,6 +17,7 @@ class Params {
     int advanced {0};
     int verbose {0};
     int debug {0};
+    int tracing {0};
     std::vector<std::string> file_names {};
 
     Params(int argc, char *argv[]);

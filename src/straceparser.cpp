@@ -28,7 +28,7 @@ namespace st2se {
             tao::pegtl::string_input<> in (line, _filename);
             bool return_val;
 
-            if (params.debug) {
+            if (params.tracing) {
                 return_val = tao::pegtl::parse<st2se::grammar::strace_line, st2se::grammar::action, tao::pegtl::tracer>(in, _output, params,
                         states);
             }
