@@ -13,6 +13,11 @@ all: st2se
 release: CXXFLAGS += -O2
 release: st2se
 
+coverage: CXXFLAGS += -fprofile-arcs -ftest-coverage
+coverage: st2se run
+	lcov --capture --directory ./ --output-file coverage.info
+	genhtml coverage.info --output-directory=./html
+
 st2se: $(OBJ)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $(BIN)
 
@@ -23,7 +28,7 @@ tracing: CXXFLAGS += -DTRACING
 tracing: all
 
 run:
-	./st2se test20
+	./st2se test7871 -d -v >out 2>err
 
 astyle: astylerc
 	./astyle_script.sh
@@ -33,3 +38,5 @@ clean:
 	-rm *.orig
 	-rm $(BIN)
 	-rm vgcore.*
+	-rm -r ./html
+	-rm *.gcda *.gcno coverage.info

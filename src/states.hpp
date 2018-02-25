@@ -13,8 +13,7 @@
 
 namespace st2se {
     class States {
-        std::vector<st2se::argument_body_t> parsed_val;
-        std::vector<st2se::argument_body_t> processed_val;
+        std::vector<st2se::argument_t> parsed_val;
 
         val_format_t arg_format;
         val_type_t last_arg_type;
@@ -25,7 +24,7 @@ namespace st2se {
         unsigned arg_num;
         std::variant<int, std::string> value;
 
-        void push_parsed_val(argument_body_t &arg);
+        void push_parsed_val(argument_t &arg);
         void pop_parsed_val();
         bool process_val(Ids &ids);
 

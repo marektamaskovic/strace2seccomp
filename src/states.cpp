@@ -27,7 +27,7 @@ std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a) {
 }
 
 namespace st2se {
-    void States::push_parsed_val(argument_body_t &arg) {
+    void States::push_parsed_val(argument_t &arg) {
         this->parsed_val.push_back(arg);
     }
 
@@ -40,7 +40,8 @@ namespace st2se {
 
         Syscall_t s = this->getSyscall();
 
-        // ids.insert(this->get_name(), s);
+        ids.insert(this->get_name(), s);
+
         s.print();
 
         return true;
@@ -77,7 +78,6 @@ namespace st2se {
 
     void States::clear() {
         parsed_val.clear();
-        processed_val.clear();
         arg_num = 0;
     }
 
@@ -109,17 +109,15 @@ namespace st2se {
         if (parsed_val.size() == 0) {
             std::cerr << "Error: Parsed val is empty." << std::endl;
 
-            argument_body_t a {
+            argument_t a {
                 val_format_t::EMPTY,
                 val_type_t::EMPTY,
                 "",
-                ""
+                "",
+                {}
             };
 
-            arg_container_t b;
-            b.argument = a;
-
-            s.arg.emplace_back(b);
+            s.next.emplace_back(a);
             s.arg_num = 0;
             s.return_code = this->return_val;
             s.name = this->get_name();
@@ -127,22 +125,23 @@ namespace st2se {
             return s;
         }
 
-        arg_container_t first, tail;
+        argument_t a, b;
 
-        tail.argument = parsed_val.back();
+        a = parsed_val.back();
         parsed_val.pop_back();
 
         while (!parsed_val.empty()) {
-            first.argument = parsed_val.back();
+            //check if empty
+            b = parsed_val.back();
+            b.next.push_back(a);
+            a = b;
             parsed_val.pop_back();
-            first.next.emplace_back(tail);
-            tail = first;
         }
 
-        s.arg.emplace_back(tail);
+        s.next.emplace_back(a);
 
-        s.return_code = this->return_val;
         s.arg_num = this->arg_num;
+        s.return_code = this->return_val;
         s.name = this->get_name();
 
         return s;

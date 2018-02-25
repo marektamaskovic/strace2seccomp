@@ -22,7 +22,6 @@ int main(int argc, char *argv[]) {
     }
 
     a.print();
-    a.printSyscall();
 
     delete params;
 
