@@ -36,13 +36,12 @@ namespace st2se {
     }
 
     bool States::process_val(Ids &ids) {
-        std::cerr << "FIXME: " << __func__ << " !" << std::endl;
 
         Syscall_t s = this->getSyscall();
 
         ids.insert(this->get_name(), s);
 
-        s.print();
+        // s.print();
 
         return true;
     }
@@ -88,7 +87,7 @@ namespace st2se {
             std::string tmp = std::visit([](auto &&arg) -> std::string {
                 using T = std::decay_t<decltype(arg)>;
 
-                if constexpr(std::is_same_v<T, int>)
+                if constexpr(std::is_same_v<T, long>)
                     return std::to_string(arg);
                 else if constexpr(std::is_same_v<T, std::string>)
                     return arg;

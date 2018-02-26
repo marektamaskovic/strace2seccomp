@@ -97,14 +97,14 @@ Params::Params(int argc, char *argv[]) {
 
     /* Print any remaining command line arguments (not options). */
     if (optind < argc) {
-        std::cout << "non-option ARGV-elements: " << std::endl;
+        // std::cout << "non-option ARGV-elements: " << std::endl;
 
         while (optind < argc) {
             // std::cout << argv[optind] << " " << std::endl;
             this->file_names.emplace_back(argv[optind++]);
         }
 
-        std::cout << std::endl;
+        // std::cout << std::endl;
     }
 
 }

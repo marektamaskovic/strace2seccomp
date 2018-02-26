@@ -59,14 +59,14 @@ namespace st2se {
         for (auto &item : container) {
             if (item == arg) {
                 // std::cout << "\t cmp: \t" << item.key+"=";
-                std::visit([](auto &&arg) {
-                    std::cout << "'" << arg << "'";
-                }, item.value);
+                // std::visit([](auto &&arg) {
+                //     std::cout << "'" << arg << "'";
+                // }, item.value);
 
                 // std::cout << "  and  " << arg.key+"=";
-                std::visit([](auto &&arg) {
-                    std::cout << arg;
-                }, arg.value);
+                // std::visit([](auto &&arg) {
+                //     std::cout << arg;
+                // }, arg.value);
 
                 // std::cout << std::endl;
 
@@ -131,13 +131,14 @@ namespace st2se {
         return;
     }
 
+    // move this function to utilities
     std::string arg2str(argument_t &arg) {
         // *INDENT-OFF*
         return std::visit(
             [](auto &&arg) -> std::string {
                 using T = std::decay_t<decltype(arg)>;
 
-                if constexpr(std::is_same_v<T, int>)
+                if constexpr(std::is_same_v<T, long>)
                     return std::to_string(arg);
                 else if constexpr(std::is_same_v<T, std::string>)
                     return arg;

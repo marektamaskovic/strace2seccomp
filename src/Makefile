@@ -24,8 +24,8 @@ coverage: st2se run
 	lcov --capture --directory ./ --output-file coverage.info
 	genhtml coverage.info --output-directory=./html
 
-st2se: $(OBJ)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $(BIN)
+cfg: CXXFLAGS += -fdump-tree-cfg
+cfg: $(OBJ)
 
 cfg: CXXFLAGS += -fdump-tree-cfg
 cfg: $(OBJ)
@@ -35,6 +35,13 @@ effc++: all
 
 tracing: CXXFLAGS += -DTRACING
 tracing: all
+
+afl: CXX = afl-g++
+afl: CXXFLAGS += -O2
+afl: st2se
+
+st2se: $(OBJ)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $(BIN)
 
 run:
 	@echo "========= TEST 1 ========" >out
@@ -78,7 +85,7 @@ clean:
 	-rm *.o
 	-rm *.orig
 	-rm $(BIN)
-	-rm vgcore.*
+	-rm vgcore.* core.*
 	-rm -r ./html
 	-rm *.gcda *.gcno coverage.info
 	-rm *.cfg *.bc 

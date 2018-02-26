@@ -22,7 +22,7 @@ namespace st2se {
 
       public:
         unsigned arg_num;
-        std::variant<int, std::string> value;
+        std::variant<long, std::string> value;
 
         void push_parsed_val(argument_t &arg);
         void pop_parsed_val();

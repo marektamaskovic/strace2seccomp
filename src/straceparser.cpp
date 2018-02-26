@@ -28,12 +28,19 @@ namespace st2se {
             tao::pegtl::string_input<> in (line, _filename);
             bool return_val;
 
-            if (params.tracing) {
-                return_val = tao::pegtl::parse<st2se::grammar::strace_line, st2se::grammar::action, tao::pegtl::tracer>(in, _output, params,
-                        states);
+            try {
+                if (params.tracing) {
+                    return_val = tao::pegtl::parse<st2se::grammar::strace_line, st2se::grammar::action, tao::pegtl::tracer>(in, _output, params,
+                            states);
+                }
+                else {
+                    return_val = tao::pegtl::parse<st2se::grammar::strace_line, st2se::grammar::action>(in, _output, params, states);
+                }
             }
-            else {
-                return_val = tao::pegtl::parse<st2se::grammar::strace_line, st2se::grammar::action>(in, _output, params, states);
+            catch (tao::pegtl::parse_error &e) {
+                std::cout << e.what() << std::endl;
+                std::cout << "'" << line << "'" << std::endl;
+                return_val = false;
             }
 
             if (return_val) {

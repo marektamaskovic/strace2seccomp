@@ -36,7 +36,7 @@ namespace st2se {
         val_format_t value_format;
         val_type_t value_type;
         std::string key;
-        std::variant<int, std::string> value;
+        std::variant<long, std::string> value;
         std::vector<_argument_t> next;
     };
 
