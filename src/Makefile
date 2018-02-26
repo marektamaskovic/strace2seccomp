@@ -21,6 +21,9 @@ coverage: st2se run
 st2se: $(OBJ)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $(BIN)
 
+cfg: CXXFLAGS += -fdump-tree-cfg
+cfg: $(OBJ)
+
 effc++: CXXFLAGS += -Weffc++
 effc++: all
 
@@ -40,3 +43,4 @@ clean:
 	-rm vgcore.*
 	-rm -r ./html
 	-rm *.gcda *.gcno coverage.info
+	-rm *.cfg
