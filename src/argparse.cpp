@@ -21,18 +21,19 @@ Params::Params(int argc, char *argv[]) {
     while (1) {
         static struct option long_options[] = {
             /* These options set a flag. */
-            {"weak",     no_argument, &this->weak,     1},
-            {"strict",   no_argument, &this->strict,   1},
-            {"advanced", no_argument, &this->advanced, 1},
-            {"verbose",  no_argument, &this->verbose,  1},
-            {"debug",    no_argument, &this->debug,    1},
-            {"tracing",  no_argument, &this->tracing,  1},
+            {"weak",             no_argument, &this->weak,     1},
+            {"strict",           no_argument, &this->strict,   1},
+            {"advanced",         no_argument, &this->advanced, 1},
+            {"verbose",          no_argument, &this->verbose,  1},
+            {"debug",            no_argument, &this->debug,    1},
+            {"tracing",          no_argument, &this->tracing,  1},
+            {"analyze-grammar",  no_argument, &this->analysis, 1},
             {nullptr,    0,           nullptr,         0}
         };
         /* getopt_long stores the option index here. */
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "wsavdt",
+        c = getopt_long(argc, argv, "wsavdtA",
                 long_options, &option_index);
 
         /* Detect the end of the options. */
@@ -79,6 +80,10 @@ Params::Params(int argc, char *argv[]) {
 
         case 't':
             this->tracing = 1;
+            break;
+
+        case 'A':
+            this->analysis = 1;
             break;
 
         case '?':

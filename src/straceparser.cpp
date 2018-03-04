@@ -51,8 +51,12 @@ namespace st2se {
             unparsed_lines << line << std::endl;
         }
 
-        std::cout << "statistics:" << good_lines << " " << bad_lines << std::endl;
+        std::cout << "statistics: + " << good_lines << " - " << bad_lines << std::endl;
         std::cout << "sc:" << ::syscalls << std::endl;
         return true;
+    }
+
+    std::size_t StraceParser::AnalyzeGrammar() {
+        return tao::pegtl::analyze< st2se::grammar::strace_line >();
     }
 } // end of namespace

@@ -1,4 +1,4 @@
-BIN=main
+BIN=st2se
 
 .PHONY: all clean run
 

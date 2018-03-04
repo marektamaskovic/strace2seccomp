@@ -7,6 +7,7 @@
 
 #include "tao/pegtl.hpp"
 #include "tao/pegtl/contrib/tracer.hpp"
+#include "tao/pegtl/analyze.hpp"
 
 #include "straceparser_actions.hpp"
 #include "ids.hpp"
@@ -27,6 +28,8 @@ namespace st2se {
         bool parse(std::string _filename, st2se::Ids &_output, Params &params, States &states);
 
         std::string getFilename();
+        std::size_t AnalyzeGrammar();
+
     };
 
 }
