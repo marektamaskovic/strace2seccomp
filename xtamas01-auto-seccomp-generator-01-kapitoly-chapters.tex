@@ -74,7 +74,7 @@ This procedure is illustrated in figure \ref{fig:tikz:int_handling} on page \pag
 
 \section{Monitoring}
 The most used and conventional method for monitoring is tracing, in other words watching what a program is doing during the execution.
-Tracing involves a specialised logging to record information, useful for debugging, about a program's execution.
+Tracing involves a specialized logging to record information, useful for debugging, about a program's execution.
 This can be done in multiple layers, from tracing which lines in the program was executed to individual instructions run on a CPU.
 Collecting this information can be done with various tools, i.e., strace, ftrace and a lots of more.
 
@@ -138,7 +138,7 @@ It supports dynamic tracing which means dynamically patching while running instr
 Static tracing is supported as well, but it needs to add tracepoints to the code.
 DTrace provides a scripting language called 'D' for writing scripts and one-liners.
 It is similar to C with AWK elements.
-With this script, you can create filters and summarise data in the kernel before passing to user-space.
+With this script, you can create filters and summarize data in the kernel before passing to user-space.
 This design can decrease the overhead in performance sensitive systems.
 
 For our purposes, DTrace is too complicated to setup or gather the information about syscalls.
@@ -162,8 +162,8 @@ After load it is working and doing the useful part.
 When you send a signal to terminate the stap program it will unload the kernel module and stop working.
 
 Similar as Dtrace the SystemTap is too complicated to work as system call monitor and it is not flawless.
-The Systemtap can't dereference the pointer address in system call but the strace tool can. 
- 
+The Systemtap can't dereference the pointer address in system call but the strace tool can.
+
 
 \subsection{Autrace}
 The Linux Auditing System helps system administrators create an audit trail.
@@ -215,7 +215,7 @@ The systrace monitors all running daemons and can generate a warning when some i
 These alerts can be sent to a system administrator and can provide information what happened.
 
 \section{Seccomp}
-A large number of syscalls are exposed to user space of a process. 
+A large number of syscalls are exposed to user space of a process.
 Many of this syscalls are unused for the entire lifetime of the process.
 This generates small possibility to misuse some syscalls to corrupt the process itself.
 A particular subset of applications benefits from a reduced set of syscalls by reducing exposed kernel surface to process.
@@ -428,7 +428,7 @@ Other inconvenience is that we must carefully determine the order in which the r
 \textit{Packrat parsing} is a lazy derivation of a tabular algorithm that solves both of these problems. It computes results only when thet are needed, in the same order as the original recursive descent parser would.
 \cite{Ford:PEG}
 
-\begin{figure}
+\begin{table}
 	\begin{center}
   \begin{tabular}{lcl}
       Additive  & $\leftarrow$ & Multititve '+' Additive | Multitive \\
@@ -439,7 +439,7 @@ Other inconvenience is that we must carefully determine the order in which the r
   \end{center}
   \caption{Example of a grammar for a trivial language}
   \label{fig:pegtl:example}
- \end{figure}
+\end{table}
 
 \section{Optimizer}
 Optimizer the main part of this tool.
@@ -546,9 +546,59 @@ I decided to use this library because it was audited and tested by community, is
 \subsection{Smart}
 
 
-\chapter{Testing}
-\section{Test Requirements}
+\chapter{Software Verification}
+This chapter will describe activities used to assure quality control of the developed tool.
+Firstly I want to introduce on which aspects we will focus.
+One of the aspects is \textit{module testing}.
+The main purpose of module testing is to detect errors in submodules, in communication among them, in passing data through data structures.
+Another aspect of verification is \textit{system testing} merged with \textit{acceptance testing}.
+In this type of testing we will check if the strace2seccomp tool has valid architectural design.
+Next aspect which will be checked is \textit{static analysis}.
+Static analysis is type of testing which does not requires run the program but requires a source code of the tool.
+The static analyzer will analyse the source codes with different heuristics and produces a analysis of detected errors. % cite ITS lectures.
+
+
+
+\section{Module Testing}
+Module testing is part of whole quality control process.
+This testing can provide us how functional are particular components and if they meet the requirements.
+Table \ref{table:moduletesting} shows us the description of module's test suits.
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|l|p{10cm}|}
+		\hline
+		\textbf{Module / Component}	&	\textbf{Test descriptiom} \\ \hline
+		Params 											& Validity of recognized runtime arguments \\ \hline
+		StraceParser								& Syntax testing, validity of parsed data, correct error handling \\ \hline
+	\end{tabular}
+	\caption{Test plan}
+	\label{table:moduletesting}
+\end{table}
+
+\subsection{Params Testing}
+about using params class in custom test set and manualy check if the correct flags was ommited.
+
+\subsection{StraceParser Testing}
+StraceParser module is responsible for parsing the strace output and translates it to intermediate data structure.
+Testing of this module can be done with various techniques.
+First one which is used is fuzzy testing or fuzzing described in section above \ref{fuzzing}.
+AFL fuzzer was used in the process.
+
+\section{System and Acceptance Testing}
+
 \section{Testing Methods}
+\subsection{Fuzzing}
+\label{fuzzing}
+The term fuzzing was first used by professor Barton Miller who used fuzzing to test robustness of UNIX applications in 1989 \cite{Takanen:2008:FSS:1404500}\cite{Marhefka2013}.
+\subsection{American Fuzzy Lop}
+\subsection{HongFuzz}
+\subsection{Radamsa}
+\subsection{Bunny the Fuzzer}
+
+\section{Static analysis}
+
+\section{Test Requirements}
 \section{Results}
 \section{Test Statistics}
 
