@@ -537,13 +537,43 @@ One of the first ideas were implement custom logger.
 This idea wasn't bad but it will be a reinventing wheel.
 Another way is using the logger implemented in boost library\footnote{http://www.boost.org/doc/libs/1\_63\_0/libs/log/doc/html/index.html}.
 I decided to use this library because it was audited and tested by community, is widely supported and is well documented.
+
 \section{Input}
+what is imput and why
+\subsection{Strace grammar}
+wirte strace output in eBNF
+\subsection{Configure Strace to Produce Expected Input}
+what should we do to get valid \texttt{strace} output for \texttt{st2se}?
 \section{Intermediate Representation}
+How it looks and why?
+
 \section{Output}
+Chapter about creating output from IDS to libseccom or eBPF.
+\subsection{libseccomp}
+Something about using libseccomp.
+\subsection{eBPF}
+Maybe extension?
+\subsection{C/C++ template}
+Add it in appendix.
+\subsection{Go template}
+Add it in appendix.
+
 \section{Heuristics and Optimizations}
+Something about heuristics in global
 \subsection{Minimax}
+findin min and max for every arg. position.
 \subsection{Strict}
+input $\rightarrow$ output
 \subsection{Smart}
+we should use clustering \ldots
+\subsubsection{Clustering}
+What is clustering?
+\subsubsection{Clustering algorithms used}
+There are a lots of clustering algorithms. Find them \ldots.
+\begin{itemize}
+	\item{K-means}
+\end{itemize}
+
 
 
 \chapter{Software Verification}
@@ -584,23 +614,44 @@ StraceParser module is responsible for parsing the strace output and translates 
 Testing of this module can be done with various techniques.
 First one which is used is fuzzy testing or fuzzing described in section above \ref{fuzzing}.
 AFL fuzzer was used in the process.
-
-\section{System and Acceptance Testing}
-
-\section{Testing Methods}
-\subsection{Fuzzing}
+\subsubsection{Fuzzing}
 \label{fuzzing}
 The term fuzzing was first used by professor Barton Miller who used fuzzing to test robustness of UNIX applications in 1989 \cite{Takanen:2008:FSS:1404500}\cite{Marhefka2013}.
-\subsection{American Fuzzy Lop}
-\subsection{HongFuzz}
-\subsection{Radamsa}
-\subsection{Bunny the Fuzzer}
+
+\begin{itemize}
+	\item{AFL} write sometihong about every fuzzer you mentioned
+	\item{Bunny the Fuzzer}
+	\item{Hongfuzz}
+	\item{Radamsa}
+\end{itemize}
+\subsubsection{Fuzzing results}
+Show some results from afl.
+\subsubsection{Grammar testing}
+If you got time write grammar tester. or find one .. dunno
+
+\subsection{Algorithms}
+How should we test if algorithms? 
+\subsection{Optimizer}
+how should we test this adapter?
+\subsection{Output}
+Testing correctness of a Output generator
+\begin{itemize}
+	\item{C/C++}
+	\item{Go}
+\end{itemize}
+
+\section{System and Acceptance Testing}
+\subsection{Testing on real app}
+\subsection{USBGuard}
 
 \section{Static analysis}
+Any bugs?
 
 \section{Test Requirements}
+
 \section{Results}
-\section{Test Statistics}
+Which bugs have you found.
+
 
 
 %=========================================================================
