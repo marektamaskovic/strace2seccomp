@@ -6,6 +6,7 @@
 #include <map>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <type_traits>
 #include <variant>
 #include <algorithm>
@@ -28,6 +29,7 @@ namespace st2se {
         CONSTANT,
         ARRAY,
         STRUCTURE,
+        BITFIELD,
         EMPTY
     };
 

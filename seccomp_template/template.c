@@ -12,6 +12,24 @@
 
 #include <seccomp.h>
 
+int setup_seccomp_whitelist(scmp_filter_ctx *ctx){
+
+    if(ctx == NULL){
+        fprintf(stderr, "%s %s %s\n", "Error:", __func__, ": ctx is NULL\n");
+        return -1;
+    }
+
+    int rc = 0;
+
+    // seccomp rules 
+    //-------------------------------------------------------------------------
+    __insert_tag;
+
+    //-------------------------------------------------------------------------
+
+    return rc;
+}
+
 int main(int argc, char *argv[])
 {
     int rc = -1;
@@ -26,11 +44,7 @@ int main(int argc, char *argv[])
         rc = 0;
     }
 
-    // seccomp rules 
-    //-------------------------------------------------------------------------
-    __insert_tag
-
-    //-------------------------------------------------------------------------
+    setup_seccomp_whitelist(&ctx);
 
     // Put your code below
 

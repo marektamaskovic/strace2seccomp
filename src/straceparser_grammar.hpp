@@ -73,7 +73,7 @@ namespace st2se::grammar {
 
     struct array : seq<opt<one<'~'>>, container<'[', ']'>> {};
     struct structure : container<'{', '}'> {};
-    struct value : sor<pointer, integer, string, constants, array, structure> {};
+    struct value : sor<pointer, str_nullpointer, integer, string, constants, array, structure> {};
     struct key_value : seq<ascii::identifier, one<'='>, value> {};
     struct argument : seq<sor<value, key_value, inline_comment, at<str_unfinished>>, star<space>, opt<inline_comment>> {};
     struct rest : star<ascii::any> {};

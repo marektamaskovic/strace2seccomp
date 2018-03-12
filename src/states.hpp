@@ -11,6 +11,7 @@
 
 #include "ids.hpp"
 
+
 namespace st2se {
     class States {
         std::vector<st2se::argument_t> parsed_val;
@@ -19,6 +20,7 @@ namespace st2se {
         val_type_t last_arg_type;
         long long return_val;
         std::string name;
+        bool bitfields;
 
       public:
         unsigned arg_num;
@@ -32,7 +34,9 @@ namespace st2se {
         void set_val_type(const val_type_t &fmt);
         void set_ret_val(const std::string &str);
         void set_name(const std::string &str);
+        void set_bitfields(const bool &b);
 
+        const bool &get_bitfields();
         const std::string &get_name();
         const val_format_t &get_val_format();
         const val_type_t &get_val_type();
@@ -46,5 +50,7 @@ namespace st2se {
 
     };
 }
+
+std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a);
 
 #endif

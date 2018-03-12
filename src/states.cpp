@@ -21,6 +21,12 @@ std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a) {
     else if (a == st2se::val_type_t::STRUCTURE) {
         return os << "STRUCTURE";
     }
+    else if (a == st2se::val_type_t::BITFIELD) {
+        return os << "BITFIELD";
+    }
+    else if (a == st2se::val_type_t::EMPTY) {
+        return os << "EMPTY";
+    }
     else {
         return os << "UNDEF";
     }
@@ -63,6 +69,14 @@ namespace st2se {
         this->name = str;
     }
 
+    void States::set_bitfields(const bool &b) {
+        this->bitfields = b;
+    }
+
+    const bool &States::get_bitfields() {
+        return this->bitfields;
+    }
+
     const std::string &States::get_name() {
         return this->name;
     }
@@ -78,6 +92,7 @@ namespace st2se {
     void States::clear() {
         parsed_val.clear();
         arg_num = 0;
+        bitfields = false;
     }
 
     std::string States::argsStr() {

@@ -134,12 +134,25 @@ namespace st2se {
     // move this function to utilities
     std::string arg2str(argument_t &arg) {
         // *INDENT-OFF*
+        const bool pointer = arg.value_type == val_type_t::POINTER;
         return std::visit(
-            [](auto &&arg) -> std::string {
+            [pointer](auto &&arg) -> std::string {
                 using T = std::decay_t<decltype(arg)>;
 
-                if constexpr(std::is_same_v<T, long>)
-                    return std::to_string(arg);
+                if constexpr(std::is_same_v<T, long>){
+                    if(pointer){
+                        std::stringstream ss;
+                        std::string ret_val;
+
+                        ss << std::hex << arg;
+                        ss >> ret_val;
+
+                        return "0x" + ret_val;
+                    }
+                    else{
+                        return std::to_string(arg);
+                    }
+                }
                 else if constexpr(std::is_same_v<T, std::string>)
                     return arg;
                 else {

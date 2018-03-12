@@ -19,7 +19,7 @@ extern int syscalls;
         if (states.get_val_format() == val_format_t::KEY_VALUE) {   \
             std::string::size_type index;                           \
             index = InputStr.string().find_first_of("=");           \
-            \
+                                                                    \
             Key = InputStr.string().substr(0, index);               \
         }                                                           \
         else {                                                      \
@@ -34,6 +34,23 @@ namespace st2se::grammar {
 
     template<>
     struct action< pointer > {
+        template < typename Input >
+        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+            (void) states;
+            (void) out;
+            (void) in;
+            (void) params;
+
+            states.set_val_type(val_type_t::POINTER);
+
+            if (params.debug) {
+                std::cout << "pointer: " << in.string() << std::endl;
+            }
+        }
+    };
+
+    template<>
+    struct action< str_nullpointer > {
         template < typename Input >
         static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
             (void) states;
@@ -93,9 +110,38 @@ namespace st2se::grammar {
 
             states.set_val_type(val_type_t::CONSTANT);
 
-            if (params.debug) {
-                std::cout << "constants: " << in.string() << std::endl;
+
+            std::string s = in.string();
+            std::string delim = "|";
+            std::vector<std::string> bitfields;
+
+            auto start = 0U;
+            auto end = s.find(delim);
+
+            while (end != std::string::npos) {
+                states.set_val_type(val_type_t::BITFIELD);
+                bitfields.push_back(s.substr(start, end - start));
+                start = end + delim.length();
+                end = s.find(delim, start);
             }
+
+            bitfields.push_back(s.substr(start, end));
+            std::sort(bitfields.begin(), bitfields.end());
+
+            std::string merge;
+
+            for (unsigned i = 0; i < bitfields.size(); i++) {
+                merge += bitfields[i] + "|";
+            }
+
+            merge.resize(merge.size() - 1);
+
+            if (params.debug) {
+                std::cout << "constants: " << merge << std::endl;
+            }
+
+            states.value = merge;
+            states.set_bitfields(true);
         }
     };
 
@@ -142,9 +188,10 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            states.set_val_format(val_format_t::VALUE);
+            // states.set_val_format(val_format_t::VALUE);
 
             if (states.get_val_type() == val_type_t::INTEGER) {
+                // FIXME rewrite it as a template
                 try {
                     states.value = std::stol(in.string());
                 }
@@ -152,12 +199,28 @@ namespace st2se::grammar {
                     throw tao::pegtl::parse_error("stol err '" + in.string() + "'", in);
                 }
             }
+            else if (states.get_val_type() == val_type_t::POINTER) {
+                if (!in.string().compare("NULL") || !in.string().compare("nullptr")) {
+                    states.value = 0;
+                }
+                else {
+                    // FIXME rewrite it as a template
+                    try {
+                        states.value = std::stol(in.string(), nullptr, 16);
+                    }
+                    catch (std::out_of_range &e) {
+                        throw tao::pegtl::parse_error("stol err '" + in.string() + "'", in);
+                    }
+                }
+            }
             else {
-                states.value = in.string();
+                if(!states.get_bitfields()){
+                    states.value = in.string();
+                }
             }
 
             if (params.debug) {
-                std::cout << "value: " << in.string() << std::endl;
+                std::cout << "value: " << in.string() << "  ?" << std::endl;
             }
         }
     };
@@ -194,7 +257,7 @@ namespace st2se::grammar {
             states.set_name(in.string());
 
             if (params.debug) {
-                std::cout << "syscall_name: " << in.string() << std::endl;
+                std::cout << "\n\nsyscall_name: " << in.string() << std::endl;
             }
         }
     };

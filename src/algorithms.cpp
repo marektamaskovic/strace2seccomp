@@ -3,6 +3,32 @@
 namespace st2se {
 
     // WEAK //
+    std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a) {
+
+        if (a == st2se::val_type_t::POINTER) {
+            os << "POINTER";
+        }
+        else if (a == st2se::val_type_t::INTEGER) {
+            os << "INTEGER";
+        }
+        else if (a == st2se::val_type_t::STRING) {
+            os << "STRING";
+        }
+        else if (a == st2se::val_type_t::CONSTANT) {
+            os << "CONSTANT";
+        }
+        else if (a == st2se::val_type_t::ARRAY) {
+            os << "ARRAY";
+        }
+        else if (a == st2se::val_type_t::STRUCTURE) {
+            os << "STRUCTURE";
+        }
+        else if (a == st2se::val_type_t::EMPTY) {
+            os << "EMPTY";
+        }
+
+        return os;
+    }
 
     bool Algo_weak::optimize(Ids &in, Ids &out) {
         std::cout << "Algo_weak optimize emitted." << std::endl;
@@ -52,8 +78,8 @@ namespace st2se {
             std::cout << "\targ no." << arg_pos << " is " << v.size() << " items long" << std::endl;
 
             if (v.size() != 1) {
-                std::cout << "\t\tmax: " << arg2str(v.front()) << std::endl
-                    << "\t\tmin: " << arg2str(v.back()) << std::endl;
+                std::cout << "\t\tmax: " << arg2str(v.front()) << std::endl;
+                std::cout << "\t\tmin: " << arg2str(v.back()) << std::endl;
             }
             else {
                 std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
