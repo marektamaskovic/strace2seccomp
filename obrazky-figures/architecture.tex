@@ -19,10 +19,10 @@
 		\node [] (16) at (-1.5, 2.5) {};
 		\node [] (17) at (-1.5, 1.5) {};
 		\node [] (18) at (-2.5, 2) {translator};
-		\node [] (19) at (-2.75, 2.5) {};
+		\node [] (19) at (-2.5, 2.5) {};
 		\node [] (20) at (-3.5, 2) {};
-		\node [] (21) at (-4, 5) {};
-		\node [] (22) at (-8, 3) {};
+		\node [] (21) at (-3.75, 5) {};
+		\node [] (22) at (-8.25, 3) {};
 		\node [] (23) at (-7.25, 2.5) {};
 		\node [] (24) at (-3, 5.5) {};
 		\node [] (25) at (-7.75, 5.5) {strace.out};
@@ -35,14 +35,15 @@
 		\node [] (32) at (-3.75, 5.5) {parser};
 		\node [style={color=blue}] (33) at (-2, 3.75) {1.};
 		\node [style={color=purple}] (34) at (-5.75, 6) {a.};
-		\node [style={color=orange}] (35) at (-5.75, 4.5) {1.};
-		\node [style={color=orange}] (36) at (-5.25, 1.75) {2.};
+		\node [style={color=orange}] (35) at (-5.75, 4.5) {I.};
+		\node [style={color=orange}] (36) at (-5.25, 1.75) {II.};
 		\node [] (37) at (0, 2.25) {};
 		\node [] (38) at (0.25, 2.5) {};
 		\node [] (39) at (-8.75, 5.75) {};
 		\node [] (40) at (-8.5, 6) {};
 		\node [] (41) at (0.25, 2.25) {};
 		\node [] (42) at (-8.5, 5.75) {};
+		\node [] (43) at (-0.75, 2.5) {b.};
 	\end{pgfonlayer}
 	\begin{pgfonlayer}{edgelayer}
 		\draw (20.center) to (15.center);
@@ -69,7 +70,7 @@
 		\draw [semithick, color=orange, ->, in=180, out=0, looseness=1.00] (23.center) to (20.center);
 		\draw (8.center) to (24.center);
 		\draw (24.center) to (7.center);
-		\draw [semithick, color=blue, ->, in=90, out=0, looseness=1.25] (24.center) to (19.center);
+		\draw [semithick, color=blue, dash pattern=on 2pt off 2pt, ->, in=90, out=0, looseness=1.25] (24.center) to (19.center);
 		\draw (28.center) to (27.center);
 		\draw (27.center) to (26.center);
 		\draw (30.center) to (26.center);
