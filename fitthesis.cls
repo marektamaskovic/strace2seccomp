@@ -259,7 +259,7 @@
 \@author@tp~\fi\@author\ifx\undefined\@author@ta\else,~\@author@ta\fi}
 %Jmeno, prijmeni, tituly vedouciho / name surname and the titles of the supervisor
 \def\get@supervisor{\ifx\undefined\@supervisor@tp\else%
-\@supervisor@tp~\fi\MakeUppercase{\@supervisor}\ifx\undefined\@supervisor@ta\else,~\@supervisor@ta\fi}
+\@supervisor@tp~\fi\MakeUppercase{\@supervisor}}
 
 %-----------------------------------------------------------------------------
 % Projectinfo - parametrizace sablony / template parameters
@@ -831,7 +831,7 @@
 \usepackage{ragged2e}
 \usepackage{url}
 \DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
-\def\UrlBreaks{\do\/\do-}
+\def\UrlBreaks{\do\/\do-\do\_}
 
 \usepackage{blindtext}
 \usepackage{listings}
