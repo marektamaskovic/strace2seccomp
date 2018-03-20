@@ -214,7 +214,7 @@ namespace st2se::grammar {
                 }
             }
             else {
-                if(!states.get_bitfields()){
+                if (!states.get_bitfields()) {
                     states.value = in.string();
                 }
             }
