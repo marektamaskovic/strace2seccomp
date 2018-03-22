@@ -1,5 +1,5 @@
-#ifndef STRACEPARSER_ACTIONS
-#define STRACEPARSER_ACTIONS
+#ifndef _SRC_STRACEPARSER_ACTIONS
+#define _SRC_STRACEPARSER_ACTIONS
 
 #include <utility>
 
@@ -18,12 +18,12 @@ extern int syscalls;
     do{                                                             \
         if (states.get_val_format() == val_format_t::KEY_VALUE) {   \
             std::string::size_type index;                           \
-            index = InputStr.string().find_first_of("=");           \
+            index = (InputStr).string().find_first_of("=");         \
                                                                     \
-            Key = InputStr.string().substr(0, index);               \
+            (Key) = (InputStr).string().substr(0, index);           \
         }                                                           \
         else {                                                      \
-            Val = InputStr.string();                                \
+            (Val) = (InputStr).string();                            \
         }                                                           \
     }while(0)
 // *INDENT-ON*
@@ -364,6 +364,6 @@ namespace st2se::grammar {
             }
         }
     };
-}
+} // namespace st2se::grammar
 
 #endif

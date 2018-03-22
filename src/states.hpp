@@ -1,26 +1,32 @@
-#ifndef STATES_HPP
-#define STATES_HPP
+#ifndef _SRC_STATES_HPP
+#define _SRC_STATES_HPP
 
-#include <vector>
-#include <string>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <variant>
+#include <string>
 #include <type_traits>
-#include <iomanip>
+#include <variant>
+#include <vector>
 
 #include "ids.hpp"
 
 
 namespace st2se {
     class States {
-        std::vector<st2se::argument_t> parsed_val;
+        // TODO
+        // - define a copy constructor
+        // - copy assignment operator
+        // - move constructor
+        // - move assignment operator
 
-        val_format_t arg_format;
-        val_type_t last_arg_type;
-        long long return_val;
-        std::string name;
-        bool bitfields;
+        std::vector<st2se::argument_t> parsed_val {};
+
+        val_format_t arg_format {val_format_t::EMPTY};
+        val_type_t last_arg_type {val_type_t::EMPTY};
+        long long return_val {0};
+        std::string name {};
+        bool bitfields {false};
 
       public:
         unsigned arg_num;
@@ -49,7 +55,7 @@ namespace st2se {
         ~States() = default;
 
     };
-}
+} // namespace st2se
 
 std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a);
 

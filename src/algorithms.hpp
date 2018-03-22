@@ -50,10 +50,11 @@ namespace st2se {
     };
 
     int LevenshteinDistance(const std::string &s, int len_s, const std::string &t, int len_t);
-    int minimum(int a, int b, int c);
+    template<typename T>
+    T minimum(T a, T b, T c);
     int bitfieldDistance(bitfield_t &a, bitfield_t &b);
     bitfield_t convert2bitfield(argument_t &in);
 
-} // end of namespace
+} // namespace st2se
 
 #endif

@@ -92,7 +92,7 @@ namespace st2se {
         return container.back().next;
     }
 
-    void Ids::print(void) {
+    void Ids::print() {
         std::cout << *this << std::endl;
 
         for (auto item : data) {
@@ -127,8 +127,6 @@ namespace st2se {
 
             print_recursive("\t", this->next);
         }
-
-        return;
     }
 
     // move this function to utilities
@@ -149,9 +147,7 @@ namespace st2se {
 
                         return "0x" + ret_val;
                     }
-                    else{
-                        return std::to_string(arg);
-                    }
+                    return std::to_string(arg);
                 }
                 else if constexpr(std::is_same_v<T, std::string>)
                     return arg;
@@ -165,4 +161,4 @@ namespace st2se {
         // *INDENT-ON*
     }
 
-} // end of namespace
+} // namespace st2se

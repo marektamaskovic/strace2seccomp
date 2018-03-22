@@ -18,6 +18,6 @@ namespace st2se {
         bool optimize(Ids &in, Ids &out);
     };
 
-} // end of namespace
+} // namespace st2se
 
 #endif

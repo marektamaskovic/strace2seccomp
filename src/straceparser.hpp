@@ -1,5 +1,5 @@
-#ifndef STRACEPARSER_HPP
-#define STRACEPARSER_HPP
+#ifndef _SRC_STRACEPARSER_HPP
+#define _SRC_STRACEPARSER_HPP
 
 #include <iostream>
 #include <fstream>
@@ -21,17 +21,17 @@ namespace st2se {
         States states();
 
       public:
-        StraceParser(st2se::Ids &_output);
-        StraceParser(std::string _filename, st2se::Ids &_output);
+        explicit StraceParser(st2se::Ids &_output);
+        StraceParser(const std::string &_filename, st2se::Ids &_output);
         // ~StraceParser();
 
-        bool parse(std::string _filename, st2se::Ids &_output, Params &params, States &states);
+        bool parse(const std::string &_filename, st2se::Ids &_output, Params &params, States &states);
 
         std::string getFilename();
         std::size_t AnalyzeGrammar();
 
     };
 
-}
+} // namespace st2se
 
 #endif

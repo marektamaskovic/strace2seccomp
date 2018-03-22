@@ -3,15 +3,15 @@
 #include "tao/pegtl.hpp"
 
 #include "argparse.hpp"
-#include "straceparser.hpp"
-#include "states.hpp"
 #include "ids.hpp"
 #include "optimizer.hpp"
+#include "states.hpp"
+#include "straceparser.hpp"
 
 int main(int argc, char *argv[]) {
     int ret_val {0};
 
-    Params *params = new Params(argc, argv);
+    auto *params = new Params(argc, argv);
 
     // std::cout << *params << std::endl;
 
@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     st2se::States states {};
 
     // run grammar analysis
-    if (params->analysis) {
+    if (params->analysis != 0) {
 
         std::cout << "Analyzing grammar ..." << std::endl;
 
@@ -44,10 +44,10 @@ int main(int argc, char *argv[]) {
     // optimize IDS
     st2se::Algorithm *algo {nullptr};
 
-    if (params->weak) {
+    if (params->weak != 0) {
         algo = new st2se::Algo_weak();
     }
-    else if (params->strict) {
+    else if (params->strict != 0) {
         algo = new st2se::Algo_strict();
     }
     else {
