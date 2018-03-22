@@ -1,18 +1,16 @@
-#ifndef TYPES_HPP
-#define TYPES_HPP
+#ifndef _SRC_IDS_HPP
+#define _SRC_IDS_HPP
 
-#include <string>
-#include <vector>
-#include <map>
+#include <algorithm>
+#include <functional>
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <sstream>
+#include <string>
 #include <type_traits>
 #include <variant>
-#include <algorithm>
 #include <vector>
-#include <functional>
-#include <algorithm>
 
 namespace st2se {
 
@@ -69,6 +67,6 @@ namespace st2se {
 
     std::string arg2str(argument_t &arg);
 
-} // end of namespace
+} // namespace st2se
 
 #endif

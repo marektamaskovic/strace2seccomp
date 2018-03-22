@@ -52,7 +52,7 @@ namespace st2se {
             unsigned tmp;
 
             if ((tmp = getDepth(arg)) > depth) {
-                if (depth) {
+                if (depth != 0u) {
                     std::cout << " " << depth;
                 }
 
@@ -66,13 +66,17 @@ namespace st2se {
             std::vector<argument_t> v;
             v = getArguemntsFromPos(sc.next, arg_pos);
 
-            std::sort(v.begin(), v.end(), [](argument_t a, argument_t b) {
-                return a.value > b.value;
-            });
+            /*INDENT-OFF*/
+            std::sort(v.begin(), v.end(),
+                [](argument_t a, argument_t b)
+                    {return a.value > b.value;}
+            );
 
-            auto end = std::unique(v.begin(), v.end(), [](argument_t l, argument_t r) {
-                return l.value == r.value;
-            });
+            auto end = std::unique(v.begin(), v.end(),
+                [](argument_t l, argument_t r)
+                    {return l.value == r.value;}
+            );
+            /*INDENT-ON*/
 
             v.erase(end, v.end());
 
@@ -87,8 +91,9 @@ namespace st2se {
             }
         }
 
-
-        return;
+        // TODO
+        // put intervals into out structure
+        (void) out;
     }
 
     std::vector<argument_t> Algorithm::getArguemntsFromPos(
@@ -103,8 +108,7 @@ namespace st2se {
 
             for (auto arg : args) {
                 auto x = getArguemntsFromPos(arg.next, lvl - 1);
-                std::copy(x.begin(), x.end(),
-                    std::back_inserter(v));
+                std::copy(x.begin(), x.end(), std::back_inserter(v));
             }
 
             return v;
@@ -132,7 +136,8 @@ namespace st2se {
     }
 
     void Algo_weak::findMinMax(Syscall_t &sc, Ids &out) {
-        return;
+        (void) sc;
+        (void) out;
     }
 
     // --------------------------------------------------------------------- //
@@ -141,6 +146,8 @@ namespace st2se {
     // STRICT //
 
     bool Algo_strict::optimize(Ids &in, Ids &out) {
+        (void) in;
+        (void) out;
         std::cout << "Algo_strict optimize emitted." << std::endl;
         return true;
     }
@@ -171,7 +178,7 @@ namespace st2se {
             unsigned tmp;
 
             if ((tmp = getDepth(arg)) > depth) {
-                if (depth) {
+                if (depth != 0) {
                     std::cout << " " << depth;
                 }
 
@@ -188,16 +195,15 @@ namespace st2se {
             std::vector<argument_t> v;
             v = getArguemntsFromPos(sc.next, arg_pos);
 
-            std::sort(v.begin(), v.end(), [](argument_t a, argument_t b) {
-                return a.value > b.value;
-            });
+            std::sort(v.begin(), v.end(),
+                [](argument_t a, argument_t b) {return a.value > b.value;}
+            );
 
             // *INDENT-OFF*
             auto end =
-                std::unique(v.begin(), v.end(), [](argument_t l, argument_t r)
-            {
-                return l.value == r.value;
-            });
+                std::unique(v.begin(), v.end(),
+                    [](argument_t l, argument_t r){return l.value == r.value;}
+                );
             // *INDENT-ON*
 
             v.erase(end, v.end());
@@ -228,8 +234,10 @@ namespace st2se {
         double eps = 2.0 * distance(smallest_pair.first, smallest_pair.second);
 
         while (true) {
-
+            break;
         }
+
+        (void) out;
 
         return -1;
     }
@@ -247,7 +255,8 @@ namespace st2se {
                 if (tmp != (-1.0)) {
                     continue;
                 }
-                else if (tmp <= mem_dst) {
+
+                if (tmp <= mem_dst) {
                     mem_dst = tmp;
                     p = std::make_pair(in.at(i), in.at(l));
                 }
@@ -267,7 +276,8 @@ namespace st2se {
             auto b = *std::get_if<std::string>(&(left.value));
             return LevenshteinDistance(a, a.size(), b, b.size());
         }
-        else if (
+
+        if (
             left.value_type == val_type_t::POINTER ||
             left.value_type == val_type_t::INTEGER
         ) {
@@ -278,7 +288,7 @@ namespace st2se {
             ret_val = (a > b) ? a - b : b - a;
 
         }
-        else if (left.value_type == val_type_t::BITFIELD) {
+        if (left.value_type == val_type_t::BITFIELD) {
             // compute distance between bitfields
             auto a = convert2bitfield(left);
             auto b = convert2bitfield(right);
@@ -342,82 +352,79 @@ namespace st2se {
             );
     }
 
-    int minimum(int a, int b, int c) {
+    template<typename T>
+    T minimum(T a, T b, T c) {
         if ((a < b) && (a < c)) {
             return a;
         }
-        else if (b < c) {
+        if (b < c) {
             return b;
         }
-        else {
-            return c;
-        }
+
+        return c;
     }
 
     int bitfieldDistance(bitfield_t &a, bitfield_t &b) {
         int ret_val {0};
 
-        if (a.size() == 0 && b.size() == 0) {
+        if (a.empty() && b.empty()) {
             return 0;
         }
-        else if (a.size() == 0) {
+        if (a.empty()) {
             return b.size();
         }
-        else if (b.size() == 0) {
+        if (b.empty()) {
             return a.size();
         }
-        else {
-            if (a.size() < b.size()) {
-                auto tmp = a;
-                b = a;
-                b = tmp;
-            }
 
-            int diff {0};
-
-            //create uset of bitfields and initialize them with appropriate vectors
-            std::unordered_set<std::string> uset_a {};
-            std::unordered_set<std::string> uset_b {};
-
-            for (auto item : a) {
-                uset_a.insert(item);
-            }
-
-            for (auto item : b) {
-                uset_b.insert(item);
-            }
-
-            // check if item from vector a is in uset_b
-            // if not increment difference
-            // else continue
-            for (auto item = a.begin(); item != a.end(); item++) {
-                auto search = uset_b.find(*item);
-
-                if (search != uset_b.end()) {
-                    continue;
-                }
-                else {
-                    diff++;
-                }
-            }
-
-            // the same as above but for item from vector b in uset_a
-            for (auto item = b.begin(); item != b.end(); item++) {
-                auto search = uset_a.find(*item);
-
-                if (search != uset_a.end()) {
-                    continue;
-                }
-                else {
-                    diff++;
-                }
-            }
-
-            // set ret_val with number of differences between bitfields
-            ret_val = diff;
+        if (a.size() < b.size()) {
+            const bitfield_t tmp = a;
+            a = b;
+            b = tmp;
         }
+
+        int diff {0};
+
+        //create uset of bitfields and initialize them with appropriate vectors
+        std::unordered_set<std::string> uset_a {};
+        std::unordered_set<std::string> uset_b {};
+
+        for (const auto &item : a) {
+            uset_a.insert(item);
+        }
+
+        for (const auto &item : b) {
+            uset_b.insert(item);
+        }
+
+        // check if item from vector a is in uset_b
+        // if not increment difference
+        // else continue
+        for (auto & item : a) {
+            auto search = uset_b.find(item);
+
+            if (search != uset_b.end()) {
+                continue;
+            }
+
+            diff++;
+        }
+
+        // the same as above but for item from vector b in uset_a
+        for (auto & item : b) {
+            auto search = uset_a.find(item);
+
+            if (search != uset_a.end()) {
+                continue;
+            }
+
+            diff++;
+        }
+
+        // set ret_val with number of differences between bitfields
+        ret_val = diff;
 
         return ret_val;
     }
 
-} // end of namespace
+} // namespace st2se

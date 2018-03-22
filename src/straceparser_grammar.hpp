@@ -1,5 +1,5 @@
-#ifndef STRACEPARSER_GRAMMAR
-#define STRACEPARSER_GRAMMAR
+#ifndef _SRC_STRACEPARSER_GRAMMAR
+#define _SRC_STRACEPARSER_GRAMMAR
 
 namespace st2se::grammar {
 
@@ -94,6 +94,7 @@ namespace st2se::grammar {
 
     struct strace_line : sor<syscall_line, ignored_line> {};
     struct grammar : until<eof, must<strace_line>> {};
-}
+
+} // namespace st2se::grammar
 
 #endif

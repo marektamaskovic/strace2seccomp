@@ -11,7 +11,7 @@ namespace st2se {
 
 
     bool Optimizer::optimize(Ids &in, Ids &out) {
-        if (this->isInitialized() == false) {
+        if (!this->isInitialized()) {
             throw std::runtime_error("Algorithm is not provided.");
         }
 
@@ -27,7 +27,7 @@ namespace st2se {
     }
 
     bool Optimizer::isInitialized() {
-        return this->opt_adapter == nullptr ? false : true;
+        return this->opt_adapter != nullptr;
     }
 
-} // end of namespace
+} // namespace st2se

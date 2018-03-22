@@ -18,7 +18,7 @@ Params::Params(int argc, char *argv[]) {
 
     int c;
 
-    while (1) {
+    while (true) {
         static struct option long_options[] = {
             /* These options set a flag. */
             {"weak",             no_argument, &this->weak,     1},
