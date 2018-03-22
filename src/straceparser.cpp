@@ -9,7 +9,7 @@ namespace st2se {
     StraceParser::StraceParser(st2se::Ids &_output) : output(_output) {
     }
 
-    StraceParser::StraceParser(std::string _filename, st2se::Ids &_output):
+    StraceParser::StraceParser(const std::string &_filename, st2se::Ids &_output):
         filename(_filename), output(_output) {
     }
 
@@ -17,7 +17,7 @@ namespace st2se {
         return this->filename;
     }
 
-    bool StraceParser::parse(std::string _filename, st2se::Ids &_output, Params &params, States &states) {
+    bool StraceParser::parse(const std::string &_filename, st2se::Ids &_output, Params &params, States &states) {
 
         std::fstream input_file {_filename, std::ios_base::in};
 
@@ -66,4 +66,4 @@ namespace st2se {
     std::size_t StraceParser::AnalyzeGrammar() {
         return tao::pegtl::analyze< st2se::grammar::strace_line >();
     }
-} // end of namespace
+} // namespace st2se

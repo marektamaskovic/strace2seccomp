@@ -7,9 +7,9 @@ LDFLAGS=-Iinclude/
 LINK.o = $(LINK.cpp)
 
 ifeq ($(CXX),g++)
-	CXXFLAGS:=-Wall -Wextra -pedantic -Iinclude/ -std=c++17
+	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/
 else
-	CXXFLAGS:=-Wall -Wextra -pedantic -Iinclude/ -std=c++17 -stdlib=libc++ 
+	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -stdlib=libc++ -Iinclude/ -I/usr/include/c++/7/
 endif
 
 
@@ -29,6 +29,9 @@ tracing: all
 
 st2se: $(OBJ)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $(BIN)
+
+clangTidy:
+	clang-tidy *.[ch]pp -checks=* -- -std=c++17 -stdlib=libc++ -I/usr/include/c++/7/ > lint.out
 
 # Generate dependency tree for cpp files
 dep:

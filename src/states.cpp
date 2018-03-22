@@ -3,33 +3,24 @@
 template<class T> struct always_false : std::false_type {};
 
 std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a) {
-    if (a == st2se::val_type_t::INTEGER) {
+    // TODO transformt this into switch case statement
+    if (a == st2se::val_type_t::INTEGER)
         return os << "INTEGER";
-    }
-    else if (a == st2se::val_type_t::STRING) {
+    if (a == st2se::val_type_t::STRING)
         return os << "STRING";
-    }
-    else if (a == st2se::val_type_t::CONSTANT) {
+    if (a == st2se::val_type_t::CONSTANT)
         return os << "CONSTANT";
-    }
-    else if (a == st2se::val_type_t::POINTER) {
+    if (a == st2se::val_type_t::POINTER)
         return os << "POINTER";
-    }
-    else if (a == st2se::val_type_t::ARRAY) {
+    if (a == st2se::val_type_t::ARRAY)
         return os << "ARRAY";
-    }
-    else if (a == st2se::val_type_t::STRUCTURE) {
+    if (a == st2se::val_type_t::STRUCTURE)
         return os << "STRUCTURE";
-    }
-    else if (a == st2se::val_type_t::BITFIELD) {
+    if (a == st2se::val_type_t::BITFIELD)
         return os << "BITFIELD";
-    }
-    else if (a == st2se::val_type_t::EMPTY) {
+    if (a == st2se::val_type_t::EMPTY)
         return os << "EMPTY";
-    }
-    else {
-        return os << "UNDEF";
-    }
+    return os << "UNDEF";
 }
 
 namespace st2se {
@@ -120,7 +111,7 @@ namespace st2se {
     Syscall_t States::getSyscall() {
         Syscall_t s;
 
-        if (parsed_val.size() == 0) {
+        if (parsed_val.empty()) {
             std::cerr << "Error: Parsed val is empty." << std::endl;
 
             argument_t a {
@@ -162,4 +153,4 @@ namespace st2se {
 
     }
 
-} // end of namespace
+} // namespace st2se

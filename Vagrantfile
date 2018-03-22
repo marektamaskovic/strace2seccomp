@@ -69,7 +69,11 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
    config.vm.provision "shell", inline: <<-SHELL
      pacman -Syu --noconfirm
-     pacman -Sy base-devel --noconfirm
-     pacman -Sy clang gcc git --noconfirm
+     pacman -Sy base-devel clang gcc git python cmake --noconfirm
+     pacman -Sy ninja libunwind llvm llvm-libs lld --noconfirm
+     gpg --recv-keys 0FC3042E345AD05D
+     git clone https://aur.archlinux.org/libc++.git
+     cd libc++
+     makepkg
    SHELL
 end
