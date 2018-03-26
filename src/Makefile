@@ -13,7 +13,7 @@ else
 endif
 
 
-all: CXXFLAGS += -g3
+all: CXXFLAGS += -g3 -fsanitize=address -fno-omit-frame-pointer
 all: st2se
 
 release: CXXFLAGS += -O2

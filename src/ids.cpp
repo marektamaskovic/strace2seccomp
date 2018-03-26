@@ -2,27 +2,109 @@
 
 template<class T> struct always_false : std::false_type {};
 
-std::ostream &operator<< (std::ostream &os, const st2se::Ids &a) {
-    for (const auto &item : a.data) {
-        os << item.first
-            << " has "
-            << item.second.next.size()
-            << " arguments"
-            << std::endl;
-    }
-
-    return os << std::endl << std::endl;
-}
-
-bool operator==(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
-    return lhs.value_type == rhs.value_type &&
-        lhs.value_format == rhs.value_format &&
-        lhs.key == rhs.key &&
-        lhs.value == rhs.value;
-}
 
 
 namespace st2se {
+
+    std::ostream &operator<< (std::ostream &os, const st2se::Ids &a) {
+        for (const auto &item : a.data) {
+            os << item.first
+                << " has "
+                << item.second.next.size()
+                << " arguments"
+                << std::endl;
+        }
+
+        return os << std::endl << std::endl;
+    }
+
+    bool operator==(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
+        std::cout << POSITION_MACRO << "comapring:" << std::endl;
+        std::cout << "\t" << lhs.value_type << "\t" << rhs.value_type << std::endl;
+        std::cout << "\t" << lhs.value_format << "\t" << rhs.value_format << std::endl;
+        std::cout << "\t'" << lhs.key << "'\t'" << rhs.key << "'" << std::endl;
+        std::cout << "\t" << arg2str(lhs) << "\t" << arg2str(rhs) << std::endl;
+
+        bool b_val = false;
+
+        if (auto lval = std::get_if<long>(&lhs.value))
+            if (auto rval = std::get_if<long>(&rhs.value))
+                if (*lval == *rval) {
+                    b_val = true;
+                }
+
+        if (auto lval = std::get_if<std::string>(&lhs.value))
+            if (auto rval = std::get_if<std::string>(&rhs.value))
+                if (!lval->compare(*rval)) {
+                    b_val = true;
+                }
+
+        std::cout << "\tb_val:" << b_val << std::endl;
+
+        std::cout << "\treturning:" << (lhs.value_type == rhs.value_type &&
+                lhs.value_format == rhs.value_format &&
+                !lhs.key.compare(rhs.key) &&
+                b_val) << std::endl;
+
+        return lhs.value_type == rhs.value_type &&
+            lhs.value_format == rhs.value_format &&
+            !lhs.key.compare(rhs.key) &&
+            b_val;
+    }
+
+    std::ostream &operator<< (std::ostream &os, const st2se::val_format_t &a) {
+        // TODO transformt this into switch case statement
+        if (a == st2se::val_format_t::KEY_VALUE) {
+            return os << "KEY_VALUE";
+        }
+
+        if (a == st2se::val_format_t::VALUE) {
+            return os << "VALUE";
+        }
+
+        if (a == st2se::val_format_t::EMPTY) {
+            return os << "EMPTY";
+        }
+
+        return os << "UNDEF";
+    }
+
+    std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a) {
+        // TODO transformt this into switch case statement
+        if (a == st2se::val_type_t::INTEGER) {
+            return os << "INTEGER";
+        }
+
+        if (a == st2se::val_type_t::STRING) {
+            return os << "STRING";
+        }
+
+        if (a == st2se::val_type_t::CONSTANT) {
+            return os << "CONSTANT";
+        }
+
+        if (a == st2se::val_type_t::POINTER) {
+            return os << "POINTER";
+        }
+
+        if (a == st2se::val_type_t::ARRAY) {
+            return os << "ARRAY";
+        }
+
+        if (a == st2se::val_type_t::STRUCTURE) {
+            return os << "STRUCTURE";
+        }
+
+        if (a == st2se::val_type_t::BITFIELD) {
+            return os << "BITFIELD";
+        }
+
+        if (a == st2se::val_type_t::EMPTY) {
+            return os << "EMPTY";
+        }
+
+        return os << "UNDEF";
+    }
 
     bool Ids::insert(const std::string &name, Syscall_t &sc) {
 
@@ -130,8 +212,10 @@ namespace st2se {
     }
 
     // move this function to utilities
-    std::string arg2str(argument_t &arg) {
+    std::string arg2str(const argument_t &arg) {
         // *INDENT-OFF*
+        // std::cout << POSITION_MACRO << "\tval_type:" << arg.value_type << std::endl;
+        // std::cout << POSITION_MACRO << "\tvalue:" << std::endl;
         const bool pointer = arg.value_type == val_type_t::POINTER;
         return std::visit(
             [pointer](auto &&arg) -> std::string {

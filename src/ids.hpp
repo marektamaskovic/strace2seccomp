@@ -12,6 +12,8 @@
 #include <variant>
 #include <vector>
 
+#define POSITION_MACRO __FILE__ << ":" << __func__ << ":" << __LINE__ << ":"
+
 namespace st2se {
 
     enum class val_format_t {
@@ -65,7 +67,11 @@ namespace st2se {
 
     };
 
-    std::string arg2str(argument_t &arg);
+    std::string arg2str(const argument_t &arg);
+    bool operator== (const st2se::argument_t &lhs, const st2se::argument_t &rhs);
+    std::ostream &operator<< (std::ostream &os, const st2se::Ids &a);
+    std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a);
+    std::ostream &operator<< (std::ostream &os, const st2se::val_format_t &a);
 
 } // namespace st2se
 

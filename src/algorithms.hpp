@@ -1,13 +1,13 @@
 #ifndef ALGORITHMS_HPP
 #define ALGORITHMS_HPP
 
-#include <iostream>
-#include <vector>
 #include <algorithm>
+#include <iostream>
+#include <string>
+#include <unordered_set>
 #include <utility>
 #include <variant>
-#include <unordered_set>
-#include <string>
+#include <vector>
 
 #include "ids.hpp"
 
@@ -45,15 +45,16 @@ namespace st2se {
         void processSyscall(const Syscall_t &sc, Ids &out);
         unsigned cluster(std::vector<argument_t> &in, std::vector<argument_t> &out);
         std::pair<argument_t, argument_t> smallestDst(std::vector<argument_t> &in);
-        double distance(argument_t &left, argument_t &right);
+        double distance(const argument_t &left, const argument_t &right);
+
+        bool removeItem(argument_t &arg, std::vector<argument_t> &vec);
+        std::vector<argument_t> closestItemsTo(const argument_t &arg, std::vector<argument_t> &vec);
+        bool moveCluster(std::vector<argument_t> &cluster, std::vector<argument_t> &out);
 
     };
 
-    int LevenshteinDistance(const std::string &s, int len_s, const std::string &t, int len_t);
-    template<typename T>
-    T minimum(T a, T b, T c);
     int bitfieldDistance(bitfield_t &a, bitfield_t &b);
-    bitfield_t convert2bitfield(argument_t &in);
+    bitfield_t convert2bitfield(const argument_t &in);
 
 } // namespace st2se
 

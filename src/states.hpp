@@ -57,6 +57,4 @@ namespace st2se {
     };
 } // namespace st2se
 
-std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a);
-
 #endif
