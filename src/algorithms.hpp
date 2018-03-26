@@ -11,6 +11,18 @@
 
 #include "ids.hpp"
 
+#define DEBUGprintArgumentSet(__set_variable) do {                      \
+        std::cout << "\t\x1B[33m";                                      \
+        for (auto item : __set_variable) {                              \
+            std::cout << "  " << arg2str(item);                         \
+        }                                                               \
+        std::cout << "\x1B[0m" << std::endl;                            \
+    } while(0)
+
+#define DEBUGprint(__string_variable) do {                              \
+        std::cout << POSITION_MACRO << __string_variable ;              \
+    } while(0)
+
 namespace st2se {
 
     using bitfield_t = std::vector<std::string>;
@@ -48,8 +60,10 @@ namespace st2se {
         double distance(const argument_t &left, const argument_t &right);
 
         bool removeItem(argument_t &arg, std::vector<argument_t> &vec);
-        std::vector<argument_t> closestItemsTo(const argument_t &arg, std::vector<argument_t> &vec);
+        std::vector<argument_t> closestItemsTo(const argument_t &arg, std::vector<argument_t> &vec, double eps);
         bool moveCluster(std::vector<argument_t> &cluster, std::vector<argument_t> &out);
+        bool moveFirstItem(std::vector<argument_t> &to, std::vector<argument_t> &from);
+
 
     };
 

@@ -219,30 +219,22 @@ namespace st2se {
 
 
 
-        std::cout << POSITION_MACRO << arg2str(in.front()) << std::endl;
-
-
-        std::cout << POSITION_MACRO << "in.size() is " << in.size() << std::endl;
-        std::cout << POSITION_MACRO << "in is:" << std::endl;
-
-        for (auto item : in) {
-            std::cout << "\t" << arg2str(item) << std::endl;
-        }
+        DEBUGprint(arg2str(in.front()) << std::endl);
+        DEBUGprint("in.size() is " << in.size() << std::endl);
+        DEBUGprint("in is:");
+        DEBUGprintArgumentSet(in);
 
         std::vector<argument_t> reducing_input;
 
-        std::cout << POSITION_MACRO << "reducing_input.size() is " << reducing_input.size() << std::endl;
+        DEBUGprint("reducing_input.size() is " << reducing_input.size() << std::endl);
 
         // duplicate in to reducing_input
         std::copy(in.begin(), in.end(),
             std::back_inserter(reducing_input));
 
-        std::cout << POSITION_MACRO << "reducing_input.size() is " << reducing_input.size() << std::endl;
-        std::cout << POSITION_MACRO << "reducing_input is:" << std::endl;
-
-        for (auto item : reducing_input) {
-            std::cout << "\t" << arg2str(item) << std::endl;
-        }
+        DEBUGprint("reducing_input.size() is " << reducing_input.size() << std::endl);
+        DEBUGprint("reducing_input is:");
+        DEBUGprintArgumentSet(reducing_input);
 
         // helping vectors
         std::vector<argument_t> to_check {};
@@ -250,89 +242,125 @@ namespace st2se {
 
         auto smallest_pair = smallestDst(in);
         double eps = 2.0 * distance(smallest_pair.first, smallest_pair.second);
+        DEBUGprint("eps: " << eps << std::endl);
 
         to_check.push_back(smallest_pair.first);
-        to_check.push_back(smallest_pair.second);
+        // to_check.push_back(smallest_pair.second);
 
-        std::cout << POSITION_MACRO << arg2str(smallest_pair.first) << std::endl;
-        std::cout << POSITION_MACRO << arg2str(smallest_pair.second) << std::endl;
+        DEBUGprint(arg2str(smallest_pair.first) << std::endl);
+        // DEBUGprint(arg2str(smallest_pair.second) << std::endl);
 
-        std::cout << "---------------------------------\n\n\n\n" << std::endl;
+        std::cout << "---------------------------------------\n\n" << std::endl;
 
         while (true) {
-            //------------------------------------------------------------------
             // Debug info:
             //------------------------------------------------------------------
-            std::cout << POSITION_MACRO << "step 1: removeItem  to_check().front from reducing_input" << std::endl;
-            std::cout << POSITION_MACRO << "to_check is:" << std::endl;
-
-            for (auto item : to_check) {
-                std::cout << "\t" << arg2str(item) << std::endl;
-            }
-
-            std::cout << POSITION_MACRO << "cluster is:" << std::endl;
-
-            for (auto item : cluster) {
-                std::cout << "\t" << arg2str(item) << std::endl;
-            }
-
-            std::cout << POSITION_MACRO << "reducing_input is:" << std::endl;
-
-            for (auto item : reducing_input) {
-                std::cout << "\t" << arg2str(item) << std::endl;
-            }
-
+            DEBUGprint("step 1: removeItem  to_check.front() from reducing_input" << std::endl);
             //------------------------------------------------------------------
             removeItem(to_check.front(), reducing_input);
 
-            std::cout << POSITION_MACRO << "step 2: find closest items to " << std::endl;
-            auto vec_tmp = closestItemsTo(to_check.front(), reducing_input);
+            // Debug info:
+            //------------------------------------------------------------------
+            DEBUGprint("to_check is:");
+            DEBUGprintArgumentSet(to_check);
+            DEBUGprint("cluster is:");
+            DEBUGprintArgumentSet(cluster);
+            DEBUGprint("reducing_input is:");
+            DEBUGprintArgumentSet(reducing_input);
+            //------------------------------------------------------------------
 
-            std::cout << POSITION_MACRO << "step 3" << std::endl;
+            // Debug info:
+            //------------------------------------------------------------------
+            DEBUGprint("step 2: find closest items to `" << arg2str(to_check.front()) << "`" << std::endl);
+            //------------------------------------------------------------------
 
+            auto vec_tmp = closestItemsTo(to_check.front(), reducing_input, eps);
+
+            DEBUGprint("vec_tmp is:");
+            DEBUGprintArgumentSet(vec_tmp);
+
+            DEBUGprint("step 3" << std::endl);
+
+            DEBUGprint("step 3.1: insert clossest items to `to_check` set" << std::endl);
             for (auto item : vec_tmp) {
-                std::cout << POSITION_MACRO << "step 3.1: insert clossest items to `to_check` set" << std::endl;
+
                 to_check.push_back(item);
                 cluster.push_back(item);
+            }
+            DEBUGprint("to_check is:");
+            DEBUGprintArgumentSet(to_check);
 
-                std::cout << POSITION_MACRO << "step 3.2: remove clossest item from `reducing_input` set" << std::endl;
+            DEBUGprint("step 3.2: remove clossest item from `reducing_input` set" << std::endl);
+            for(auto item : vec_tmp) {
                 removeItem(item, reducing_input);
             }
+            DEBUGprint("reducing_input is:");
+            DEBUGprintArgumentSet(reducing_input);
 
-            std::cout << POSITION_MACRO << "step 4: check if is `to_check` set empty" << std::endl;
+            // move first `to_check` element to cluster
+            DEBUGprint("step 4: move first `to_check` element to cluster" << std::endl);
+            
+            moveFirstItem(/*where*/cluster, /*from*/ to_check);
+
+            DEBUGprint("to_check is:");
+            DEBUGprintArgumentSet(to_check);
+            DEBUGprint("cluster is:");
+            DEBUGprintArgumentSet(cluster);
+
+
+            DEBUGprint("step 5: check if is `to_check` set empty" << std::endl);
 
             if (to_check.empty()) {
                 moveCluster(cluster, out);
                 cluster.clear();
 
                 if (!reducing_input.empty()) {
-                    std::cout << POSITION_MACRO << "step 4.1: `reducing_input` is not empty adding first item of it to to_check set" << std::endl;
+                    DEBUGprint("step 5.1: `reducing_input` is not empty adding first item of it to to_check set" << std::endl);
                     to_check.push_back(reducing_input.front());
                 }
                 else {
-                    std::cout << POSITION_MACRO << "step 4.2: `reducing_input` is empty() breaking out from loop" << std::endl;
+                    DEBUGprint("step 5.2: `reducing_input` is empty() breaking out from loop" << std::endl);
                     break;
                 }
             }
-
+            DEBUGprint("\n\n\n");
         }
-        std::cout << POSITION_MACRO << "step 5: returning from cluster()" << std::endl;
+
+        DEBUGprint("step 6: returning from cluster()" << std::endl);
 
         return out.size();
     }
 
+    bool Algo_advanced::moveFirstItem(std::vector<argument_t> &to, std::vector<argument_t> &from) {
+
+        argument_t element = from.front();
+
+        for (auto item : to) {
+            if (item == element) {
+                from.erase(from.begin());
+                return false;
+            }
+        }
+
+        to.push_back(element);
+        from.erase(from.begin());
+
+        return true;
+    };
+
+
     // asdf func()
     bool Algo_advanced::removeItem(argument_t &arg, std::vector<argument_t> &vec) {
 
-        // std::cout << POSITION_MACRO << "arg is " << arg2str(arg) << std::endl;
-        // std::cout << POSITION_MACRO << "vec is:" << std::endl;
+        // DEBUGprint("arg is " << arg2str(arg) << std::endl);
+        // DEBUGprint("vec is:" << std::endl);
 
         // for (auto item : vec) {
         //     std::cout << "\t" << arg2str(item) << std::endl;
         // }
 
         for (auto item = vec.begin(); item != vec.end(); item++) {
-            // std::cout << POSITION_MACRO << "comparing:" << std::endl;
+            // DEBUGprint("comparing:" << std::endl);
             // std::cout << "\t" << arg2str(arg) << std::endl;
             // std::cout << "\t" << arg2str(*item) << std::endl;
 
@@ -347,7 +375,7 @@ namespace st2se {
     }
 
     // asdf func()
-    std::vector<argument_t> Algo_advanced::closestItemsTo(const argument_t &arg, std::vector<argument_t> &vec) {
+    std::vector<argument_t> Algo_advanced::closestItemsTo(const argument_t &arg, std::vector<argument_t> &vec, double eps) {
 
         double(tmp) {
             0.0
@@ -358,7 +386,7 @@ namespace st2se {
             return ret_val;
         }
 
-        // std::cout << POSITION_MACRO << "computing distance:" << std::endl;
+        // DEBUGprint("computing distance:" << std::endl);
         // std::cout << "\t" << arg2str(vec.front()) << std::endl;
         // std::cout << "\t" << arg2str(vec.back()) << std::endl;
 
@@ -372,6 +400,9 @@ namespace st2se {
                 min = tmp;
             }
         }
+
+        if (min > eps)
+            return ret_val;
 
         for (auto item : vec) {
             if (distance(item, arg) == min) {
@@ -410,16 +441,16 @@ namespace st2se {
         double mem_dst = distance(in.front(), in.back());
         double tmp {0.0};
 
-        std::cout << POSITION_MACRO << "distance:" << std::endl;
+        // DEBUGprint("distance:" << std::endl);
 
-        std::cout << "\tin.size(): " << in.size() << std::endl;
-        std::cout << "\tmem_dst: " << mem_dst << std::endl;
-        std::cout << "\ti\tl\ttmp" << std::endl;
+        // std::cout << "\tin.size(): " << in.size() << std::endl;
+        // std::cout << "\tmem_dst: " << mem_dst << std::endl;
+        // std::cout << "\ti\tl\ttmp" << std::endl;
 
         for (unsigned i = 0; i < in.size(); i++) {
             for (unsigned l = i; l < in.size(); l++) {
                 tmp = distance(in[i], in[l]);
-                std::cout << "\t" << i << "\t" << l << "\t" << tmp << std::endl;
+                // std::cout << "\t" << i << "\t" << l << "\t" << tmp << std::endl;
 
                 if (tmp == (-1.0)) {
                     continue;
@@ -427,17 +458,17 @@ namespace st2se {
 
                 if (tmp != 0.0 && tmp <= mem_dst) {
                     mem_dst = tmp;
-                    std::cout << "\tassigning: " << arg2str(in.at(i)) << std::endl;
-                    std::cout << "\tassigning: " << arg2str(in.at(l)) << std::endl;
+                    // std::cout << "\tassigning: " << arg2str(in.at(i)) << std::endl;
+                    // std::cout << "\tassigning: " << arg2str(in.at(l)) << std::endl;
                     p.first = in.at(i);
                     p.second = in.at(l);
                 }
             }
         }
 
-        // std::cout << POSITION_MACRO << arg2str(in.front()) << std::endl;
-        // std::cout << POSITION_MACRO << arg2str(p.first) << std::endl;
-        // std::cout << POSITION_MACRO << arg2str(p.second) << std::endl;
+        // DEBUGprint(arg2str(in.front()) << std::endl);
+        DEBUGprint(arg2str(p.first) << std::endl);
+        // DEBUGprint(arg2str(p.second) << std::endl);
 
         return p;
     }
@@ -446,7 +477,7 @@ namespace st2se {
     double Algo_advanced::distance(const argument_t &left, const argument_t &right) {
         double ret_val {-1.0};
 
-        // std::cout << POSITION_MACRO << "value_type:" << left.value_type << std::endl;
+        // DEBUGprint("value_type:" << left.value_type << std::endl);
 
         if (
             left.value_type == val_type_t::POINTER ||
@@ -462,7 +493,8 @@ namespace st2se {
             else {
                 ret_val = b - a;
             }
-            // std::cout << POSITION_MACRO << "assigning:" << ((a > b) ? a - b : b - a) << std::endl;
+
+            // DEBUGprint("assigning:" << ((a > b) ? a - b : b - a) << std::endl);
 
         }
 
@@ -473,7 +505,7 @@ namespace st2se {
             ret_val = bitfieldDistance(a, b);
         }
 
-        // std::cout << POSITION_MACRO << "ret_val:" << ret_val << std::endl;
+        // DEBUGprint("ret_val:" << ret_val << std::endl);
 
 
         return ret_val;

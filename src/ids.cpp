@@ -2,8 +2,6 @@
 
 template<class T> struct always_false : std::false_type {};
 
-
-
 namespace st2se {
 
     std::ostream &operator<< (std::ostream &os, const st2se::Ids &a) {
@@ -19,11 +17,11 @@ namespace st2se {
     }
 
     bool operator==(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
-        std::cout << POSITION_MACRO << "comapring:" << std::endl;
-        std::cout << "\t" << lhs.value_type << "\t" << rhs.value_type << std::endl;
-        std::cout << "\t" << lhs.value_format << "\t" << rhs.value_format << std::endl;
-        std::cout << "\t'" << lhs.key << "'\t'" << rhs.key << "'" << std::endl;
-        std::cout << "\t" << arg2str(lhs) << "\t" << arg2str(rhs) << std::endl;
+        // std::cout << POSITION_MACRO << "comapring:" << std::endl;
+        // std::cout << "\t" << lhs.value_type << "\t" << rhs.value_type << std::endl;
+        // std::cout << "\t" << lhs.value_format << "\t" << rhs.value_format << std::endl;
+        // std::cout << "\t'" << lhs.key << "'\t'" << rhs.key << "'" << std::endl;
+        // std::cout << "\t" << arg2str(lhs) << "\t" << arg2str(rhs) << std::endl;
 
         bool b_val = false;
 
@@ -39,12 +37,12 @@ namespace st2se {
                     b_val = true;
                 }
 
-        std::cout << "\tb_val:" << b_val << std::endl;
+        // std::cout << "\tb_val:" << b_val << std::endl;
 
-        std::cout << "\treturning:" << (lhs.value_type == rhs.value_type &&
-                lhs.value_format == rhs.value_format &&
-                !lhs.key.compare(rhs.key) &&
-                b_val) << std::endl;
+        // std::cout << "\treturning:" << (lhs.value_type == rhs.value_type &&
+        // lhs.value_format == rhs.value_format &&
+        // !lhs.key.compare(rhs.key) &&
+        // b_val) << std::endl;
 
         return lhs.value_type == rhs.value_type &&
             lhs.value_format == rhs.value_format &&

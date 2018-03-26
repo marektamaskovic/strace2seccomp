@@ -194,7 +194,8 @@ main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
  include/tao/pegtl/memory_input.hpp include/tao/pegtl/read_input.hpp \
  include/tao/pegtl/string_input.hpp \
  include/tao/pegtl/internal/file_reader.hpp \
- include/tao/pegtl/string_input.hpp argparse.hpp straceparser.hpp \
+ include/tao/pegtl/string_input.hpp argparse.hpp ids.hpp optimizer.hpp \
+ algorithms.hpp states.hpp straceparser.hpp \
  include/tao/pegtl/contrib/tracer.hpp \
  include/tao/pegtl/contrib/../config.hpp \
  include/tao/pegtl/contrib/../normal.hpp \
@@ -204,7 +205,7 @@ main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
  include/tao/pegtl/analysis/../config.hpp \
  include/tao/pegtl/analysis/grammar_info.hpp \
  include/tao/pegtl/analysis/insert_guard.hpp straceparser_actions.hpp \
- straceparser_grammar.hpp states.hpp ids.hpp optimizer.hpp algorithms.hpp
+ straceparser_grammar.hpp
 optimizer.o: optimizer.cpp optimizer.hpp algorithms.hpp ids.hpp
 states.o: states.cpp states.hpp ids.hpp
 straceparser.o: straceparser.cpp straceparser.hpp include/tao/pegtl.hpp \
