@@ -97,6 +97,10 @@ namespace st2se {
             return os << "BITFIELD";
         }
 
+        if (a == st2se::val_type_t::CLUSTERS) {
+            return os << "CLUSTERS";
+        }
+
         if (a == st2se::val_type_t::EMPTY) {
             return os << "EMPTY";
         }
@@ -104,9 +108,47 @@ namespace st2se {
         return os << "UNDEF";
     }
 
+    _argument_t::_argument_t(val_format_t _fmt, val_type_t _type, std::vector<_argument_t> _vec):
+        value_format(_fmt), value_type(_type), next(_vec) {
+    }
+
+    _argument_t::_argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key, std::variant<long, std::string> _value, std::vector<_argument_t> _next):
+        value_format(_fmt), value_type(_type), key(_key), value(_value), next(_next) {
+    }
+
+    _argument_t::_argument_t():
+        value_format(val_format_t::EMPTY),
+        value_type(val_type_t::EMPTY),
+        key(""),
+        value(""),
+        next({}) {
+    }
+
+    void _argument_t::print(){
+    
+        std::function<void(std::string, std::vector<argument_t>)> print_recursive;
+
+        print_recursive = [&print_recursive](std::string prefix, std::vector<argument_t> container) {
+            for (auto item : container) {
+                std::string printing = prefix + " '" + arg2str(item) + "',";
+
+                // if this is the last element print the whole string with arguments
+                if (item.next.empty()) {
+                    std::cout << printing << "\b " << std::endl;
+                }
+                else {
+                    //recursive descent
+                    print_recursive(std::string(printing), item.next);
+                }
+            }
+        };
+
+        print_recursive("\t"+arg2str(*this), next);
+    }
+
     bool Ids::insert(const std::string &name, Syscall_t &sc) {
 
-        Syscall_t &root_sc = this->data[name];
+        Syscall_t &root_sc = data[name];
 
         if (root_sc.next.empty()) {
             root_sc.name = sc.name;
@@ -181,7 +223,12 @@ namespace st2se {
     }
 
     void Syscall_t::print() {
-        std::cout << name << std::endl ;
+        std::cout << name << ":" << std::endl ;
+
+        if(clustered){
+            printClustered();
+            return;
+        }
 
         if (next.empty()) {
             std::cout << "No args" << std::endl;
@@ -205,7 +252,25 @@ namespace st2se {
                 }
             };
 
-            print_recursive("\t", this->next);
+            print_recursive("\t", next);
+        }
+    }
+
+    void Syscall_t::printClustered() {
+
+        if (next.empty()) {
+            std::cout << "No args" << std::endl;
+        }
+        else {
+            for(auto &pos : next){
+                std::cout << "Clusters for arg:" << std::endl;
+                for(auto item1 : pos.next){
+                    std::cout << "\t" << arg2str(item1) << ", ";
+                    for(auto item2 : item1.next)
+                        std::cout << arg2str(item2) << ", ";
+                    std::cout << std::endl;
+                }
+            }
         }
     }
 
@@ -242,5 +307,4 @@ namespace st2se {
         );
         // *INDENT-ON*
     }
-
 } // namespace st2se

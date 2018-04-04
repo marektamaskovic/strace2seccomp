@@ -7,9 +7,9 @@ LDFLAGS=-Iinclude/
 LINK.o = $(LINK.cpp)
 
 ifeq ($(CXX),g++)
-	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/
+	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
 else
-	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -stdlib=libc++ -Iinclude/ -I/usr/include/c++/7/
+	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -stdlib=libc++ -Iinclude/ -I/usr/include/c++/7/ $(USER_DEFINES)
 endif
 
 

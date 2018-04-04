@@ -93,13 +93,7 @@ namespace st2se {
         if (parsed_val.empty()) {
             std::cerr << "Error: Parsed val is empty." << std::endl;
 
-            argument_t a {
-                val_format_t::EMPTY,
-                val_type_t::EMPTY,
-                "",
-                "",
-                {}
-            };
+            argument_t a;
 
             s.next.emplace_back(a);
             s.arg_num = 0;

@@ -293,7 +293,12 @@ namespace st2se::grammar {
             std::string val {""};
             states.arg_num++;
             divideKV(in, key, val);
-            argument_t arg {states.get_val_format(), states.get_val_type(), key, states.value, {}};
+
+            val_type_t _type = states.get_val_type();
+            val_format_t _fmt = states.get_val_format();
+
+
+            argument_t arg(_fmt, _type, key, states.value, {});
             states.push_parsed_val(arg);
 
             if (params.debug) {

@@ -67,6 +67,10 @@ int main(int argc, char *argv[]) {
         ret_val = 1;
     }
 
+    out.print();
+
+    // out.data["close"].print();
+
     std::cout << "Exiting ..." << std::endl;
 
     // remove and dealloc algorithm

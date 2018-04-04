@@ -67,6 +67,7 @@ namespace st2se {
         (void) out;
     }
 
+    // FIXME This is rubbish vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     std::vector<argument_t> Algorithm::getArguemntsFromPos(
         const std::vector<argument_t> &args,
         unsigned lvl
@@ -85,6 +86,7 @@ namespace st2se {
             return v;
         }
     }
+    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     unsigned Algorithm::getDepth(const argument_t &arg) {
         unsigned depth {0};
@@ -141,7 +143,9 @@ namespace st2se {
     void Algo_advanced::processSyscall(const Syscall_t &sc, Ids &out) {
         unsigned depth {0};
 
+        #ifndef NDEBUG
         std::cout << "max depth of `" << sc.name << "` is";
+        #endif
 
         // FIXME
         // make static function of this vvv
@@ -149,30 +153,33 @@ namespace st2se {
             unsigned tmp;
 
             if ((tmp = getDepth(arg)) > depth) {
+        #ifndef NDEBUG
                 if (depth != 0) {
                     std::cout << " " << depth;
                 }
-
+        #endif
                 depth = tmp;
             }
         }
 
+        #ifndef NDEBUG
         std::cout << " " << depth << std::endl;
-
+        #endif
         // ------------------------------------
         // Algorithm:
 
         for (unsigned arg_pos = 0; arg_pos < depth; arg_pos++) {
             std::vector<argument_t> v;
+            std::cout << "arg_pos: " << arg_pos << std::endl;
             v = getArguemntsFromPos(sc.next, arg_pos);
 
+            // *INDENT-OFF*
             std::sort(v.begin(), v.end(),
-            [](argument_t a, argument_t b) {
-                return a.value > b.value;
-            }
+                [](argument_t a, argument_t b) {
+                    return a.value > b.value;
+                }
             );
 
-            // *INDENT-OFF*
             auto end =
                 std::unique(v.begin(), v.end(),
                     [](argument_t l, argument_t r){return l.value == r.value;}
@@ -182,25 +189,46 @@ namespace st2se {
             v.erase(end, v.end());
 
             // Clustering:
-            std::vector<argument_t> clusterd_v {};
-            unsigned clusters = this->cluster(v, clusterd_v);
+            std::vector<argument_t> clustered_v {};
+
+
+            unsigned clusters = this->cluster(v, clustered_v);
+
+            for(auto &item : v){
+                // std::cout << arg2str(item) << " ";
+                item.print();
+            }
+            std::cout << std::endl;
 
             if (clusters == 0) {
                 throw (std::runtime_error("Clustering error"));
             }
 
             std::cout << "\targ no." << arg_pos << " is ";
-            std::cout << clusterd_v.size() << " items long" << std::endl;
+            std::cout << clustered_v.size() << " items long" << std::endl;
             std::cout << "\t\tclusters: " << clusters << std::endl;
+
+            out.data[sc.name] = sc;
+            argument_t arg(val_format_t::EMPTY,
+                                                val_type_t::CLUSTERS,
+                                                clustered_v
+                                               );
+            // out.data[sc.name].next.emplace_back(val_format_t::EMPTY,
+            //                                     val_type_t::CLUSTERS,
+            //                                     clustered_v
+            //                                    );
+            std::cout << "inserting madafak cluster" << std::endl;
+            out.data[sc.name].next.push_back(arg);
+
+            std::cout << "out...next.size()" << out.data[sc.name].next.size() << std::endl;
+            out.data[sc.name].clustered = true;
+            // out.print();
         }
     }
 
     // clustering algorithm which clusters the arguments
     // from vector 'in' and stores them in vector 'out'
     unsigned Algo_advanced::cluster(std::vector<argument_t> &in, std::vector<argument_t> &out) {
-
-        int first {0};
-        int second {0};
 
         if (in.empty()) {
             return 0;
@@ -219,22 +247,22 @@ namespace st2se {
 
 
 
-        DEBUGprint(arg2str(in.front()) << std::endl);
-        DEBUGprint("in.size() is " << in.size() << std::endl);
-        DEBUGprint("in is:");
-        DEBUGprintArgumentSet(in);
+        // DEBUGprint(arg2str(in.front()) << std::endl);
+        // DEBUGprint("in.size() is " << in.size() << std::endl);
+        // DEBUGprint("in is:");
+        // DEBUGprintArgumentSet(in);
 
         std::vector<argument_t> reducing_input;
 
-        DEBUGprint("reducing_input.size() is " << reducing_input.size() << std::endl);
+        // DEBUGprint("reducing_input.size() is " << reducing_input.size() << std::endl);
 
         // duplicate in to reducing_input
         std::copy(in.begin(), in.end(),
             std::back_inserter(reducing_input));
 
-        DEBUGprint("reducing_input.size() is " << reducing_input.size() << std::endl);
-        DEBUGprint("reducing_input is:");
-        DEBUGprintArgumentSet(reducing_input);
+        // DEBUGprint("reducing_input.size() is " << reducing_input.size() << std::endl);
+        // DEBUGprint("reducing_input is:");
+        // DEBUGprintArgumentSet(reducing_input);
 
         // helping vectors
         std::vector<argument_t> to_check {};
@@ -242,91 +270,94 @@ namespace st2se {
 
         auto smallest_pair = smallestDst(in);
         double eps = 2.0 * distance(smallest_pair.first, smallest_pair.second);
-        DEBUGprint("eps: " << eps << std::endl);
+        // DEBUGprint("eps: " << eps << std::endl);
 
         to_check.push_back(smallest_pair.first);
         // to_check.push_back(smallest_pair.second);
 
-        DEBUGprint(arg2str(smallest_pair.first) << std::endl);
+        // DEBUGprint(arg2str(smallest_pair.first) << std::endl);
         // DEBUGprint(arg2str(smallest_pair.second) << std::endl);
+
+        // DEBUGprint("to_check is:");
+        // DEBUGprintArgumentSet(to_check);
 
         std::cout << "---------------------------------------\n\n" << std::endl;
 
         while (true) {
             // Debug info:
             //------------------------------------------------------------------
-            DEBUGprint("step 1: removeItem  to_check.front() from reducing_input" << std::endl);
+            // DEBUGprint("step 1: removeItem  to_check.front() from reducing_input" << std::endl);
             //------------------------------------------------------------------
             removeItem(to_check.front(), reducing_input);
 
             // Debug info:
             //------------------------------------------------------------------
-            DEBUGprint("to_check is:");
-            DEBUGprintArgumentSet(to_check);
-            DEBUGprint("cluster is:");
-            DEBUGprintArgumentSet(cluster);
-            DEBUGprint("reducing_input is:");
-            DEBUGprintArgumentSet(reducing_input);
+            // DEBUGprint("to_check is:");
+            // DEBUGprintArgumentSet(to_check);
+            // DEBUGprint("cluster is:");
+            // DEBUGprintArgumentSet(cluster);
+            // DEBUGprint("reducing_input is:");
+            // DEBUGprintArgumentSet(reducing_input);
             //------------------------------------------------------------------
 
             // Debug info:
             //------------------------------------------------------------------
-            DEBUGprint("step 2: find closest items to `" << arg2str(to_check.front()) << "`" << std::endl);
+            // DEBUGprint("step 2: find closest items to `" << arg2str(to_check.front()) << "`" << std::endl);
             //------------------------------------------------------------------
 
             auto vec_tmp = closestItemsTo(to_check.front(), reducing_input, eps);
 
-            DEBUGprint("vec_tmp is:");
-            DEBUGprintArgumentSet(vec_tmp);
+            // DEBUGprint("vec_tmp" << vec_tmp.size() << " is:");
+            // DEBUGprintArgumentSet(vec_tmp);
 
-            DEBUGprint("step 3" << std::endl);
+            // DEBUGprint("step 3" << std::endl);
 
-            DEBUGprint("step 3.1: insert clossest items to `to_check` set" << std::endl);
+            // DEBUGprint("step 3.1: insert clossest items to `to_check` set" << std::endl);
             for (auto item : vec_tmp) {
-
                 to_check.push_back(item);
                 cluster.push_back(item);
             }
-            DEBUGprint("to_check is:");
-            DEBUGprintArgumentSet(to_check);
 
-            DEBUGprint("step 3.2: remove clossest item from `reducing_input` set" << std::endl);
+            // DEBUGprint("to_check is:");
+            // DEBUGprintArgumentSet(to_check);
+
+            // DEBUGprint("step 3.2: remove clossest item from `reducing_input` set" << std::endl);
             for(auto item : vec_tmp) {
                 removeItem(item, reducing_input);
             }
-            DEBUGprint("reducing_input is:");
-            DEBUGprintArgumentSet(reducing_input);
+            // DEBUGprint("reducing_input is:");
+            // DEBUGprintArgumentSet(reducing_input);
 
-            // move first `to_check` element to cluster
-            DEBUGprint("step 4: move first `to_check` element to cluster" << std::endl);
+            // // move first `to_check` element to cluster
+            // DEBUGprint("step 4: move first `to_check` element to cluster" << std::endl);
             
             moveFirstItem(/*where*/cluster, /*from*/ to_check);
 
-            DEBUGprint("to_check is:");
-            DEBUGprintArgumentSet(to_check);
-            DEBUGprint("cluster is:");
-            DEBUGprintArgumentSet(cluster);
+            // DEBUGprint("to_check is:");
+            // DEBUGprintArgumentSet(to_check);
+            // DEBUGprint("cluster is:");
+            // DEBUGprintArgumentSet(cluster);
 
 
-            DEBUGprint("step 5: check if is `to_check` set empty" << std::endl);
+            // DEBUGprint("step 5: check if is `to_check` set empty" << std::endl);
 
             if (to_check.empty()) {
                 moveCluster(cluster, out);
                 cluster.clear();
 
                 if (!reducing_input.empty()) {
-                    DEBUGprint("step 5.1: `reducing_input` is not empty adding first item of it to to_check set" << std::endl);
+                    // DEBUGprint("step 5.1: `reducing_input` is not empty adding first item of it to to_check set" << std::endl);
                     to_check.push_back(reducing_input.front());
                 }
                 else {
-                    DEBUGprint("step 5.2: `reducing_input` is empty() breaking out from loop" << std::endl);
+                    // DEBUGprint("step 5.2: `reducing_input` is empty() breaking out from loop" << std::endl);
                     break;
                 }
             }
-            DEBUGprint("\n\n\n");
+            // DEBUGprint("\n\n\n");
         }
 
-        DEBUGprint("step 6: returning from cluster()" << std::endl);
+        // DEBUGprint("step 6: returning from cluster() with ret_val: " << out.size() << std::endl);
 
         return out.size();
     }
@@ -375,11 +406,8 @@ namespace st2se {
     }
 
     // asdf func()
-    std::vector<argument_t> Algo_advanced::closestItemsTo(const argument_t &arg, std::vector<argument_t> &vec, double eps) {
+    std::vector<argument_t> Algo_advanced::closestItemsTo(argument_t &arg, std::vector<argument_t> &vec, double eps) {
 
-        double(tmp) {
-            0.0
-        };
         std::vector<argument_t> ret_val {};
 
         if (vec.empty()) {
@@ -390,22 +418,8 @@ namespace st2se {
         // std::cout << "\t" << arg2str(vec.front()) << std::endl;
         // std::cout << "\t" << arg2str(vec.back()) << std::endl;
 
-        double min = distance(vec.front(), vec.back());
-
-
         for (auto item : vec) {
-            tmp = distance(item, arg);
-
-            if (tmp < min) {
-                min = tmp;
-            }
-        }
-
-        if (min > eps)
-            return ret_val;
-
-        for (auto item : vec) {
-            if (distance(item, arg) == min) {
+            if (distance(item, arg) <= eps) {
                 ret_val.push_back(item);
             }
         }
@@ -423,7 +437,7 @@ namespace st2se {
         out.push_back(cluster.back());
         cluster.pop_back();
 
-        std::vector<argument_t> &place = out.front().next;
+        std::vector<argument_t> &place = out.back().next;
 
         for (auto item : cluster) {
             place.push_back(item);
@@ -448,9 +462,12 @@ namespace st2se {
         // std::cout << "\ti\tl\ttmp" << std::endl;
 
         for (unsigned i = 0; i < in.size(); i++) {
-            for (unsigned l = i; l < in.size(); l++) {
+            for (unsigned l = (i + 1); l < in.size(); l++) {
                 tmp = distance(in[i], in[l]);
+                
+                #ifndef NDEBUG
                 // std::cout << "\t" << i << "\t" << l << "\t" << tmp << std::endl;
+                #endif
 
                 if (tmp == (-1.0)) {
                     continue;
@@ -466,18 +483,21 @@ namespace st2se {
             }
         }
 
-        // DEBUGprint(arg2str(in.front()) << std::endl);
-        DEBUGprint(arg2str(p.first) << std::endl);
-        // DEBUGprint(arg2str(p.second) << std::endl);
+        // // DEBUGprint(arg2str(in.front()) << std::endl);
+        // DEBUGprint(arg2str(p.first) << std::endl);
+        // // DEBUGprint(arg2str(p.second) << std::endl);
 
         return p;
     }
 
     // computes distance for two arguments
-    double Algo_advanced::distance(const argument_t &left, const argument_t &right) {
+    double Algo_advanced::distance(argument_t &left, argument_t &right) {
         double ret_val {-1.0};
 
+        // std::cout << "\n\n\n";
         // DEBUGprint("value_type:" << left.value_type << std::endl);
+        // DEBUGprint("left:" << arg2str(left) << "\n");
+        // DEBUGprint("right:" << arg2str(right) << "\n");
 
         if (
             left.value_type == val_type_t::POINTER ||
@@ -498,14 +518,18 @@ namespace st2se {
 
         }
 
-        if (left.value_type == val_type_t::BITFIELD) {
+        // constant is the same as bitfield but constant has no `|` operator
+        if ((left.value_type == val_type_t::BITFIELD) ||
+            (left.value_type == val_type_t::CONSTANT)) {
             // compute distance between bitfields
+            // DEBUGprint("computing bitfield distance\n");
             auto a = convert2bitfield(left);
             auto b = convert2bitfield(right);
             ret_val = bitfieldDistance(a, b);
         }
 
         // DEBUGprint("ret_val:" << ret_val << std::endl);
+        // std::cout << "\n\n\n";
 
 
         return ret_val;
