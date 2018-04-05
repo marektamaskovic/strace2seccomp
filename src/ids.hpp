@@ -12,6 +12,10 @@
 #include <variant>
 #include <vector>
 
+#define POSITION_MACRO "\x1B[4m\x1B[34m" << __FILE__ << "\x1B[0m"                 \
+    << ":" << "\x1B[1m\x1B[31m" << __func__ << "()\x1B[0m"    \
+    << ":\x1B[32m" << __LINE__ << "\x1B[0m:"
+
 namespace st2se {
 
     enum class val_format_t {
@@ -28,6 +32,7 @@ namespace st2se {
         ARRAY,
         STRUCTURE,
         BITFIELD,
+        CLUSTERS,
         EMPTY
     };
 
@@ -38,6 +43,12 @@ namespace st2se {
         std::string key;
         std::variant<long, std::string> value;
         std::vector<_argument_t> next;
+        _argument_t();
+        _argument_t(val_format_t fmt, val_type_t type, std::vector<_argument_t> vec);
+        _argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key, std::variant<long, std::string> _value,
+            std::vector<_argument_t> _next);
+
+        void print();
     };
 
     using argument_t = struct _argument_t;
@@ -48,8 +59,11 @@ namespace st2se {
         std::string other;
         unsigned arg_num;
         std::vector<argument_t> next;
+        bool clustered = false;
 
         void print();
+        void printClustered();
+
 
     };
 
@@ -62,10 +76,13 @@ namespace st2se {
 
         void printSyscall();
         void print();
-
     };
 
-    std::string arg2str(argument_t &arg);
+    std::string arg2str(const argument_t &arg);
+    bool operator== (const st2se::argument_t &lhs, const st2se::argument_t &rhs);
+    std::ostream &operator<< (std::ostream &os, const st2se::Ids &a);
+    std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a);
+    std::ostream &operator<< (std::ostream &os, const st2se::val_format_t &a);
 
 } // namespace st2se
 

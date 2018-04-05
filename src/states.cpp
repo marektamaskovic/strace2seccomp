@@ -2,27 +2,6 @@
 
 template<class T> struct always_false : std::false_type {};
 
-std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a) {
-    // TODO transformt this into switch case statement
-    if (a == st2se::val_type_t::INTEGER)
-        return os << "INTEGER";
-    if (a == st2se::val_type_t::STRING)
-        return os << "STRING";
-    if (a == st2se::val_type_t::CONSTANT)
-        return os << "CONSTANT";
-    if (a == st2se::val_type_t::POINTER)
-        return os << "POINTER";
-    if (a == st2se::val_type_t::ARRAY)
-        return os << "ARRAY";
-    if (a == st2se::val_type_t::STRUCTURE)
-        return os << "STRUCTURE";
-    if (a == st2se::val_type_t::BITFIELD)
-        return os << "BITFIELD";
-    if (a == st2se::val_type_t::EMPTY)
-        return os << "EMPTY";
-    return os << "UNDEF";
-}
-
 namespace st2se {
     void States::push_parsed_val(argument_t &arg) {
         this->parsed_val.push_back(arg);
@@ -114,13 +93,7 @@ namespace st2se {
         if (parsed_val.empty()) {
             std::cerr << "Error: Parsed val is empty." << std::endl;
 
-            argument_t a {
-                val_format_t::EMPTY,
-                val_type_t::EMPTY,
-                "",
-                "",
-                {}
-            };
+            argument_t a;
 
             s.next.emplace_back(a);
             s.arg_num = 0;

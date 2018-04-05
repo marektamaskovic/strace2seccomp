@@ -1,19 +1,20 @@
 # CXX=g++
 CXX=clang++
 
-OBJ=main.o straceparser.o ids.o argparse.o states.o optimizer.o algorithms.o
+OBJ=main.o straceparser.o ids.o argparse.o states.o optimizer.o algorithm.o\
+	algorithm_weak.o algorithm_strict.o algorithm_advanced.o
 BIN=st2se
 LDFLAGS=-Iinclude/
 LINK.o = $(LINK.cpp)
 
 ifeq ($(CXX),g++)
-	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/
+	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
 else
-	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -stdlib=libc++ -Iinclude/ -I/usr/include/c++/7/
+	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -stdlib=libc++ -Iinclude/ -I/usr/include/c++/7/ $(USER_DEFINES)
 endif
 
 
-all: CXXFLAGS += -g3
+all: CXXFLAGS += -g3 -fsanitize=address -fno-omit-frame-pointer
 all: st2se
 
 release: CXXFLAGS += -O2
@@ -66,7 +67,9 @@ clean:
 	-rm -f *.gcda *.gcno coverage.info
 
 # DEPS: generated with 'dep' recipe
-algorithms.o: algorithms.cpp algorithms.hpp ids.hpp
+algorithm.o: algorithm.cpp algorithm.hpp ids.hpp
+algorithm_weak.o: algorithm_weak.cpp algorithm_weak.hpp ids.hpp \
+ algorithm.hpp
 argparse.o: argparse.cpp argparse.hpp
 ids.o: ids.cpp ids.hpp
 main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
@@ -194,7 +197,8 @@ main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
  include/tao/pegtl/memory_input.hpp include/tao/pegtl/read_input.hpp \
  include/tao/pegtl/string_input.hpp \
  include/tao/pegtl/internal/file_reader.hpp \
- include/tao/pegtl/string_input.hpp argparse.hpp straceparser.hpp \
+ include/tao/pegtl/string_input.hpp argparse.hpp ids.hpp optimizer.hpp \
+ algorithm.hpp states.hpp straceparser.hpp \
  include/tao/pegtl/contrib/tracer.hpp \
  include/tao/pegtl/contrib/../config.hpp \
  include/tao/pegtl/contrib/../normal.hpp \
@@ -204,8 +208,9 @@ main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
  include/tao/pegtl/analysis/../config.hpp \
  include/tao/pegtl/analysis/grammar_info.hpp \
  include/tao/pegtl/analysis/insert_guard.hpp straceparser_actions.hpp \
- straceparser_grammar.hpp states.hpp ids.hpp optimizer.hpp algorithms.hpp
-optimizer.o: optimizer.cpp optimizer.hpp algorithms.hpp ids.hpp
+ straceparser_grammar.hpp algorithm_weak.hpp algorithm_strict.hpp \
+ algorithm_advanced.hpp
+optimizer.o: optimizer.cpp optimizer.hpp algorithm.hpp ids.hpp
 states.o: states.cpp states.hpp ids.hpp
 straceparser.o: straceparser.cpp straceparser.hpp include/tao/pegtl.hpp \
  include/tao/pegtl/config.hpp include/tao/pegtl/version.hpp \
