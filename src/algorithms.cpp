@@ -72,19 +72,36 @@ namespace st2se {
         const std::vector<argument_t> &args,
         unsigned lvl
     ) {
+        std::vector<argument_t> v;
+
+        std::function<void(std::vector<argument_t>&, const std::vector<argument_t>&)> inserter;
+
+        inserter = [](std::vector<argument_t> &to, const std::vector<argument_t> &in) {
+            for(auto &item : in){
+                if(item.value_type == val_type_t::STRUCTURE ||
+                    item.value_type == val_type_t::ARRAY ||
+                    item.value_type == val_type_t::STRING
+                    )
+                    continue;
+                argument_t tmp;
+                tmp.value_type = item.value_type;
+                tmp.value_format = item.value_format;
+                tmp.value = item.value;
+                to.push_back(tmp);
+            }
+        };
+
         if (lvl == 0) {
-            return args;
+            inserter(v, args);
         }
         else {
-            std::vector<argument_t> v;
-
             for (auto arg : args) {
                 auto x = getArguemntsFromPos(arg.next, lvl - 1);
-                std::copy(x.begin(), x.end(), std::back_inserter(v));
+                inserter(v, x);
             }
-
-            return v;
         }
+
+        return v;
     }
     //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -132,10 +149,24 @@ namespace st2se {
 
     bool Algo_advanced::optimize(Ids &in, Ids &out) {
         std::cout << "Algo_advanced optimize emitted." << std::endl;
+        int(no){0};
 
         for (const auto &item : in.data) {
+            no++;
+            std::cout << "\n\n\n\n";
+            std::cout << "=======================================" << std::endl;
+            std::cout << "\tProcessing: (";
+            std::cout << no;
+            std::cout << "/";
+            std::cout << in.data.size();
+            std::cout << ") ";
+            std::cout << item.first;
+            std::cout << std::endl;
+            std::cout << "=======================================" << std::endl;
             this->processSyscall(item.second, out);
         }
+
+        std::cout << in.data.count("brk") << std::endl;
 
         return true;
     }
@@ -168,10 +199,25 @@ namespace st2se {
         // ------------------------------------
         // Algorithm:
 
+        out.data[sc.name].name = sc.name;
+        out.data[sc.name].return_code = sc.return_code;
+        out.data[sc.name].arg_num = sc.arg_num;
+
         for (unsigned arg_pos = 0; arg_pos < depth; arg_pos++) {
             std::vector<argument_t> v;
             std::cout << "arg_pos: " << arg_pos << std::endl;
             v = getArguemntsFromPos(sc.next, arg_pos);
+
+            // if(!v.empty()){
+
+            // }
+            
+            std::cout << "v.size()" << v.size() << std::endl;
+
+            for(auto &item : v){
+                std::cout << arg2str(item) << " ";
+            }
+            std::cout << std::endl;
 
             // *INDENT-OFF*
             std::sort(v.begin(), v.end(),
@@ -191,39 +237,30 @@ namespace st2se {
             // Clustering:
             std::vector<argument_t> clustered_v {};
 
-
             unsigned clusters = this->cluster(v, clustered_v);
 
-            for(auto &item : v){
-                // std::cout << arg2str(item) << " ";
-                item.print();
-            }
-            std::cout << std::endl;
+            std::cout << "arg_pos: " << arg_pos<< " v:" << std::endl;
 
-            if (clusters == 0) {
-                throw (std::runtime_error("Clustering error"));
-            }
+            // if (clusters == 0) {
+            //     throw (std::runtime_error("Clustering error"));
+            // }
 
             std::cout << "\targ no." << arg_pos << " is ";
             std::cout << clustered_v.size() << " items long" << std::endl;
             std::cout << "\t\tclusters: " << clusters << std::endl;
 
-            out.data[sc.name] = sc;
-            argument_t arg(val_format_t::EMPTY,
+            out.data[sc.name].next.emplace_back(val_format_t::EMPTY,
                                                 val_type_t::CLUSTERS,
                                                 clustered_v
                                                );
-            // out.data[sc.name].next.emplace_back(val_format_t::EMPTY,
-            //                                     val_type_t::CLUSTERS,
-            //                                     clustered_v
-            //                                    );
-            std::cout << "inserting madafak cluster" << std::endl;
-            out.data[sc.name].next.push_back(arg);
 
             std::cout << "out...next.size()" << out.data[sc.name].next.size() << std::endl;
             out.data[sc.name].clustered = true;
-            // out.print();
+            std::cout << "\n" << std::endl;
         }
+
+        std::cout << "\n\n" << std::endl;
+
     }
 
     // clustering algorithm which clusters the arguments

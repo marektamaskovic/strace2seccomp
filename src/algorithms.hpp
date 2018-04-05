@@ -44,6 +44,7 @@ namespace st2se {
       public:
         virtual bool optimize(Ids &in, Ids &out) = 0;
         unsigned getDepth(const argument_t &arg);
+        
         std::vector<argument_t> getArguemntsFromPos(const std::vector<argument_t> &args, unsigned lvl);
     };
 
