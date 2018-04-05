@@ -1,155 +1,11 @@
-#include "algorithms.hpp"
+#include "algorithm_advanced.hpp"
 
 namespace st2se {
-
-    bool Algo_weak::optimize(Ids &in, Ids &out) {
-        std::cout << "Algo_weak optimize emitted." << std::endl;
-
-        // iterate over syscalls
-        for (const auto &item : in.data) {
-            processSyscall(item.second, out);
-        }
-
-        return true;
-    }
-
-    void Algo_weak::processSyscall(const Syscall_t &sc, Ids &out) {
-
-        unsigned depth {0};
-
-        std::cout << "max depth of `" << sc.name << "` is";
-
-        for (const auto &arg : sc.next) {
-            unsigned tmp;
-
-            if ((tmp = getDepth(arg)) > depth) {
-                if (depth != 0u) {
-                    std::cout << " " << depth;
-                }
-
-                depth = tmp;
-            }
-        }
-
-        std::cout << " " << depth << std::endl;
-
-        for (unsigned arg_pos = 0; arg_pos < depth; arg_pos++) {
-            std::vector<argument_t> v;
-            v = getArguemntsFromPos(sc.next, arg_pos);
-
-            /*INDENT-OFF*/
-            std::sort(v.begin(), v.end(),
-                [](argument_t a, argument_t b)
-                    {return a.value > b.value;}
-            );
-
-            auto end = std::unique(v.begin(), v.end(),
-                [](argument_t l, argument_t r)
-                    {return l.value == r.value;}
-            );
-            /*INDENT-ON*/
-
-            v.erase(end, v.end());
-
-            std::cout << "\targ no." << arg_pos << " is " << v.size() << " items long" << std::endl;
-
-            if (v.size() != 1) {
-                std::cout << "\t\tmax: " << arg2str(v.front()) << std::endl;
-                std::cout << "\t\tmin: " << arg2str(v.back()) << std::endl;
-            }
-            else {
-                std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
-            }
-        }
-
-        // TODO
-        // put intervals into out structure
-        (void) out;
-    }
-
-    // FIXME This is rubbish vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    std::vector<argument_t> Algorithm::getArguemntsFromPos(
-        const std::vector<argument_t> &args,
-        unsigned lvl
-    ) {
-        std::vector<argument_t> v;
-
-        std::function<void(std::vector<argument_t>&, const std::vector<argument_t>&)> inserter;
-
-        inserter = [](std::vector<argument_t> &to, const std::vector<argument_t> &in) {
-            for(auto &item : in){
-                if(item.value_type == val_type_t::STRUCTURE ||
-                    item.value_type == val_type_t::ARRAY ||
-                    item.value_type == val_type_t::STRING
-                    )
-                    continue;
-                argument_t tmp;
-                tmp.value_type = item.value_type;
-                tmp.value_format = item.value_format;
-                tmp.value = item.value;
-                to.push_back(tmp);
-            }
-        };
-
-        if (lvl == 0) {
-            inserter(v, args);
-        }
-        else {
-            for (auto arg : args) {
-                auto x = getArguemntsFromPos(arg.next, lvl - 1);
-                inserter(v, x);
-            }
-        }
-
-        return v;
-    }
-    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-    unsigned Algorithm::getDepth(const argument_t &arg) {
-        unsigned depth {0};
-
-        if (arg.next.empty()) {
-            return 1;
-        }
-        else {
-            for (const auto &arg : arg.next) {
-                unsigned tmp;
-
-                if ((tmp = getDepth(arg)) > depth) {
-                    depth = tmp;
-                }
-
-            }
-        }
-
-        return depth + 1;
-    }
-
-    void Algo_weak::findMinMax(Syscall_t &sc, Ids &out) {
-        (void) sc;
-        (void) out;
-    }
-
-    // --------------------------------------------------------------------- //
-
-
-    // STRICT //
-
-    bool Algo_strict::optimize(Ids &in, Ids &out) {
-        (void) in;
-        (void) out;
-        std::cout << "Algo_strict optimize emitted." << std::endl;
-        return true;
-    }
-
-    // --------------------------------------------------------------------- //
-
-
-    // Advanced //
-
-    bool Algo_advanced::optimize(Ids &in, Ids &out) {
+	bool Algo_advanced::optimize(Ids &in, Ids &out) {
         std::cout << "Algo_advanced optimize emitted." << std::endl;
-        int(no){0};
+        int(no) {
+            0
+        };
 
         for (const auto &item : in.data) {
             no++;
@@ -184,11 +40,13 @@ namespace st2se {
             unsigned tmp;
 
             if ((tmp = getDepth(arg)) > depth) {
-        #ifndef NDEBUG
+                #ifndef NDEBUG
+
                 if (depth != 0) {
                     std::cout << " " << depth;
                 }
-        #endif
+
+                #endif
                 depth = tmp;
             }
         }
@@ -208,51 +66,49 @@ namespace st2se {
             std::cout << "arg_pos: " << arg_pos << std::endl;
             v = getArguemntsFromPos(sc.next, arg_pos);
 
-            // if(!v.empty()){
+            if (!v.empty()) {
+                std::cout << "v.size()" << v.size() << std::endl;
 
-            // }
-            
-            std::cout << "v.size()" << v.size() << std::endl;
-
-            for(auto &item : v){
-                std::cout << arg2str(item) << " ";
-            }
-            std::cout << std::endl;
-
-            // *INDENT-OFF*
-            std::sort(v.begin(), v.end(),
-                [](argument_t a, argument_t b) {
-                    return a.value > b.value;
+                for (auto &item : v) {
+                    std::cout << arg2str(item) << " ";
                 }
-            );
 
-            auto end =
-                std::unique(v.begin(), v.end(),
-                    [](argument_t l, argument_t r){return l.value == r.value;}
+                std::cout << std::endl;
+
+                // *INDENT-OFF*
+                std::sort(v.begin(), v.end(),
+                    [](argument_t a, argument_t b) {
+                        return a.value > b.value;
+                    }
                 );
-            // *INDENT-ON*
 
-            v.erase(end, v.end());
+                auto end =
+                    std::unique(v.begin(), v.end(),
+                        [](argument_t l, argument_t r) {
+                            return l.value == r.value;
+                        }
+                    );
+                // *INDENT-ON*
+
+                v.erase(end, v.end());
+            }
+
 
             // Clustering:
             std::vector<argument_t> clustered_v {};
 
             unsigned clusters = this->cluster(v, clustered_v);
 
-            std::cout << "arg_pos: " << arg_pos<< " v:" << std::endl;
-
-            // if (clusters == 0) {
-            //     throw (std::runtime_error("Clustering error"));
-            // }
+            std::cout << "arg_pos: " << arg_pos << " v:" << std::endl;
 
             std::cout << "\targ no." << arg_pos << " is ";
             std::cout << clustered_v.size() << " items long" << std::endl;
             std::cout << "\t\tclusters: " << clusters << std::endl;
 
             out.data[sc.name].next.emplace_back(val_format_t::EMPTY,
-                                                val_type_t::CLUSTERS,
-                                                clustered_v
-                                               );
+                val_type_t::CLUSTERS,
+                clustered_v
+            );
 
             std::cout << "out...next.size()" << out.data[sc.name].next.size() << std::endl;
             out.data[sc.name].clustered = true;
@@ -359,15 +215,16 @@ namespace st2se {
             // DEBUGprintArgumentSet(to_check);
 
             // DEBUGprint("step 3.2: remove clossest item from `reducing_input` set" << std::endl);
-            for(auto item : vec_tmp) {
+            for (auto item : vec_tmp) {
                 removeItem(item, reducing_input);
             }
+
             // DEBUGprint("reducing_input is:");
             // DEBUGprintArgumentSet(reducing_input);
 
             // // move first `to_check` element to cluster
             // DEBUGprint("step 4: move first `to_check` element to cluster" << std::endl);
-            
+
             moveFirstItem(/*where*/cluster, /*from*/ to_check);
 
             // DEBUGprint("to_check is:");
@@ -391,6 +248,7 @@ namespace st2se {
                     break;
                 }
             }
+
             // DEBUGprint("\n\n\n");
         }
 
@@ -501,7 +359,7 @@ namespace st2se {
         for (unsigned i = 0; i < in.size(); i++) {
             for (unsigned l = (i + 1); l < in.size(); l++) {
                 tmp = distance(in[i], in[l]);
-                
+
                 #ifndef NDEBUG
                 // std::cout << "\t" << i << "\t" << l << "\t" << tmp << std::endl;
                 #endif
@@ -572,8 +430,7 @@ namespace st2se {
         return ret_val;
     }
 
-    // -------- //
-
+    // FIXME maybe to `ids` module?
     // convert argument string value to bitfield_t
     bitfield_t convert2bitfield(const argument_t &in) {
 

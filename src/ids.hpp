@@ -13,8 +13,8 @@
 #include <vector>
 
 #define POSITION_MACRO "\x1B[4m\x1B[34m" << __FILE__ << "\x1B[0m"                 \
-                        << ":" << "\x1B[1m\x1B[31m" << __func__ << "()\x1B[0m"    \
-                        << ":\x1B[32m" << __LINE__ << "\x1B[0m:"
+    << ":" << "\x1B[1m\x1B[31m" << __func__ << "()\x1B[0m"    \
+    << ":\x1B[32m" << __LINE__ << "\x1B[0m:"
 
 namespace st2se {
 
@@ -45,7 +45,8 @@ namespace st2se {
         std::vector<_argument_t> next;
         _argument_t();
         _argument_t(val_format_t fmt, val_type_t type, std::vector<_argument_t> vec);
-        _argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key, std::variant<long, std::string> _value, std::vector<_argument_t> _next);
+        _argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key, std::variant<long, std::string> _value,
+            std::vector<_argument_t> _next);
 
         void print();
     };

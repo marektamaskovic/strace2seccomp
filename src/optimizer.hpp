@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "algorithms.hpp"
+#include "algorithm.hpp"
 #include "ids.hpp"
 
 namespace st2se {

@@ -7,6 +7,9 @@
 #include "optimizer.hpp"
 #include "states.hpp"
 #include "straceparser.hpp"
+#include "algorithm_weak.hpp"
+#include "algorithm_strict.hpp"
+#include "algorithm_advanced.hpp"
 
 int main(int argc, char *argv[]) {
     int ret_val {0};

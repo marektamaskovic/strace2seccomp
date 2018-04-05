@@ -112,7 +112,8 @@ namespace st2se {
         value_format(_fmt), value_type(_type), next(_vec) {
     }
 
-    _argument_t::_argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key, std::variant<long, std::string> _value, std::vector<_argument_t> _next):
+    _argument_t::_argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key, std::variant<long, std::string> _value,
+        std::vector<_argument_t> _next):
         value_format(_fmt), value_type(_type), key(_key), value(_value), next(_next) {
     }
 
@@ -124,8 +125,8 @@ namespace st2se {
         next({}) {
     }
 
-    void _argument_t::print(){
-    
+    void _argument_t::print() {
+
         std::function<void(std::string, std::vector<argument_t>)> print_recursive;
 
         print_recursive = [&print_recursive](std::string prefix, std::vector<argument_t> container) {
@@ -143,7 +144,7 @@ namespace st2se {
             }
         };
 
-        print_recursive("\t"+arg2str(*this), next);
+        print_recursive("\t" + arg2str(*this), next);
     }
 
     bool Ids::insert(const std::string &name, Syscall_t &sc) {
@@ -225,7 +226,7 @@ namespace st2se {
     void Syscall_t::print() {
         std::cout << name << ":" << std::endl ;
 
-        if(clustered){
+        if (clustered) {
             printClustered();
             return;
         }
@@ -262,12 +263,16 @@ namespace st2se {
             std::cout << "No args" << std::endl;
         }
         else {
-            for(auto &pos : next){
+            for (auto &pos : next) {
                 std::cout << "Clusters for arg:" << std::endl;
-                for(auto item1 : pos.next){
+
+                for (auto item1 : pos.next) {
                     std::cout << "\t" << arg2str(item1) << ", ";
-                    for(auto item2 : item1.next)
+
+                    for (auto item2 : item1.next) {
                         std::cout << arg2str(item2) << ", ";
+                    }
+
                     std::cout << std::endl;
                 }
             }
