@@ -6,22 +6,21 @@
 
 namespace st2se {
 
-	enum class language{
-		CPP,
-		GO
-	};
+    enum class language {
+        CPP,
+        GO
+    };
 
-	class Generator
-	{
-		Output *gnrt {nullptr};
-	public:
-		Generator() = default;
-		Generator(Output *_out);
-		bool initialize(Output *_out);
-		bool generate(Ids &ids);
-		bool isInitialized();
-		void removeOutput();
-	};
+    class Generator {
+        Output *gnrt {nullptr};
+      public:
+        Generator() = default;
+        Generator(Output *_out);
+        bool initialize(Output *_out);
+        bool generate(Ids &ids);
+        bool isInitialized();
+        void removeOutput();
+    };
 } // namespace st2se
 
 

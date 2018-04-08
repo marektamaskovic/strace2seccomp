@@ -10,25 +10,25 @@
 
 namespace st2se {
 
-	class outputCPP : public Output {
+    class outputCPP : public Output {
 
-		std::ifstream template_file;
-		std::ofstream output_source;
-		int first_part_size = 25;
-		std::string template_file_path = "../seccomp_template/template.c";
-		std::string output_source_path = "./source.cpp";
+        std::ifstream template_file;
+        std::ofstream output_source;
+        int first_part_size = 25;
+        std::string template_file_path = "../seccomp_template/template.c";
+        std::string output_source_path = "./source.cpp";
 
-		void openFiles();
-		void writeFirstPart();
-		void writeLastPart();
+        void openFiles();
+        void writeFirstPart();
+        void writeLastPart();
 
-	public:
-		outputCPP() = default;
-		
+      public:
+        outputCPP() = default;
 
-		virtual void generate(Ids &ids);	
-	};
-	
+
+        virtual void generate(Ids &ids);
+    };
+
 } // namespace st2se
 
 #endif

@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     opti.useAlgorithm(nullptr);
     delete algo;
 
-    // remove and dealloc output generator 
+    // remove and dealloc output generator
     gen.removeOutput();
     delete cpp;
 

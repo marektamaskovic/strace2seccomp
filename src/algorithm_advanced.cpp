@@ -1,7 +1,7 @@
 #include "algorithm_advanced.hpp"
 
 namespace st2se {
-	bool Algo_advanced::optimize(Ids &in, Ids &out) {
+    bool Algo_advanced::optimize(Ids &in, Ids &out) {
         std::cout << "Algo_advanced optimize emitted." << std::endl;
         int(no) {
             0
