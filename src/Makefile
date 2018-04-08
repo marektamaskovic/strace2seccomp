@@ -2,7 +2,8 @@
 CXX=clang++
 
 OBJ=main.o straceparser.o ids.o argparse.o states.o optimizer.o algorithm.o\
-	algorithm_weak.o algorithm_strict.o algorithm_advanced.o
+	algorithm_weak.o algorithm_strict.o algorithm_advanced.o \
+	generator.o output.o outputCPP.o
 BIN=st2se
 LDFLAGS=-Iinclude/
 LINK.o = $(LINK.cpp)
@@ -67,10 +68,15 @@ clean:
 	-rm -f *.gcda *.gcno coverage.info
 
 # DEPS: generated with 'dep' recipe
+algorithm_advanced.o: algorithm_advanced.cpp algorithm_advanced.hpp \
+ ids.hpp algorithm.hpp
 algorithm.o: algorithm.cpp algorithm.hpp ids.hpp
+algorithm_strict.o: algorithm_strict.cpp algorithm_strict.hpp ids.hpp \
+ algorithm.hpp
 algorithm_weak.o: algorithm_weak.cpp algorithm_weak.hpp ids.hpp \
  algorithm.hpp
 argparse.o: argparse.cpp argparse.hpp
+generator.o: generator.cpp generator.hpp ids.hpp outputCPP.hpp output.hpp
 ids.o: ids.cpp ids.hpp
 main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
  include/tao/pegtl/version.hpp include/tao/pegtl/ascii.hpp \
@@ -209,8 +215,11 @@ main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
  include/tao/pegtl/analysis/grammar_info.hpp \
  include/tao/pegtl/analysis/insert_guard.hpp straceparser_actions.hpp \
  straceparser_grammar.hpp algorithm_weak.hpp algorithm_strict.hpp \
- algorithm_advanced.hpp
+ algorithm_advanced.hpp generator.hpp outputCPP.hpp output.hpp
 optimizer.o: optimizer.cpp optimizer.hpp algorithm.hpp ids.hpp
+output.o: output.cpp output.hpp ids.hpp
+outputCPP.o: outputCPP.cpp outputCPP.hpp output.hpp ids.hpp
+source.o: source.cpp
 states.o: states.cpp states.hpp ids.hpp
 straceparser.o: straceparser.cpp straceparser.hpp include/tao/pegtl.hpp \
  include/tao/pegtl/config.hpp include/tao/pegtl/version.hpp \

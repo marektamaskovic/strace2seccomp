@@ -10,6 +10,7 @@
 #include "algorithm_weak.hpp"
 #include "algorithm_strict.hpp"
 #include "algorithm_advanced.hpp"
+#include "generator.hpp"
 
 int main(int argc, char *argv[]) {
     int ret_val {0};
@@ -47,6 +48,8 @@ int main(int argc, char *argv[]) {
     // optimize IDS
     st2se::Algorithm *algo {nullptr};
 
+    // choose algorithm
+    // TODO try to hide this to ctor of optimizer
     if (params->weak != 0) {
         algo = new st2se::Algo_weak();
     }
@@ -57,6 +60,8 @@ int main(int argc, char *argv[]) {
         algo = new st2se::Algo_advanced();
     }
 
+    // TODO
+    // make constructor which takes algorithm as a param
     st2se::Optimizer opti;
 
     opti.useAlgorithm(algo);
@@ -72,14 +77,28 @@ int main(int argc, char *argv[]) {
 
     out.print();
 
-    // out.data["close"].print();
+    std::cout << "Generating output ..." << std::endl;
 
+    // Generating source template
+    st2se::Generator gen;
+    st2se::outputCPP *cpp = new st2se::outputCPP();
+    gen.initialize(cpp);
+    gen.generate(out);
+
+
+
+    // Exitint procedures
     std::cout << "Exiting ..." << std::endl;
 
     // remove and dealloc algorithm
     opti.useAlgorithm(nullptr);
     delete algo;
 
+    // remove and dealloc output generator 
+    gen.removeOutput();
+    delete cpp;
+
+    // delete params object
     delete params;
 
     return ret_val;

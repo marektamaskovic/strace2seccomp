@@ -35,6 +35,7 @@ namespace st2se {
     class Algorithm {
         Algorithm() = default;
 
+        // TODO this shouldn't be here.
         friend class Algo_weak;
         friend class Algo_strict;
         friend class Algo_advanced;
