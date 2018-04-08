@@ -52,7 +52,12 @@ namespace st2se {
             }
         }
 
+<<<<<<< HEAD
         std::ofstream unparsed_lines {"unparsed_lines.st2se", std::ios_base::out | std::ios_base::trunc};
+=======
+        if (!bad_lines_str.empty()) {
+            std::ofstream unparsed_lines {"unparsed_lines.st2se", std::ios_base::out | std::ios_base::trunc};
+>>>>>>> 4cfc6b6... Astyle fixes
 
         for (const auto &line : bad_lines_str) {
             unparsed_lines << line << std::endl;

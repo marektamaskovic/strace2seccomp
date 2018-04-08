@@ -80,6 +80,14 @@ int main(int argc, char *argv[]) {
     opti.useAlgorithm(nullptr);
     delete algo;
 
+<<<<<<< HEAD
+=======
+    // remove and dealloc output generator
+    gen.removeOutput();
+    delete cpp;
+
+    // delete params object
+>>>>>>> 4cfc6b6... Astyle fixes
     delete params;
 
     return ret_val;

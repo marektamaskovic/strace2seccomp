@@ -1,8 +1,8 @@
 #include "algorithm_weak.hpp"
 
 namespace st2se {
-	
-	bool Algo_weak::optimize(Ids &in, Ids &out) {
+
+    bool Algo_weak::optimize(Ids &in, Ids &out) {
         std::cout << "Algo_weak optimize emitted." << std::endl;
 
         // iterate over syscalls

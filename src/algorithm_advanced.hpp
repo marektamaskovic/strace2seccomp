@@ -16,7 +16,7 @@ namespace st2se {
 
     using bitfield_t = std::vector<std::string>;
 
-	class Algo_advanced : public Algorithm {
+    class Algo_advanced : public Algorithm {
         bool optimize(Ids &in, Ids &out) override;
         void processSyscall(const Syscall_t &sc, Ids &out);
         unsigned cluster(std::vector<argument_t> &in, std::vector<argument_t> &out);
