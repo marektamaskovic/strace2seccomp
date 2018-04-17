@@ -12,10 +12,12 @@ namespace st2se {
 
     class outputCPP : public Output {
 
-        std::ifstream template_file;
+        std::ifstream template_file_begin;
+        std::ifstream template_file_end;
         std::ofstream output_source;
-        int first_part_size = 25;
-        std::string template_file_path = "../seccomp_template/template.c";
+        
+        std::string template_file_b_path = "../seccomp_template/template.c.begin";
+        std::string template_file_e_path = "../seccomp_template/template.c.end";
         std::string output_source_path = "./source.cpp";
 
         void openFiles();

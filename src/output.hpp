@@ -8,7 +8,7 @@ namespace st2se {
     class Output {
       public:
         Output() = default;
-        ~Output() = default;
+        virtual ~Output() = default;
 
         virtual void generate(Ids &ids) = 0;
 

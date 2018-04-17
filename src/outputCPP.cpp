@@ -4,11 +4,16 @@ namespace st2se {
 
     void outputCPP::openFiles() {
         // FIXME use only onde dot
-        template_file.open(template_file_path, std::ios::in);
+        template_file_begin.open(template_file_b_path, std::ios::in);
+        template_file_end.open(template_file_e_path, std::ios::in);
         output_source.open(output_source_path, std::ios_base::out | std::ios_base::trunc);
 
-        if (!template_file.is_open()) {
-            throw (std::runtime_error("template_file is not open"));
+        if (!template_file_begin.is_open()) {
+            throw (std::runtime_error("template_file_begin is not open"));
+        }
+
+        if (!template_file_end.is_open()) {
+            throw (std::runtime_error("template_file_begin is not open"));
         }
 
         if (!output_source.is_open()) {
@@ -20,9 +25,7 @@ namespace st2se {
     void outputCPP::writeFirstPart() {
         std::string line;
 
-        for (int i = 0; i < first_part_size; ++i) {
-            getline(template_file, line);
-            std::cout << line.size() << std::endl;
+        while(getline(template_file_begin, line)) {
             output_source << line << std::endl;
         }
     }
@@ -31,7 +34,7 @@ namespace st2se {
         std::string line;
 
         // print the end of the  template.c
-        while (getline(template_file, line)) {
+        while (getline(template_file_end, line)) {
             output_source << line << std::endl;
         }
     }
