@@ -626,12 +626,54 @@ Another way is using the logger implemented in boost library\footnote{http://www
 I decided to use this library because it was audited and tested by community, is widely supported and is well documented.
 
 \section{Input}
-what is imput and why
-\subsection{Strace grammar}
-wirte strace output in eBNF
+As an input was used output from strace tool. As I mentioned earlier strace tool was
+chosen because it is easy to use system call monitoring tool. It can monitor what observed
+program demanded from kernel. With strace tool it is possible to trace child processes.
+The main advantage of strace tool is that is doesn't need any of the source code files,
+program has not to be compiled with extra flags or withount any library or
+it does not have to be statically linked.
+
 \subsection{Configure Strace to Produce Expected Input}
 \label{sec:strace_config}
-what should we do to get valid \texttt{strace} output for \texttt{st2se}?
+
+The output from strace tool has to be normalised before procesing with strace2seccomp.
+The normalization is done by providing a few runtime arguments to strace tool.
+Example:
+
+\texttt{\$ strace -s 0 -xx -yy -o dataset -ff nautilus }
+\\
+I would like to describe what they are doing in the first place.\cite{strace_man}
+
+\paragraph{-s} is a string size. We are setting a string size to zero because the
+libseccomp does not have the ability to work with strings. It does not know how long is
+the string or if it is really a string. By this option the filenames are not affected.
+They are printed in full length.
+
+\paragraph{-xx} this option will switch the format of strings to hexadecimal format.
+It is much easier to parse strings in this format. It affects the filename as well.
+This option is used because sometimes can occure a non ascii (UTF--8) character in filename.
+
+\paragraph{-f} trace children processes.
+
+\paragraph{-yy} will print protocol specific information associated with socket file descriptor.
+It is here for future enhancements of strace2seccomp tool.
+
+\paragraph{-o} is used for specifying the output file.
+
+\paragraph{-ff} is helpfull when you are tracing a multiprocess program.
+In this case it will create a multiple files in format
+NAME.PID where NAME is a provided filename in option \texttt{-o} and PID is a process id.
+
+
+
+\subsection{Strace grammar}
+wirte strace output in eBNF
+
+\begin{bnf*}
+\bnfprod{grammar}
+	{\bnfpn{system\_call} \bnfor \bnfpn{signal} \bnfor \bnfpn{exit\_line}}\\
+\end{bnf*}
+
 \section{Intermediate Representation}
 How it looks and why?
 
