@@ -16,6 +16,16 @@ namespace st2se {
         return os << std::endl << std::endl;
     }
 
+    bool operator<(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
+
+        if(lhs.value < rhs.value){
+            return true;
+        }
+
+        return false;
+    }
+
+
     bool operator==(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
         // std::cout << POSITION_MACRO << "comapring:" << std::endl;
         // std::cout << "\t" << lhs.value_type << "\t" << rhs.value_type << std::endl;

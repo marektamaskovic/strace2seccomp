@@ -80,6 +80,7 @@ namespace st2se {
 
     std::string arg2str(const argument_t &arg);
     bool operator== (const st2se::argument_t &lhs, const st2se::argument_t &rhs);
+    bool operator< (const st2se::argument_t &lhs, const st2se::argument_t &rhs);
     std::ostream &operator<< (std::ostream &os, const st2se::Ids &a);
     std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a);
     std::ostream &operator<< (std::ostream &os, const st2se::val_format_t &a);

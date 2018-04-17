@@ -29,6 +29,14 @@ namespace st2se {
 
 
         virtual void generate(Ids &ids);
+        void generateScRules(std::pair<std::string, Syscall_t> sc);
+        void generateClusterRules(argument_t arg, const unsigned pos);
+        void generateRules(argument_t arg, const unsigned pos, const bool clustered);
+
+        std::pair<argument_t, argument_t> getMinMax(argument_t arg);
+
+        void writeRangeValue(std::pair<argument_t, argument_t> &range);
+        void writeValue(argument_t);
     };
 
 } // namespace st2se
