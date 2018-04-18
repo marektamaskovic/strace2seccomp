@@ -18,7 +18,7 @@ namespace st2se {
 
     bool operator<(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
 
-        if(lhs.value < rhs.value){
+        if (lhs.value < rhs.value) {
             return true;
         }
 

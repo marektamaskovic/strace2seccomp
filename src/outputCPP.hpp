@@ -18,7 +18,7 @@ namespace st2se {
         std::ifstream template_file_begin;
         std::ifstream template_file_end;
         std::ofstream output_source;
-        
+
         std::string template_file_b_path = "../seccomp_template/template.c.begin";
         std::string template_file_e_path = "../seccomp_template/template.c.end";
         std::string output_source_path = "./source.cpp";

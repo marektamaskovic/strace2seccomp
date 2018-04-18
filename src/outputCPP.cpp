@@ -25,7 +25,7 @@ namespace st2se {
     void outputCPP::writeFirstPart() {
         std::string line;
 
-        while(getline(template_file_begin, line)) {
+        while (getline(template_file_begin, line)) {
             output_source << line << std::endl;
         }
     }
@@ -50,7 +50,7 @@ namespace st2se {
 
         ids.print();
 
-        for(const auto &item : ids.data){
+        for (const auto &item : ids.data) {
             generateScRules(item);
         }
 
@@ -68,77 +68,81 @@ namespace st2se {
 
         #if 1
 
-        if(sc.second.clustered == true){
+        if (sc.second.clustered == true) {
             std::cout << "clustered branch" << std::endl;
-            for(auto &pos : sc.second.next){
+
+            for (auto &pos : sc.second.next) {
                 generateClusterRules(pos, pos_num);
             }
         }
-        else{
-            for(auto &argument : sc.second.next){
+        else {
+            for (auto &argument : sc.second.next) {
                 generateRules(argument, pos_num, /*clustered =*/ false);
             }
         }
 
         #else
+
         // less readable
-        for(auto argument : sc.second.next){
-            
+        for (auto argument : sc.second.next) {
+
             // clustered tree is a little bit different
-            if(sc.second.clustered == true){
+            if (sc.second.clustered == true) {
                 std::cout << "clustered branch" << std::endl;
                 generateClusterRules(argument, pos_num);
             }
-            else{
+            else {
                 generateRules(argument, pos_num + 1, /*clustered =*/ false);
             }
         }
+
         #endif
     }
 
-    void outputCPP::generateClusterRules(argument_t arg, const unsigned pos){
+    void outputCPP::generateClusterRules(argument_t arg, const unsigned pos) {
 
         // iterate over clusters
-        for(auto cluster : arg.next){
+        for (auto cluster : arg.next) {
             generateRules(cluster, pos, /*clustered =*/ true);
         }
 
     }
 
-    void outputCPP::generateRules(argument_t arg, const unsigned pos, const bool clustered){
+    void outputCPP::generateRules(argument_t arg, const unsigned pos, const bool clustered) {
 
-        if(clustered) {
-            
+        if (clustered) {
+
             // get minmax
             auto minmax = getMinMax(arg);
 
-            if(minmax.empty()){
+            if (minmax.empty()) {
                 return;
             }
 
             // std::cout << arg2str(minmax.first) << " " << arg2str(minmax.second) << std::endl;
             // print minmax
-            if(minmax.size() == 1){
+            if (minmax.size() == 1) {
                 writeValue(minmax.front());
             }
-            else{
+            else {
                 writeValue(minmax);
             }
 
             // recursive descent
-            if(!arg.next.empty()){
-                if(!arg.next.front().next.empty()){
+            if (!arg.next.empty()) {
+                if (!arg.next.front().next.empty()) {
                     generateRules(arg.next.front(), pos + 1, clustered);
                 }
-                else{
+                else {
                     // std::cout << "first not empty and second one is" << std::endl;
                     return;
                 }
             }
-            else{
+            else {
                 // std::cout << "first and second empty" << std::endl;
                 return;
             }
+
             // if(!arg.next.empty()){
             //     generateRules(arg.next.front(), pos + 1, clustered);
             // }
@@ -150,14 +154,14 @@ namespace st2se {
             writeValue(arg);
 
             // recursive descent over IDS
-            for(auto x : arg.next) {
+            for (auto x : arg.next) {
                 generateRules(x, pos + 1, clustered);
             }
         }
 
     }
 
-    std::vector<argument_t> outputCPP::getMinMax(argument_t &arg){
+    std::vector<argument_t> outputCPP::getMinMax(argument_t &arg) {
 
 
         std::vector<argument_t> vec {arg.next.begin(), arg.next.end()};
@@ -167,11 +171,11 @@ namespace st2se {
 
         std::sort(vec.begin(), vec.end());
 
-        if(vec.size() > 1){
+        if (vec.size() > 1) {
             ret_val.push_back(vec.front());
             ret_val.push_back(vec.back());
         }
-        else if(vec.size() == 1){
+        else if (vec.size() == 1) {
             ret_val.push_back(vec.front());
         }
 
