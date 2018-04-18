@@ -339,8 +339,6 @@ We will require from the application to fulfills the following requirements:
     \item advanced - combination of above methods.
 	\end{enumerate}
 \item Policy will be generated with libseccomp \cite{libseccomp_git} syntax as C language \cite{ISO9899} code.
-\item ? Logger will be able to log different log levels (debug, trace, info, error, warning)
-\item ? Logger will log into user specified files or in predefined files located in a current working directory.
 \end{enumerate}
 
 \section{Architecture}
@@ -401,15 +399,6 @@ This is not secure however it is more suitable for work than the case without op
 You can minimize these pitfalls by providing a lot of strace input files.
 The best case is when you provide strace files from every major complex test case (with big prime path coverage).
 
-\subsection{Logger}
-One of the important part of every component is logging.
-With logging you can see what the program was doing in specific components and how urgent it was.
-The logger should log everything in a log file, print logs on standard output or both.
-It should handle various logging level e.g. debug, trace, info, warning or error.
-The logger must be accessible from every component.
-The output should be written in user specified log files instead of system logs.
-
-
 \subsection{Parser}
 The parser is crucial part of the whole application because it will put everything in a IR (intermediate representation).
 Input to the parser is a output from a \texttt{Strace} tool.
@@ -468,8 +457,8 @@ The IDS representation is shown in Figure \ref{fig:tikz:IDStree}.
 Optimizer is the main part of this tool.
 This part will reduce the intermediate data structure (IDS).
 There are three approaches of reducing IDS (strict, advanced, weak).
-\begin{itemize}
-	\item \textbf{Strict}
+
+	\paragraph{Strict}
 	optimization is defined as 1:1 to strace input file.
 	It means that it will interpret every record in strace as a strict rule.
 	So only that one case is only possible to run.
@@ -504,9 +493,15 @@ There are three approaches of reducing IDS (strict, advanced, weak).
 		}
 	\end{algorithm}
 
-	\item \textbf{Weak}
-	optimization is defined as finding minimum and maximum values on specific levels of IDS.
-	It can be found on multiple levels as well.
+	\paragraph{Weak}
+	optimization is the most basic one of this set of optimizations.
+	The weak optimization is based on finding minimum and maximum from set of arguments.
+	The main idea is to find minimum and maximum for each argument of each syscall.
+
+	So the abstracted algoritm follows as this:
+	\begin{enumerate}
+		\item For each syscall find extremes on every argument position.
+	\end{enumerate}
 
 	\begin{algorithm}[H]
 		\SetKwData{syscall}{sc}
@@ -536,12 +531,40 @@ There are three approaches of reducing IDS (strict, advanced, weak).
 		}
 	\end{algorithm}
 
-	\item \textbf{Advanced}
+	\paragraph{Clustering} is learning algoritm from family of unsupervised machine learning. It is
+	a bunch of numerous operation focused on decomposition of informations.
+	When we decompose information then we can clasify it by clasificators.
+	One of them is clustering. Clustering has many definitions, e.g.
+	 in book about data minig from Carlo Vercellis is clustering defined as
+	''\emph{clustering models is to subdivide the records of a dataset into homo-
+	geneous groups of observations, called clusters , so that observations belonging
+	to one group are similar to one another and dissimilar from observations
+	included in other groups.}''. \cite{doi:10.1002/9780470753866.ch12}
+
+	The goal of this method is to find subsets (clusters) in given set.
+	Cluster is defined by Paolo S. R. Diniz and group as ''\emph{In describing a cluster,
+	most researchers consider internal homogeneity and external separation,
+	i.e., patterns in the same cluster should be similar to each other, while patterns in different
+	clusters should not. Similarities and dissimilarities both should have the potential to be examined in a
+	clear and meaningful way.}''. \cite{Lam20141115}
+
+	The clasification of raw data can be done in mulitple ways.
+	Some basic methods are:
+	\begin{itemize}
+		\item partitioning,
+		\item hierarchical,
+		\item density based clustering,
+		\item fuzzy clustering,
+		\item DBSCAN clustering, (this is interesting for us),
+		\item Model-based clustering.
+	\end{itemize}
+
+	\paragraph{Advanced}
 	optimization is defined as combination of both strict and weak optimizations.
 	In some specific cases it will use only the exact values and in other cases it will use weak optimizations.
 	This combination should be more strict than the weak optimization and weaker than the strict optimization.
 
-	In this case is used DBSCAN clustering method\cite{Schubert:2017:DRR:3129336.3068335}. The clustering is unsupervised machine learning algorithm.
+	In this case is used DBSCAN clustering method\cite{Schubert:2017:DRR:3129336.3068335}.
 	The model introduced by DBSCAN uses a simple minimum denisty level estimation.
 	It defines a treshold fot the number of neighbors (minPts) within the radius $\epsilon$.
 	Objects with more than treshold neighbors within $\epsilon$ are treated as core points.
@@ -565,45 +588,25 @@ There are three approaches of reducing IDS (strict, advanced, weak).
 			\item $epsilon$ is indicated by circles
 	\end{itemize}
 
-	The abstracted algorithm is:
+	In this picture you can see multiple points and four of them named A, B, C, N.
+	Arrows indicate direct density reachability. Points A, B, C are density connected and B, C points are border points.
+	N is not density reachable (it is not in any $\epsilon$ radius). Any point as N is considered as noise point.
+
+	The abstracted algorithm is:\nopagebreak
 	\begin{enumerate}
 			\item find neighbors in $\epsilon$ radius of every point, and find core points with more that minimum neigthnours (minPts)
 			\item find connected core points on the graph and merge them into clusters.
 			\item assign every non-core point to a core point if that non-core point is in $\epsilon$ radius of that core-point else assign it to noise.
 	\end{enumerate}
 
-
-
-	\begin{algorithm}[H]
-		\SetKwData{syscall}{sc}
-		\SetKwData{ids}{IDS}
-		\SetKwData{argument}{arg}
-		\SetKwData{level}{lvl}
-		\SetKwData{numArgs}{num\_arg}
-		\SetKwData{intervals}{intervals}
-		\SetKwData{rules}{rules}
-
-		\SetKwFunction{GetNumArgs}{get\_num\_args}
-		\SetKwFunction{Append}{append}
-		\SetKwFunction{getMinMax}{get\_minmax}
-
-		\KwIn{intermediate data structure \ids}
-		\KwOut{list of rules \rules}
-
-		\caption{Smart optimization}\label{algo:weak}
-		\ForEach{syscall \syscall in the \ids}{
-			\ForEach{argument \argument in the syscall \syscall}{
-				\numArgs $\leftarrow$ \GetNumArgs{p}\;
-				\For{$\level \leftarrow 0$ \KwTo \numArgs}{
-					\intervals.\Append{\getMinMax{\argument, \level}}\;
-				}
-				\rules.\Append{\syscall, \intervals}\;
-			}
-		}
-	\end{algorithm}
-\end{itemize}
-
-
+	The whole algorithm is:
+	\nopagebreak
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\linewidth]{obrazky-figures/algo_dbscan}
+		\caption{Illustration of DBSCAN cluster model}
+		\label{dbscan_ilustration}
+	\end{figure}
 
 
 
@@ -651,12 +654,6 @@ It computes results only when they are needed, in the same order as the original
 \chapter{Development of strace2seccomp}
 %code should be using libseccomp to be secure.
 %test it with some fuzzer
-\section{Logger}
-There are many ways how can logger be implemented.
-One of the first ideas were implement custom logger.
-This idea wasn't bad but it will be a reinventing wheel.
-Another way is using the logger implemented in boost library\footnote{http://www.boost.org/doc/libs/1\_63\_0/libs/log/doc/html/index.html}.
-I decided to use this library because it was audited and tested by community, is widely supported and is well documented.
 
 \section{Input}
 As an input was used output from strace tool. As I mentioned earlier strace tool was
