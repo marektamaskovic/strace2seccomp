@@ -52,19 +52,40 @@ namespace st2se {
             v.erase(end, v.end());
 
             std::cout << "\targ no." << arg_pos << " is " << v.size() << " items long" << std::endl;
+            std::vector<argument_t> clustered_v {};
 
             if (v.size() != 1) {
+                clustered_v.push_back(v.front());
+                clustered_v.push_back(v.back());
+
                 std::cout << "\t\tmax: " << arg2str(v.front()) << std::endl;
                 std::cout << "\t\tmin: " << arg2str(v.back()) << std::endl;
             }
             else {
+                clustered_v.push_back(v.front());
                 std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
             }
+
+
+            std::cout << "arg_pos: " << arg_pos << " v:" << std::endl;
+
+            std::cout << "\targ no." << arg_pos << " is ";
+            std::cout << clustered_v.size() << " items long" << std::endl;
+
+            out.data[sc.name].next.emplace_back(val_format_t::EMPTY,
+                val_type_t::CLUSTERS,
+                clustered_v
+            );
+
+            std::cout << "out...next.size()" << out.data[sc.name].next.size() << std::endl;
+            out.data[sc.name].clustered = true;
+            std::cout << "\n" << std::endl;
         }
+
+        std::cout << "\n\n" << std::endl;
 
         // TODO
         // put intervals into out structure
-        (void) out;
     }
 
     void Algo_weak::findMinMax(Syscall_t &sc, Ids &out) {
