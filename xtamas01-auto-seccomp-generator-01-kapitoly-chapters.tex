@@ -467,7 +467,7 @@ The IDS representation is shown in Figure \ref{fig:tikz:IDStree}.
 \subsection{Optimizer}
 Optimizer is the main part of this tool.
 This part will reduce the intermediate data structure (IDS).
-There are three approaches of reducing IDS.
+There are three approaches of reducing IDS (strict, advanced, weak).
 \begin{itemize}
 	\item \textbf{Strict}
 	optimization is defined as 1:1 to strace input file.
@@ -540,6 +540,39 @@ There are three approaches of reducing IDS.
 	optimization is defined as combination of both strict and weak optimizations.
 	In some specific cases it will use only the exact values and in other cases it will use weak optimizations.
 	This combination should be more strict than the weak optimization and weaker than the strict optimization.
+
+	In this case is used DBSCAN clustering method\cite{Schubert:2017:DRR:3129336.3068335}. The clustering is unsupervised machine learning algorithm.
+	The model introduced by DBSCAN uses a simple minimum denisty level estimation.
+	It defines a treshold fot the number of neighbors (minPts) within the radius $\epsilon$.
+	Objects with more than treshold neighbors within $\epsilon$ are treated as core points.
+	The intention of DBSCAN is to find all areas, which satisfy at least the minimum density separated by areas with lower density (noise).
+	Every point in $\epsilon$ radius is part of the same cluster as a core point.
+	If any neighbour is again a core point, their neighbourhoods are transitively included to a core point.
+	This is very simple and basic algorithm as you can see later in this section.
+	The strength and weakness of DBSCAN clustering is that it does not require a number of output clusters.
+
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.5\linewidth]{obrazky-figures/dbscan}
+		\caption{Illustration of DBSCAN cluster model}
+		\label{dbscan_ilustration}
+	\end{figure}
+
+	Figure \ref{dbscan_ilustration} illustrates the model DBSCAN.
+	In this illustration are defined parameters:
+	\begin{itemize}
+			\item minPts is 4
+			\item $epsilon$ is indicated by circles
+	\end{itemize}
+
+	The abstracted algorithm is:
+	\begin{enumerate}
+			\item find neighbors in $\epsilon$ radius of every point, and find core points with more that minimum neigthnours (minPts)
+			\item find connected core points on the graph and merge them into clusters.
+			\item assign every non-core point to a core point if that non-core point is in $\epsilon$ radius of that core-point else assign it to noise.
+	\end{enumerate}
+
+
 
 	\begin{algorithm}[H]
 		\SetKwData{syscall}{sc}
@@ -667,12 +700,32 @@ NAME.PID where NAME is a provided filename in option \texttt{-o} and PID is a pr
 
 
 \subsection{Strace grammar}
-wirte strace output in eBNF
+Strace produces structured output. Simplified version in extended Backus–Naur form (eBNF)\cite{ISO14977}
+you can see in Figure \ref{strace_grammar_simple}.
 
-\begin{bnf*}
-\bnfprod{grammar}
-	{\bnfpn{system\_call} \bnfor \bnfpn{signal} \bnfor \bnfpn{exit\_line}}\\
-\end{bnf*}
+\begin{figure}[h]
+	\label{strace_grammar_simple}
+	\begin{bnf*}
+	\bnfprod{grammar}
+		{\bnfpn{system\_call} \bnfor \bnfpn{signal} \bnfor \bnfpn{exit\_line}}\\
+	\bnfprod{system\_call}
+		{\bnfpn{sc\_name} \bnfsp  \bnfts{''(''} \bnfsp \{\bnfpn{argument}\} \bnfsp \bnfts{'')''} \bnfsp \bnfts{''=''} \bnfsp \bnfpn{digit}}\\
+	\bnfprod{signal}
+			{\bnfts{''+++ killed with''} \bnfsp \bnfpn{signal\_name} \bnfsp \bnfts{''+++''}}\\
+	\bnfprod{exit\_line}
+		{\bnfts{''+++ exited with''} \bnfsp \bnfpn{digit} \bnfsp \bnfts{''+++''}}\\
+	\end{bnf*}
+	\caption{Strace output grammar in eBNF}
+\end{figure}
+
+As you can see the grammar is composed of main parts that are \emph{system\_call}, \emph{signal} and \emph{exit\_line}.
+For us are interesting the first one (\emph{system\_call}).
+The system call is composed of a name of syscall, arguments and return code.
+The argument can occur in a sequence and it is made of som atomic types
+(value, constant, structure, array, string, address and there can be find comments as  well).
+The string is in program represented as a place in memory but strace can dereference this address
+and show it in analysis. This is the reason I mentioned it explicitly.
+
 
 \section{Intermediate Representation}
 How it looks and why?
