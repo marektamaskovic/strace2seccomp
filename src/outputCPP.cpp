@@ -62,25 +62,45 @@ namespace st2se {
     }
 
     void outputCPP::generateScRules(std::pair<std::string, Syscall_t> sc) {
-        const unsigned pos = -1;
+        const unsigned pos_num = 0;
 
+        // writen as this for readabilty
+
+        #if 1
+
+        if(sc.second.clustered == true){
+            std::cout << "clustered branch" << std::endl;
+            for(auto &pos : sc.second.next){
+                generateClusterRules(pos, pos_num);
+            }
+        }
+        else{
+            for(auto &argument : sc.second.next){
+                generateRules(argument, pos_num, /*clustered =*/ false);
+            }
+        }
+
+        #else
+        // less readable
         for(auto argument : sc.second.next){
             
             // clustered tree is a little bit different
             if(sc.second.clustered == true){
-                generateClusterRules(argument, pos);
+                std::cout << "clustered branch" << std::endl;
+                generateClusterRules(argument, pos_num);
             }
             else{
-                generateRules(argument, pos + 1, /*clustered =*/ false);
+                generateRules(argument, pos_num + 1, /*clustered =*/ false);
             }
         }
+        #endif
     }
 
     void outputCPP::generateClusterRules(argument_t arg, const unsigned pos){
 
         // iterate over clusters
         for(auto cluster : arg.next){
-            generateRules(cluster, pos + 1, /*clustered =*/ true);
+            generateRules(cluster, pos, /*clustered =*/ true);
         }
 
     }
@@ -92,13 +112,36 @@ namespace st2se {
             // get minmax
             auto minmax = getMinMax(arg);
 
+            if(minmax.empty()){
+                return;
+            }
+
+            // std::cout << arg2str(minmax.first) << " " << arg2str(minmax.second) << std::endl;
             // print minmax
-            writeRangeValue(minmax);
+            if(minmax.size() == 1){
+                writeValue(minmax.front());
+            }
+            else{
+                writeValue(minmax);
+            }
 
             // recursive descent
             if(!arg.next.empty()){
-                generateRules(arg.next.front(), pos + 1, clustered);
+                if(!arg.next.front().next.empty()){
+                    generateRules(arg.next.front(), pos + 1, clustered);
+                }
+                else{
+                    // std::cout << "first not empty and second one is" << std::endl;
+                    return;
+                }
             }
+            else{
+                // std::cout << "first and second empty" << std::endl;
+                return;
+            }
+            // if(!arg.next.empty()){
+            //     generateRules(arg.next.front(), pos + 1, clustered);
+            // }
         }
         else {
             // TODO maybe smarter way with backtracking?
@@ -114,14 +157,33 @@ namespace st2se {
 
     }
 
-    std::pair<argument_t, argument_t> outputCPP::getMinMax(argument_t arg){
-        return std::pair<argument_t, argument_t>();
+    std::vector<argument_t> outputCPP::getMinMax(argument_t &arg){
+
+
+        std::vector<argument_t> vec {arg.next.begin(), arg.next.end()};
+        vec.push_back(arg);
+
+        std::vector<argument_t> ret_val {};
+
+        std::sort(vec.begin(), vec.end());
+
+        if(vec.size() > 1){
+            ret_val.push_back(vec.front());
+            ret_val.push_back(vec.back());
+        }
+        else if(vec.size() == 1){
+            ret_val.push_back(vec.front());
+        }
+
+        return ret_val;
     }
 
-    void outputCPP::writeRangeValue(std::pair<argument_t, argument_t> &range) {
+    void outputCPP::writeValue(minmax_t &range) {
+        std::cout << "TODO: print as rule: range:\t" << arg2str(range.front()) << " " << arg2str(range.back()) << std::endl;
         return;
     }
-    void outputCPP::writeValue(argument_t) {
+    void outputCPP::writeValue(argument_t &arg) {
+        std::cout << "TODO: print as rule: val:\t" << arg2str(arg) << std::endl;
         return;
     }
 

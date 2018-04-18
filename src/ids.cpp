@@ -273,14 +273,17 @@ namespace st2se {
             std::cout << "No args" << std::endl;
         }
         else {
+            // iterate through positions
             for (auto &pos : next) {
                 std::cout << "Clusters for arg:" << std::endl;
 
-                for (auto item1 : pos.next) {
-                    std::cout << "\t" << arg2str(item1) << ", ";
+                // iterate through clusters
+                for (auto cluster : pos.next) {
+                    std::cout << "\t" << arg2str(cluster) << ", ";
 
-                    for (auto item2 : item1.next) {
-                        std::cout << arg2str(item2) << ", ";
+                    // iterate in cluster
+                    for (auto item : cluster.next) {
+                        std::cout << arg2str(item) << ", ";
                     }
 
                     std::cout << std::endl;

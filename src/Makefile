@@ -4,9 +4,12 @@ CXX=clang++
 OBJ=main.o straceparser.o ids.o argparse.o states.o optimizer.o algorithm.o\
 	algorithm_weak.o algorithm_strict.o algorithm_advanced.o \
 	generator.o output.o outputCPP.o
+
 BIN=st2se
 LDFLAGS=-Iinclude/
 LINK.o = $(LINK.cpp)
+
+DATASET=../testdata/dataset.reduced
 
 ifeq ($(CXX),g++)
 	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
@@ -32,6 +35,7 @@ tracing: all
 st2se: $(OBJ)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $(BIN)
 
+# static analysis
 clangTidy:
 	clang-tidy *.[ch]pp -checks=* -- -std=c++17 -stdlib=libc++ -I/usr/include/c++/7/ > lint.out
 
@@ -39,19 +43,21 @@ clangTidy:
 dep:
 	g++ *.cpp -Iinclude -MM >> Makefile
 
+# TODO
+# Paramatrize dataset file
 run:
 	@echo "========= TEST 1 ========" >out
 	@echo "========= TEST 1 ========" >err
-	./st2se dataset -w -d -v >>out 2>>err
+	./st2se $(DATASET) -w -d -v >>out 2>>err
 	@echo "========= TEST 2 ========" >>out
 	@echo "========= TEST 2 ========" >>err
-	./st2se dataset -s -d -v >>out 2>>err
+	./st2se $(DATASET) -s -d -v >>out 2>>err
 	@echo "========= TEST 3 ========" >>out
 	@echo "========= TEST 3 ========" >>err
-	./st2se dataset -a -d -v >>out 2>>err
+	./st2se $(DATASET) -a -d -v >>out 2>>err
 	@echo "========= TEST 4 ========" >>out
 	@echo "========= TEST 4 ========" >>err
-	./st2se dataset -a -t -d -v >>out 2>>err
+	./st2se $(DATASET) -a -t -d -v >>out 2>>err
 	@echo "========= TEST 4 ========" >>out
 	@echo "========= TEST 4 ========" >>err
 	./st2se -A >>out 2>>err
@@ -63,7 +69,7 @@ clean:
 	-rm -f *.o
 	-rm -f *.orig
 	-rm -f $(BIN)
-	-rm -f vgcore.* core.*
+	-rm -f vgcore.* core.* lint.out
 	-rm -rf ./html
 	-rm -f *.gcda *.gcno coverage.info
 

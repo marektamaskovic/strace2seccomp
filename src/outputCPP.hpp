@@ -4,11 +4,14 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <optional>
 
 #include "output.hpp"
 #include "ids.hpp"
 
 namespace st2se {
+
+    using minmax_t = std::vector<argument_t>;
 
     class outputCPP : public Output {
 
@@ -33,10 +36,10 @@ namespace st2se {
         void generateClusterRules(argument_t arg, const unsigned pos);
         void generateRules(argument_t arg, const unsigned pos, const bool clustered);
 
-        std::pair<argument_t, argument_t> getMinMax(argument_t arg);
+        std::vector<argument_t> getMinMax(argument_t &arg);
 
-        void writeRangeValue(std::pair<argument_t, argument_t> &range);
-        void writeValue(argument_t);
+        void writeValue(minmax_t &range);
+        void writeValue(argument_t &arg);
     };
 
 } // namespace st2se
