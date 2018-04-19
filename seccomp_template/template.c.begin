@@ -12,14 +12,12 @@
 
 #include <seccomp.h>
 
-int setup_seccomp_whitelist(scmp_filter_ctx *ctx){
+int setup_seccomp_whitelist(){
 
-    if(ctx == NULL){
-        fprintf(stderr, "%s %s %s\n", "Error:", __func__, ": ctx is NULL\n");
-        return -1;
-    }
-
+    scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_KILL);
+    
     int rc = 0;
+
 
     // seccomp rules 
     //-------------------------------------------------------------------------

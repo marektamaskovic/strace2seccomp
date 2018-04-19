@@ -40,6 +40,10 @@ namespace st2se {
 
         void writeValue(minmax_t &range);
         void writeValue(argument_t &arg);
+
+        void writeSC(Syscall_t &sc, unsigned tab_len);
+        void writeClosingBracket();
+
     };
 
 } // namespace st2se

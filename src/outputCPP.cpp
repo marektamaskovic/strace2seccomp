@@ -54,8 +54,6 @@ namespace st2se {
             generateScRules(item);
         }
 
-        output_source << "asdg" << std::endl;
-
         writeLastPart();
         std::cout << "last part" << std::endl;
 
@@ -65,6 +63,8 @@ namespace st2se {
         const unsigned pos_num = 0;
 
         // it's writen this way for better readabilty
+
+        writeSC(sc.second, 1);
 
         if (sc.second.clustered == true) {
             std::cout << "clustered branch" << std::endl;
@@ -78,6 +78,8 @@ namespace st2se {
                 generateRules(argument, pos_num, /*clustered =*/ false);
             }
         }
+
+        writeClosingBracket();
     }
 
     void outputCPP::generateClusterRules(argument_t arg, const unsigned pos) {
@@ -165,6 +167,23 @@ namespace st2se {
     }
     void outputCPP::writeValue(argument_t &arg) {
         std::cout << "TODO: print as rule: val:\t" << arg2str(arg) << std::endl;
+        return;
+    }
+
+    void outputCPP::writeSC(Syscall_t &sc, unsigned tab_len) {
+
+        for(unsigned i = 0; i < tab_len; ++i){
+            output_source << "    ";
+        }
+
+        output_source << "rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS("
+                      << sc.name
+                      << "), ";
+
+        return;
+    }
+    void outputCPP::writeClosingBracket() {
+        output_source << "0);" << std::endl;
         return;
     }
 
