@@ -61,7 +61,7 @@ When a user invokes a system call, an execution flow is as follows:
 	\item Immediately after return from the system call to interrupt handler, \texttt{syscallX()} macro checks for a negative return value from the syscall, if so it puts a positive copy of a return value to a global variable \texttt{\_errno}, for accessing from code like \texttt{perror()}.
 \end{itemize}
 
-This procedure is illustrated in Figure \ref{fig:tikz:int_handling}.
+This procedure is illustrated in Figure \ref{fig:tikz:int_handling}. \cite{Silberschatz2013}
 
 \begin{figure}[]
   \centering
