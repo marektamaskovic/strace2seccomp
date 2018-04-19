@@ -36,7 +36,10 @@ namespace st2se {
         for (unsigned arg_pos = 0; arg_pos < depth; arg_pos++) {
             std::vector<argument_t> v;
             v = getArguemntsFromPos(sc.next, arg_pos);
-
+            
+            if (v.empty()) {
+                continue;
+            }
             /*INDENT-OFF*/
             std::sort(v.begin(), v.end(),
                 [](argument_t a, argument_t b)

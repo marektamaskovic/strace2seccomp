@@ -64,9 +64,7 @@ namespace st2se {
     void outputCPP::generateScRules(std::pair<std::string, Syscall_t> sc) {
         const unsigned pos_num = 0;
 
-        // writen as this for readabilty
-
-        #if 1
+        // it's writen this way for better readabilty
 
         if (sc.second.clustered == true) {
             std::cout << "clustered branch" << std::endl;
@@ -80,23 +78,6 @@ namespace st2se {
                 generateRules(argument, pos_num, /*clustered =*/ false);
             }
         }
-
-        #else
-
-        // less readable
-        for (auto argument : sc.second.next) {
-
-            // clustered tree is a little bit different
-            if (sc.second.clustered == true) {
-                std::cout << "clustered branch" << std::endl;
-                generateClusterRules(argument, pos_num);
-            }
-            else {
-                generateRules(argument, pos_num + 1, /*clustered =*/ false);
-            }
-        }
-
-        #endif
     }
 
     void outputCPP::generateClusterRules(argument_t arg, const unsigned pos) {
@@ -142,10 +123,6 @@ namespace st2se {
                 // std::cout << "first and second empty" << std::endl;
                 return;
             }
-
-            // if(!arg.next.empty()){
-            //     generateRules(arg.next.front(), pos + 1, clustered);
-            // }
         }
         else {
             // TODO maybe smarter way with backtracking?

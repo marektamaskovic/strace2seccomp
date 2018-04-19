@@ -272,7 +272,7 @@ namespace st2se {
         from.erase(from.begin());
 
         return true;
-    };
+    }
 
 
     // asdf func()
