@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <map>
 
 #include "tao/pegtl.hpp"
 #include "tao/pegtl/contrib/tracer.hpp"
