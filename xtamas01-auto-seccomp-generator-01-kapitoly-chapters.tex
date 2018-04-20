@@ -13,7 +13,7 @@ After that, IDS is reporting this violation.
 
 Another way is to monitor and block system calls (syscalls).
 Monitoring is performed using tools mentioned in the next chapter.
-The actual blocking can be performed with mandatory control access (MAC) (Apparmor, SELinux), sandboxing (seccomp) or others mechanisms.
+The actual blocking can be performed with mandatory access control (MAC) (Apparmor, SELinux), sandboxing (seccomp) or others mechanisms.
 MAC refers to a type of access control by which the operating system constraints the ability of a subject or initiator to access or generally perform some sort of operation on an object or target.
 Seccomp is a Linux kernel module which allows a process one-way transition to secure a state where the process can only use four syscalls.
 When the process tries to call another syscall then one of the four member's sets is terminated with SIGKILL.
@@ -25,24 +25,25 @@ I aim to design and develop a tool which helps developers using libseccomp and s
 I plan to create policies for a specific program in a format readable by libseccomp or seccomp-bpf.
 
 \Cref{chap:syscalls} describes syscalls and how to monitor them.
-In the next chapter of the thesis, I will illustrate how security facilities in Linux, such as systrace and seccomp, work.
+In the chapter \Cref{chap:third} of the thesis, I will illustrate how security facilities in Linux, such as systrace and seccomp, work.
 After the theoretical part, the design and development of a tool will follow.
 In conclusion, methodology how this tool was tested is described.
 
 \chapter{System Calls and Monitoring Tools}
 \label{chap:syscalls}
-In this chapter, I will describe a term system call and make an overview of tools which can monitor the system calls.
-We will focus in detail on a strace tool which will be used as an input to my tool.
+In this chapter, I will describe the term system call and make an overview of tools which can monitor the system calls.
+We will focus in detail on the strace tool which will be used as an input to my tool.
 The other applications are described briefly not as detailed as the strace tool.
 
 \section{System Calls}
 
 In computer terminology, the term syscall is a way in which a computer program requests a service of the operating system on which is executed on.
-In other words, the system calls are functions used in the kernel itself.
+In other words, system calls are functions used in the kernel itself.
 The system call appears to a standard developer as a C function call.
 This design is typical for monolithic kernels.
 We can find them on every UNIX system.
-The system calls are generated using interruption, i.e., on Linux/i86 with an interruption no. \texttt{0x80} or with a system call named \texttt{syscall()} or \texttt{sysenter()} and these syscalls are handled by the kernel in a privileged mode.
+The system call can be called on Linux/i86 multiple ways. One of them is to call interruption no. \texttt{0x80} with value of syscall in register \texttt{eax}.
+The seccond and third one is by calling system calls \texttt{syscall()} or \texttt{sysenter()} and these syscalls are handled by the kernel in a privileged mode.
 When a user invokes a system call, an execution flow is as follows:
 \begin{itemize}
 	\item Each syscall is vectored through a stub in libc.
@@ -76,30 +77,30 @@ This procedure is illustrated in Figure \ref{fig:tikz:int_handling}. \cite{Silbe
 The most used and conventional method for monitoring is tracing, in other words watching what a program is doing during the execution.
 Tracing involves a specialized logging to record information, useful for debugging, about a program's execution.
 This can be done in multiple layers, from tracing which lines in the program was executed to individual instructions run on a CPU.
-Collecting this information can be done with various tools, i.e., strace, ftrace and a lots of more.
+Collecting this information can be done with various tools, e.g., strace, ftrace etc.
 
 \subsection{Strace}
 \label{sec:strace}
 
-Strace \cite{strace_man} is a simple diagnostic, instructional and debugging tool.
+Strace \cite{strace_man} is a easy to use diagnostic, instructional and debugging tool.
 You can monitor every syscall or signal made by the program you are tracking.
-Using this tool is possible to log what an observing program demanded from the kernel.
-The individual recorded operations can be, i.e., an attempt to open a file or delete a content of CPU caches.
-The strace also shows arguments for the called syscall.
+Using this tool it is possible to log what the observed program demanded from the kernel.
+The individual recorded operations can be, e.g., an attempt to open a file or delete a content of CPU caches.
+This tool also shows arguments for the called syscall and it can show data strcutures with their elements, etc.
 The developer can perform a fault injection for the specified set of syscalls as well, to simulate the program in faulty test cases.
-The next feature is that the Strace can trace child processes of the observing program.
+Another feature is that the Strace can trace child processes of the observing program.
 The log on the output will contain the system calls from the primary process and its child processes.
 
 The main advantage of Strace tool is that it does not need any source codes.
 The observing program has not to be compiled with extra flags nor object files.
 Also, it does not matter if the application is statically or dynamically linked.
-This is useful because we only need to execute it binary.
-These features are helpful for my tool, but this will be more described in another chapter.
-Strace tool is straightforward, i.e., when one wants to run ls with strace he types in a command line:\\
+This is useful because we only need to execute the binary.
+These features are helpful for my tool, but this will be more described in a later chapter.
+The usage of strace tool is straightforward, i.e., when one wants to run ls with strace he types in a command line:\\
 \\
 \texttt{>\$ strace ls}\\
 \\
-In this case, the strace executes the \texttt{ls} command, and on the output, it occurs which system calls were called.
+In this case, strace executes the \texttt{ls} command, and on the output, it shows which system calls were called.
 An example of the strace output is in the next figure.\\[2mm]
 
 \fontfamily{lmtt}\selectfont\noindent
@@ -111,13 +112,13 @@ close(3)\linebreak
 \fontfamily{\familydefault}\selectfont
 
 \subsection{Ptrace}
-Strace is using a ptrace \cite{ptrace_man} system call.
-The ptrace is used to  implement debuggers and other tools for process monitoring.
+Strace is using ptrace \cite{ptrace_man} system call.
+Ptrace is used to  implement debuggers and other tools for process monitoring.
 Basically, the strace call ptrace and attach to a tracee (monitored process).
-When the connection is established the tracee is halt before and after syscall.
+When the connection is established the tracee is halted before and after syscall.
 Now the tracer (strace) can observe and control the execution as well as inspect memory and registers of (tracee).
 With this information, strace can determine which syscall was called.
-With the second halt after syscall, the strace can get information of return value from syscall.
+During the second halt after syscall, the strace can get information of return value from syscall.
 
 \subsection{Ftrace}
 Ftrace \cite{ftrace_man} is an internal tracer which traces events in the kernel.
@@ -173,7 +174,7 @@ You can also set which actions should or should not be reported.
 
 Audit System is composed of two main parts.
 The first one \(autrace\) is a kernel component which intercepts system calls, records events and sends these audit messages to the next part.
-The second component is an audit daemon.
+The second component is an audit daemon working in user space.
 This part is collecting the information emitted by a kernel component.
 Emitted data is then stored as entries in a log file.
 As you can see this tool is not for monitoring one specific program, but it is designed to monitor the whole system.
@@ -191,6 +192,7 @@ Entry example in a log file:\\
 
 
 \chapter{Security Facilities in Linux}
+\label{chap:third}
 This chapter describes security facilities in GNU Linux operating system.
 First we mention an old tool named Systrace \cite{systrace_web}.
 Later we will mention a secure computing module named Seccomp \cite{seccomp_sandbox}.
@@ -202,9 +204,9 @@ In the end, there will be a description of libseccomp which is an easy to use li
 \section{Systrace}
 Systrace is security facility which limits an application's access to the system.
 It is similar to a newer tool named seccomp-bpf which will be described later.
-The limitations are provided via system call blocking.
+The restrictions of a program are provided via system call blocking.
 The policy is generated interactively.
-Operations not covered by the defined policy raise the alarm.
+Operations not covered by the defined policy raise an alarm.
 When an alarm is raised the user can refine the current policy.
 Systrace provides an option to generate policies automatically which can be immediately used in sandboxing
 (Sandbox is a security mechanism for separating programs, usually in an effort to mitigate system failures or software vulnerabilities from spreading.)\footnote{https://www.wikiwand.com/en/Sandbox\_(computer\_security)}.
@@ -218,7 +220,7 @@ These alerts can be sent to a system administrator and can provide information w
 \section{Seccomp}
 A large number of syscalls are exposed to user space of a process.
 Many of this syscalls are unused for the entire lifetime of the process.
-This generates small possibility to misuse some syscalls to corrupt the process itself.
+This exposes a possibility to misuse some syscalls to corrupt the process itself.
 A particular subset of applications benefits from a reduced set of syscalls by reducing exposed kernel surface to process.
 The filtering is done by seccomp.
 Seccomp filtering provides a means for a process to reduce the set of syscalls available to the process \cite{seccomp_kernel_doc}.
@@ -304,9 +306,15 @@ As you can see in the figure, there are 5 parts that are opcode (operation code)
 Libseccomp \cite{libseccomp_git} is easy to use library which provides a platform-independent interface to the Linux Kernel's syscall filtering.
 The libseccomp API is designed to abstract an user from underlying BPF based syscall filtering and present a more conventional function-call based filtering interface.
 The interface should be more familiar to and quickly adopted by application developers.
-The comparison of libseccomp and raw BPF filter is shown in Figures \ref{lst:raw_bpf} and \ref{lst:libseccomp}.
+The comparison of libseccomp and raw BPF filter is shown in Appendix \ref{lst:raw_bpf} and \ref{lst:libseccomp}.
 
-One of the advantages of libseccomp is that it has a permissive mode in which every syscall violation is reported to the user.
+The library accept on input a set of rules which are later transformed into a eBPF format used in seccomp.
+One of the advantages of a libseccomp is that you can write a function call based filter.
+This filter is then translated to eBPF and after that it is loaded into seccomp as filter.
+This method is not transitive from function call filter to eBPF.
+There are some differences but they are on so small-scale they can be ignored.
+
+Another advantages of seccomp is that it has a permissive mode in which every syscall violation is reported to the user.
 This feature can be helpful if you want to obtain information which syscalls was called.
 This use case is really similar to the syscall monitoring.
 But it is really tough to depend on this output because it is in development.
@@ -314,12 +322,12 @@ But it is really tough to depend on this output because it is in development.
 
 \chapter{Solution Design}
 \label{chap:design}
-This chapter will describe, the technical part of the thesis.
+This chapter will describe the technical part of the thesis.
 We will discuss requirements and particular parts, its architecture and issues, we have to deal with.
 
 \section{Requirements}
 \label{sec:requirements}
-We will require from the application to fulfills the following requirements:
+We will require from the application to fulfill the following requirements:
 \begin{enumerate}
 \item Application will have only CLI\footnote{Command Line Interface}.
 \item The application will be implemented in C++17 \cite{ISO14882}.
@@ -334,7 +342,7 @@ We will require from the application to fulfills the following requirements:
 \item Parser will be implemented using PEG\footnote{Parsing Expression Grammar} \cite{PEG_def} design.
 \item Optimizer will have at least three optimizing methods:
 	\begin{enumerate}
-    \item strict - without used of advanced methods, with an interpretation of internal structure,
+    \item strict - without use of advanced methods,
     \item minimax - possibility to  count an interval interval between minimum and maximum value found in a set of arguments,
     \item advanced - combination of above methods.
 	\end{enumerate}
@@ -344,7 +352,7 @@ We will require from the application to fulfills the following requirements:
 \section{Architecture}
 The architecture of this application is based on architectural patterns.
 In this case \textit{Pipe-and-Filter} \cite{PipeAndFilter} architectural pattern was used.
-This pattern best fits out problem.
+This pattern best fits our  problem.
 A big inspiration came from compilers.
 They are very similar to this application.
 They break down the processing required for input into separate components (or filters), each performing a single task.
@@ -400,8 +408,8 @@ You can minimize these pitfalls by providing a lot of strace input files.
 The best case is when you provide strace files from every major complex test case (with big prime path coverage).
 
 \subsection{Parser}
-The parser is crucial part of the whole application because it will put everything in a IR (intermediate representation).
-Input to the parser is a output from a \texttt{Strace} tool.
+The parser is crucial part of the whole application because it will put everything in an IR (intermediate representation).
+Input to the parser is a output from the \texttt{Strace} tool.
 The output was described in Section \ref{sec:strace} and correct configuration of strace to generate valid ouptut for \texttt{strace2seccomp} will be described in Section \ref{sec:strace_config}.
 As you can see the output is in a structured form and has an unambiguous syntax which means that no error should occur during the parsing part.
 When syntax error occurs, the program should inform where the error is located in the input file.
@@ -419,7 +427,7 @@ In this structure, there are different information about syscall represented on 
 The root node has child elements which represent an individual system calls.
 In this case, we are naming these nodes as~a~system~call node (SCD).
 In SCD, information about a system call number is stored and it have multiple children.
-The nth level represents the nth argument of a specific system call.
+The \textit{n}-th level represents the \textit{n}-th argument of a specific system call.
 The whole system call (including arguments) can be read as a path from the root node to the leaf node.
 The IDS representation is shown in Figure \ref{fig:tikz:IDStree}.
 
@@ -456,7 +464,7 @@ The IDS representation is shown in Figure \ref{fig:tikz:IDStree}.
 \subsection{Optimizer}
 Optimizer is the main part of this tool.
 This part will reduce the intermediate data structure (IDS).
-There are three approaches of reducing IDS (strict, advanced, weak).
+There are three approaches of reducing IDS (strict, advanced, minmax).
 
 	\paragraph{Strict}
 	optimization is defined as 1:1 to strace input file.
@@ -493,14 +501,20 @@ There are three approaches of reducing IDS (strict, advanced, weak).
 		}
 	\end{algorithm}
 
-	\paragraph{Weak}
+	\paragraph{Minmax}
 	optimization is the most basic one of this set of optimizations.
-	The weak optimization is based on finding minimum and maximum from set of arguments.
 	The main idea is to find minimum and maximum for each argument of each syscall.
+	The model uses a simple  tecniques to find extremes on every position of the system call.
+	Firstly it serialize the arguments from $n$-th position. Then the serialization is
+	looked for extremes.
 
 	So the abstracted algoritm follows as this:
 	\begin{enumerate}
-		\item For each syscall find extremes on every argument position.
+		\item Serialize $n$-th argument position of a system call.
+		\item Search for extremes in serialization
+		\item increment $n$
+		\item if $n$ is bigger than number of arguments in syscall then exit.
+		\item go to number 1.
 	\end{enumerate}
 
 	\begin{algorithm}[H]
@@ -721,41 +735,104 @@ The system call is composed of a name of syscall, arguments and return code.
 The argument can occur in a sequence and it is made of som atomic types
 (value, constant, structure, array, string, address and there can be find comments as  well).
 The string is in program represented as a place in memory but strace can dereference this address
-and show it in analysis. This is the reason I mentioned it explicitly.
+and show it in analysis.
 
-
-\section{Intermediate Representation}
-How it looks and why?
+\section{Class Hierarchy}
+class diagrams?
 
 \section{Output}
-Chapter about creating output from IDS to libseccom or eBPF.
-\subsection{libseccomp}
-Something about using libseccomp.
-\subsection{eBPF}
-Maybe extension?
+The strace2seccomp tool is generating a source code for C/C++.
+In the source code is used seccomp library to provide system call blocking.
+
+\section{Used software}
+In this section I want to mention which software I used to develop strace2seccomp tool.
+Firstly I mention compilers used in this project and after that valuable tools for developments.
+
+\subsection{Compilers}
+\label{subsec:compilers}
+In this project I used two compilers. The reason is simple.
+Every compiler can detect another set of errors and warnings during the compilation.
+And at the time of doing project one of the reason of compiling with two compilers
+was to compare the execution times with an optimizations turned on.
+
+In the project was used \texttt{libc++} and \texttt{libc++ ABI} from LLVM project.
+The reason for using implementation from LLVM project was that in the GNU implementation
+was a bug which affected a C++17 functionality.\footnote{\url{https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=877838}}.
+
+\paragraph{GNU Compiler Collection} is a part of the GNU project.
+It aims to improve compiler used in the GNU ecosystem.
+GCC\footnote{\url{https://gcc.gnu.org/}} uses an open development environment.
+It includes front ends for C, C++, Objective-C, Go etc.
+as well as libraries for these languages. It was firstly written for GNU operating system\footnote{\url{https://www.gnu.org/gnu/thegnuproject.html}}
+The compiler collection is released under the GPL license, other components e.g. as runtime libraries are distributed under various free licenses.
+
+\paragraph{LLVM/Clang}
+The goal of Clang\footnote{\url{https://clang.llvm.org/}} project is to provide a new C based language front-end (C, C++, Objective-C,) for the LLVM\footnote{\url{http://www.llvm.org/}} compiler.
+It is released under NCSA Open Source Licence. Clang is designed to be highly compatible with GCC.
+It supports most of the GCC compilation flags and unofficial language extensions\footnote{\url{https://clang.llvm.org/docs/LanguageExtensions.html}}.
+
+\subsection{LLVM/Clang-tidy} is clang-based ''linter'' tool\footnote{\url{http://clang.llvm.org/extra/clang-tidy/}}.
+Its purpose is to diagnose and fix typical programming errors,
+like interface misuse, style violation, or bugs that can be deduced via static analysis.
+clang-tidy diagnostics are designed to assert cote that has invalid coding standard or is otherwise problematic.
+It has options to diasable some false positive warnings (e.g. \texttt{\textbackslash\textbackslash NOLINT}).
+
+\subsection{AddressSanitizer}
+(ASan)\footnote{\url{https://github.com/google/sanitizers/wiki/AddressSanitizer}} is a memory error detector for C/C++ developed by Google.
+ASan is a very fast and the average slowdown of the instrumented program is \textasciitilde 2x.
+The tool consist of a runtime library which replaces the \texttt{malloc} function and compiler module (currently as LLVM pass).
+The tool supports multiple architectures e.g. (x86, x86\_64, ARM, ARM\_64, MIPS, PowerPC64, etc.).
+It is part of the both compilers mentioned above in Subsection \ref{subsec:compilers}.
+
+Usage of ASan is very straightforward. You have to add only:\\
+\begin{center}
+	\texttt{-fsanitize=address -fno-omit-frame-pointer}
+\end{center}
+The first parameter turns on the ASan and the second one print a nicer stack trace in error messages.
+It is adviced by developers to use optimization e.g. \texttt{-O1}, to get reasonable performance.
+
+\subsection{Git}
+The Git\footnote{\url{https://git-scm.com/about}} is a source code manager (SCM). It stand out of the group of SCMs by its branching model.
+Git allows and encourage you to have multiple local or remote branches that can be entirely independent.
+This provides features like:
+\begin{itemize}
+	\item Context Switching
+	\item Feature Based Workflow
+	\item Role-based Codelines
+	\item Disposable Experimentation
+\end{itemize}
+Other benefit of Git it is doing nearly all operations locally.
+This gives the tool huge speed advantage.
+Git was built to work with Linux kernel, that means it can effectively handle large repositories.
+The st2se used repository hosting on GitHub.
+
+\subsection{Artistic Style}
+Astyle\footnote{\url{http://astyle.sourceforge.net/}} is  source code formatter and beautifuller.
+Works with C, C++ Objective-C, C\# and Java programming languages.
+The motivation to use this tool is to has uniform code style.
+Some of the editors by default insert spaces instead of tabs when pressing key.
+Other editors have the abillity to insert space before tab lines to ''pretty up'' the code (Emacs).
+The solution to this problem is to use Artistic Style formatter.
+It can normalise the source code by rules defined in configuration file provided by developer of the project.
+
+\subsection{LCOV \& GCOV}
+LCOV\footnote{\url{http://ltp.sourceforge.net/coverage/lcov.php}} is an extension to GCOV, a GNU tool which can determine what parts of a program was executed while running particular testcase.
+It can provide information about how many times was that part of program executed.
+LCOV implements to GCOV following additional functionality:
+\begin{itemize}
+	\item HTML based output with coverage rates indicated by specific color i.e. (green is 100\% and red is 0\% coverage).
+	\item Support for large projects. It allows you to browse over overview pages that shows coverage data
+	by providing: directory view, file view and source code view.
+\end{itemize}
+LCOV was designed like Git to support Linux kernel, but works as well on standard user space applications.
+This tool uses line coverage technique and it is the poorest coverage from the coverage types point of view.
+
+
+\section{Usage}
+How to run the st2se tool
+
 \subsection{C/C++ template}
 Add it in appendix.
-\subsection{Go template}
-Add it in appendix.
-
-\section{Heuristics and Optimizations}
-Something about heuristics in global
-\subsection{Minimax}
-findin min and max for every arg. position.
-\subsection{Strict}
-input $\rightarrow$ output
-\subsection{Smart}
-we should use clustering \ldots
-\subsubsection{Clustering}
-What is clustering?
-\subsubsection{Clustering algorithms used}
-There are a lots of clustering algorithms. Find them \ldots.
-\begin{itemize}
-	\item{K-means}
-	\item{DBSCAN\cite{Mahesh_Kumar2016}}
-\end{itemize}
-
-
 
 \chapter{Software Verification}
 This chapter will describe activities used to assure quality control of the developed tool.
@@ -779,7 +856,7 @@ Table \ref{table:moduletesting} shows us the description of module's test suits.
 	\centering
 	\begin{tabular}{|l|p{10cm}|}
 		\hline
-		\textbf{Module / Component}	&	\textbf{Test descriptiom} \\ \hline
+		\textbf{Module / Component}	&	\textbf{Test descriptiom} \\ \hline \hline
 		Params 											& Validity of recognized runtime arguments \\ \hline
 		StraceParser								& Syntax testing, validity of parsed data, correct error handling \\ \hline
 	\end{tabular}
@@ -798,6 +875,29 @@ AFL fuzzer was used in the process.
 \subsubsection{Fuzzing}
 \label{fuzzing}
 The term fuzzing was first used by professor Barton Miller who used fuzzing to test robustness of UNIX applications in 1989 \cite{Takanen:2008:FSS:1404500, Marhefka2013}.
+Fuzzing is a testing method which generates an unexpected input on tested software and then is observing if the software crashes. The whole process is
+typicaly automated or semiautomated that involves repeatedly manipulating and supplying input data to targeted program.
+Some modern fuzzers (programs that generates a stochastic input), record every crash or halt of a tested program.
+The stochastic data are in most cases invalid to observer how application handles invalid
+states and boundary conditions.
+"The name comes from modern applications tendency to fail due to random input caused by line noise on 'fuzzy' telephon lines."\cite{Takanen:2008:FSS:1404500, N2LYDLnqzEFYp0wM}
+In other literature fuzzing can be named by these terms:
+\begin{itemize}
+	\item Negative testing
+	\item Syntax testing
+	\item Dirty testing
+	\item Rubustness testing
+	\item Protocol mutation
+	\item Fault injection
+\end{itemize}
+
+Fuzzers can be divided into two groups:
+\begin{itemize}
+	\item \textbf{Generation-based} fuzzers creates test suite from scratch by modeling the target grammar.
+	\item \textbf{Mutation-based} fuzzers needs an (in)valid input file. The file is mutated by various techniques.
+	The mutation can be e.g. bitflip, byte change, duplicate or swap some chunks in the input file.
+	The mutated test case is then provided to a tested program.
+\end{itemize}
 
 \begin{itemize}
 	\item{AFL} write sometihong about every fuzzer you mentioned
