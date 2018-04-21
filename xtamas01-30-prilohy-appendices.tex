@@ -1,0 +1,12 @@
+\chapter{Comparison of libseccomp and raw BPF filtering}
+
+\section{BPF}
+\lstinputlisting[language=c, label={lst:raw_bpf}, caption={Using raw BPF filtering}]{source_examples/raw_bpf.c}
+
+\section{libseccomp}
+\lstinputlisting[language=c, label={lst:libseccomp}, caption={Using simpler libseccomp wrapper}]{source_examples/libseccomp.c}
+
+\chapter{Output of strace2seccomp}
+
+\section{Example Output no.1}
+\lstinputlisting[language=c, label={lst:example1}, caption={Example output of strace2seccomp}]{source_examples/exportedSource.c}

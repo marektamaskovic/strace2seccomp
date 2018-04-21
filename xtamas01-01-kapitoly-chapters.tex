@@ -568,8 +568,10 @@ There are three approaches of reducing IDS (strict, advanced, minmax).
 		\item partitioning,
 		\item hierarchical,
 		\item density based clustering,
+		\begin{itemize}
+			\item DBSCAN clustering,
+		\end{itemize}
 		\item fuzzy clustering,
-		\item DBSCAN clustering, (this is interesting for us),
 		\item Model-based clustering.
 	\end{itemize}
 
@@ -623,6 +625,31 @@ There are three approaches of reducing IDS (strict, advanced, minmax).
 	\end{figure}
 
 
+\subsection{Pitfalls of clustering}
+The clustering of the arguments of system call has some pitfalls.
+Some of them are described bellow.
+
+\paragraph{Address space layout randomization}
+(ASLR) was introduced in 2001 by Page EXec (PaX) team to defense over buffer overflow attack. \cite{ASLR:PAX, Ganz2017}
+The goal of ASLR is to provide randomness into address space of a given task.
+This will add another layer of protection to exploits which uses buffer overflow to change behavior of attacked software.
+
+The idea behind ASLR is that the memory segments (stack, heap, libraries, ...) are located on different offsets during the runtime.
+With this technique you can achieve that exploits can not know where exactly is located e.g. stack segment in the memory.
+When is ASLR enabled, the analysis of the addresess in systemcall make no sense.
+You can not know on which offset will be any segment.
+
+ASLR is by now implemented in many modern OS (MS Windows, GNU/Linux, NetBSD, OpenBSD, MacOS).
+In Linux this feature is enabled by kernel. You can chagne this option in file e.g.:
+\begin{center}
+	\texttt{echo 2 > /proc/sys/kernel/randomize\_va\_space}
+\end{center}
+
+
+\paragraph{String represented in memory}
+The strings are represented in memory as an offset where the string
+begins and ends with null termination.\cite{ISO9899} \todo{TODO cite}
+For this reason seccomp can not operate with strings and we will skip string arguments as well.
 
 \section{Parsing Expression Grammar}
 Parsing expression grammar was introduced by Ford in 2004.
@@ -743,7 +770,7 @@ class diagrams?
 \section{Output}
 The strace2seccomp tool is generating a source code for C/C++.
 In the source code is used seccomp library to provide system call blocking.
-
+The example of a generated source code is in Appendix \ref{}
 \section{Used software}
 In this section I want to mention which software I used to develop strace2seccomp tool.
 Firstly I mention compilers used in this project and after that valuable tools for developments.

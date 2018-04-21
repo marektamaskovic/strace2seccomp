@@ -4,7 +4,7 @@
 # E-mail: dytrych AT fit vutbr cz
 #===========================================
 # asi budete chtit prejmenovat / you will probably rename:
-CO=xtamas01-auto-seccomp-generator
+CO=xtamas01
 
 all: $(CO).pdf
 
