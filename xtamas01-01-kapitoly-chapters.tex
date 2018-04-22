@@ -582,7 +582,7 @@ There are three approaches of reducing IDS (strict, advanced, minmax).
 
 	In this case is used DBSCAN clustering method\cite{Schubert:2017:DRR:3129336.3068335}.
 	The model introduced by DBSCAN uses a simple minimum denisty level estimation.
-	It defines a treshold fot the number of neighbors (minPts) within the radius $\epsilon$.
+	It defines a treshold for the number of neighbors (minPts) within the radius $\epsilon$.
 	Objects with more than treshold neighbors within $\epsilon$ are treated as core points.
 	The intention of DBSCAN is to find all areas, which satisfy at least the minimum density separated by areas with lower density (noise).
 	Every point in $\epsilon$ radius is part of the same cluster as a core point.
@@ -770,7 +770,7 @@ class diagrams?
 \section{Output}
 The strace2seccomp tool is generating a source code for C/C++.
 In the source code is used seccomp library to provide system call blocking.
-The example of a generated source code is in Appendix \ref{}
+The example of a generated source code is in Appendix \ref{lst:example1}
 \section{Used software}
 In this section I want to mention which software I used to develop strace2seccomp tool.
 Firstly I mention compilers used in this project and after that valuable tools for developments.
@@ -858,8 +858,7 @@ This tool uses line coverage technique and it is the poorest coverage from the c
 \section{Usage}
 How to run the st2se tool
 
-\subsection{C/C++ template}
-Add it in appendix.
+
 
 \chapter{Software Verification}
 This chapter will describe activities used to assure quality control of the developed tool.
@@ -871,7 +870,6 @@ In this type of testing we will check if the strace2seccomp tool has valid archi
 Next aspect which will be checked is \textit{static analysis}.
 Static analysis is type of testing which does not requires run the program but requires a source code of the tool.
 The static analyzer will analyse the source codes with different heuristics and produces a analysis of detected errors. % cite ITS lectures.
-
 
 
 \section{Module Testing}
@@ -886,6 +884,8 @@ Table \ref{table:moduletesting} shows us the description of module's test suits.
 		\textbf{Module / Component}	&	\textbf{Test descriptiom} \\ \hline \hline
 		Params 											& Validity of recognized runtime arguments \\ \hline
 		StraceParser								& Syntax testing, validity of parsed data, correct error handling \\ \hline
+		Algorithm 									& Testing correctness of algorithms \\ \hline
+		Output                      & Check the validity of generated policy \\ \hline
 	\end{tabular}
 	\caption{Test plan}
 	\label{table:moduletesting}
@@ -897,8 +897,8 @@ about using params class in custom test set and manualy check if the correct fla
 \subsection{StraceParser Testing}
 StraceParser module is responsible for parsing the strace output and translates it to intermediate data structure.
 Testing of this module can be done with various techniques.
-First one which is used is fuzzy testing or fuzzing described in section above \ref{fuzzing}.
-AFL fuzzer was used in the process.
+First one which is used is fuzzy testing or fuzzing described in section below \ref{fuzzing}.
+
 \subsubsection{Fuzzing}
 \label{fuzzing}
 The term fuzzing was first used by professor Barton Miller who used fuzzing to test robustness of UNIX applications in 1989 \cite{Takanen:2008:FSS:1404500, Marhefka2013}.
@@ -907,7 +907,7 @@ typicaly automated or semiautomated that involves repeatedly manipulating and su
 Some modern fuzzers (programs that generates a stochastic input), record every crash or halt of a tested program.
 The stochastic data are in most cases invalid to observer how application handles invalid
 states and boundary conditions.
-"The name comes from modern applications tendency to fail due to random input caused by line noise on 'fuzzy' telephon lines."\cite{Takanen:2008:FSS:1404500, N2LYDLnqzEFYp0wM}
+"The name comes from modern applications tendency to fail due to random input caused by line noise on 'fuzzy' telephon lines."\cite{Takanen:2008:FSS:1404500, N2LYDLnqzEFYp0wM, takanen2009fuzzing}
 In other literature fuzzing can be named by these terms:
 \begin{itemize}
 	\item Negative testing
@@ -918,7 +918,9 @@ In other literature fuzzing can be named by these terms:
 	\item Fault injection
 \end{itemize}
 
-Fuzzers can be divided into two groups:
+\noindent
+Fuzzers can be divided into two large groups:
+
 \begin{itemize}
 	\item \textbf{Generation-based} fuzzers creates test suite from scratch by modeling the target grammar.
 	\item \textbf{Mutation-based} fuzzers needs an (in)valid input file. The file is mutated by various techniques.
@@ -926,22 +928,67 @@ Fuzzers can be divided into two groups:
 	The mutated test case is then provided to a tested program.
 \end{itemize}
 
+For us is interresting \emph{Mutation-based} group because is easier to setup and
+is more availible in open source comunity. There are many options to choose so here is
+a little comparison of most popular fuzzers:
+
 \begin{itemize}
-	\item{AFL} write sometihong about every fuzzer you mentioned
-	\item{Bunny the Fuzzer}
-	\item{Hongfuzz}
-	\item{Radamsa}
-	\item{oss-fuzz}
+
+	\item \textbf{Bunny the Fuzzer}\footnote{\url{https://code.google.com/archive/p/bunny-the-fuzzer/}} is a closed loop, general purpose fuzzer for C programs.
+	The fuzzer uses compiler-level integration which means that it injects reliable instrumentation hooks into an object file.
+	Those hooks enable the fuzzer to trace the program, and can provide real-time feedback. This architecture provides a possibility
+	to considerably improve coverage of testing process. The injection of the hooks
+	needs to be done by the compiler scripts.
+	This fuzzer  subset of American Fuzzy Lop. This project is now deprecated.
+
+	\item \textbf{American Fuzzy Lop}\footnote{\url{http://lcamtuf.coredump.cx/afl/}}
+	is a security oriented fuzzer that add compile-time instrumentation.
+	It is supperset to really similar Bunny the Fuzzer.
+	The fuzzer has implemented many researched fuzzing capabilities (bit / byte flips,  simple arithmetics, known integers, test case splicing, \ldots).
+	Compared to other instrumented fuzzers it has moderate overhead and as little
+	configuration as possible.
+	The disadvantage of the tool is that it needs to be executed
+	multiple times to achieve multiprocess or multithread fuzzing.
+
+	\item \textbf{Honggfuzz}\footnote{\url{http://honggfuzz.com/}} us a evolutionary, security oriented, easy to use fuzzer with analysis options.
+	The main advantage of this mutation based fuzzer is that it is multi-process and multi-threded without need to run multiple copies of fuzzer.
+	The file corpus is automatically shared and improved among the processes / threads.
+	Authors of the fuzzer says that it is ''blazing fast when it works in persistent fuzzing mode''.
+	For monitoring of target (process under test) it uses low-level interface (e.g ptrace in Linux).
+	It supports several hardware based (Intel BTS, Intel PT) and software based fuzzing methods.
+
+	\item \textbf{Radamsa} is fuzzing tool\footnote{\url{https://github.com/aoh/radamsa}} developed at the Oulu university.
+	The motivation for building this fuzzer was to make robustness testing accessible to independent developers.
+	Existing tool were considered hard to use and to customize to fit the project.
+	The fuzzer is command line tool, on input it expects multiple files (samples), and generates mutated files.
+	So by the output Radamsa is considered as a mutation-based fuzzer.
+	The tool includes feature aiding in automatizing test runs.
+	This is achieved by specifying number of wanted test runs with unique mutated files.
+	Another parameter that can be set is random seed for mutation.
+	On the other hand the tool does not provide a option to monitor target (program under test).
+	Radamsa is multiplatform so it is built for Windows and Linux.\cite{radamsaThesis}
+
+	\item \textbf{Oss-fuzz} is a complex project developed by Google.\footnote{\url{https://github.com/google/oss-fuzz}}
+	The architecture of this project is that the ClusterFuzz (fuzzer tools) automatically pulls the newest source code
+	from repository and it will starts fuzzers and sanitizers
+	\footnote{Sanitizer is dynamic testing tool that can detect bugs and faults during the execution. Typicall sanitizers are \textit{ASan}, \textit{DFSan}, \ldots}.
+	When some bug or fault occurs it is automaticaly reported to the OSS-fuzz issue tracker.
+	Project owners are then notified with email about the issue.
+	When the fix is submitted ClusterFuzz automaticaly verifies the fix adds a comment to issue tracker and closes the issue.
+
 \end{itemize}
+
+For this project was used AFL fuzzer. \todo{why?}
+
 \subsubsection{Fuzzing results}
 Show some results from afl.
-\subsubsection{Grammar testing}
-If you got time write grammar tester. or find one .. dunno
 
 \subsection{Algorithms}
 How should we test if algorithms?
+
 \subsection{Optimizer}
 how should we test this adapter?
+
 \subsection{Output}
 Testing correctness of a Output generator
 \begin{itemize}
