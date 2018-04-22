@@ -971,32 +971,41 @@ a little comparison of most popular fuzzers:
 	\item \textbf{Oss-fuzz} is a complex project developed by Google.\footnote{\url{https://github.com/google/oss-fuzz}}
 	The architecture of this project is that the ClusterFuzz (fuzzer tools) automatically pulls the newest source code
 	from repository and it will starts fuzzers and sanitizers
-	\footnote{Sanitizer is dynamic testing tool that can detect bugs and faults during the execution. Typicall sanitizers are \textit{ASan}, \textit{DFSan}, \ldots}.
+	\footnote{Dynamic testing tool that can detect bugs and faults during the execution. Typicall sanitizers are \textit{ASan}, \textit{DFSan}, \ldots}.
 	When some bug or fault occurs it is automaticaly reported to the OSS-fuzz issue tracker.
 	Project owners are then notified with email about the issue.
 	When the fix is submitted ClusterFuzz automaticaly verifies the fix adds a comment to issue tracker and closes the issue.
 
 \end{itemize}
 
-For this project was used AFL fuzzer. \todo{why?}
 
 \subsubsection{Fuzzing results}
-Show some results from afl.
+The chosen fuzzer was AFL for its ability of fast deployment and easy of use.
+The opposite example is Oss-fuzz which is the whole infrastructure for fuzzing and bug hunting.
+
+The fuzzer run straight two and a half week and during this time it was discovered dozen hangs and 2 sefmentation faults.
+The hangs were caused of loops in grammar. There were possibility to infinitely parse no character.
+\todo{check the fuzzer output}
 
 \subsection{Algorithms}
-How should we test if algorithms?
+How should we test the algorithms?
 
-\subsection{Optimizer}
+\subsection{Policy generator}
 how should we test this adapter?
 
-\subsection{Output}
-Testing correctness of a Output generator
-\begin{itemize}
-	\item{C/C++}
-	\item{Go}
-\end{itemize}
-
 \section{System and Acceptance Testing}
+In the book of ''Software Acceptance Testing'' is acceptance testing defined as:
+\emph{''Acceptance testing is the formal testing activity that presents the product to the
+customer by enterprise (many times it includes stakeholders as well).
+This activity represents demonstration of a software product and shows to the customer
+that the requirements fulfilled its obligations. By this activity you can decide if
+the product is ready for deployment. The software items must be examined
+to ensure that the provided product is complete i.e. the architecture must be audited to check if
+it accurate reflects the software configuration. The test results are audited by functional
+configuration audit to certify that the software product satisfies its specification etc.''} \cite{Schmidt2013335}
+
+In this case the acceptance testing means \todo{todo}
+
 \subsection{Testing on real app}
 \subsection{USBGuard}
 
@@ -1007,6 +1016,8 @@ Any bugs?
 
 \section{Results}
 Which bugs have you found.
+
+\chapter{Conclusion}
 
 
 
