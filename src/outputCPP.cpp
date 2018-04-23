@@ -60,7 +60,10 @@ namespace st2se {
     }
 
     void outputCPP::generateScRules(std::pair<std::string, Syscall_t> sc) {
-        const unsigned pos_num = 0;
+        unsigned pos_num = 0;
+
+        // Write zero when no arguments provided.
+        writeZero = true;
 
         // it's writen this way for better readabilty
 
@@ -70,7 +73,8 @@ namespace st2se {
             std::cout << "clustered branch" << std::endl;
 
             for (auto &pos : sc.second.next) {
-                generateClusterRules(pos, pos_num);
+                // TODO Find why this works ?
+                generateRules(pos, pos_num++, true);
             }
         }
         else {
@@ -82,39 +86,47 @@ namespace st2se {
         writeClosingBracket();
     }
 
-    void outputCPP::generateClusterRules(argument_t arg, const unsigned pos) {
+    void outputCPP::generateClusterRules(argument_t pos, const unsigned pos_num) {
 
         // iterate over clusters
-        for (auto cluster : arg.next) {
-            generateRules(cluster, pos, /*clustered =*/ true);
+        for (auto cluster : pos.next) {
+            generateRules(cluster, pos_num, /*clustered =*/ true);
         }
 
     }
 
     void outputCPP::generateRules(argument_t arg, const unsigned pos, const bool clustered) {
 
+        argument_t &cluster = arg;
+
         if (clustered) {
 
             // get minmax
-            auto minmax = getMinMax(arg);
-
+            auto minmax = getMinMax(cluster);
+            // std::cout << "\n\n\n\n" << arg2str(cluster) << " ." << cluster.next.size() << std::endl;
             if (minmax.empty()) {
                 return;
             }
 
             // std::cout << arg2str(minmax.first) << " " << arg2str(minmax.second) << std::endl;
             // print minmax
+            std::cout << "minmax.size():" << minmax.size() << std::endl;
+
+            // TODO add here param switch when program is running without ASLR
+            if(isPointer(minmax)){
+                return;
+            }
             if (minmax.size() == 1) {
-                writeValue(minmax.front());
+                writeValue(minmax.front(), pos);
             }
             else {
-                writeValue(minmax);
+                writeValue(minmax, pos);
             }
 
             // recursive descent
-            if (!arg.next.empty()) {
-                if (!arg.next.front().next.empty()) {
-                    generateRules(arg.next.front(), pos + 1, clustered);
+            if (!cluster.next.empty()) {
+                if (!cluster.next.front().next.empty()) {
+                    generateRules(cluster.next.front(), pos, clustered);
                 }
                 else {
                     // std::cout << "first not empty and second one is" << std::endl;
@@ -130,7 +142,7 @@ namespace st2se {
             // TODO maybe smarter way with backtracking?
 
             // print arg as rule
-            writeValue(arg);
+            writeValue(arg, pos);
 
             // recursive descent over IDS
             for (auto x : arg.next) {
@@ -143,8 +155,16 @@ namespace st2se {
     std::vector<argument_t> outputCPP::getMinMax(argument_t &arg) {
 
 
-        std::vector<argument_t> vec {arg.next.begin(), arg.next.end()};
+        std::vector<argument_t> vec;
+
+        if(!arg.next.empty()){
+            for(auto item : arg.next)
+                vec.push_back(item);
+        }
+
         vec.push_back(arg);
+
+        // std::cout << "arg.next.size()" << arg.next.size() << std::endl;
 
         std::vector<argument_t> ret_val {};
 
@@ -161,12 +181,40 @@ namespace st2se {
         return ret_val;
     }
 
-    void outputCPP::writeValue(minmax_t &range) {
-        std::cout << "TODO: print as rule: range:\t" << arg2str(range.front()) << " " << arg2str(range.back()) << std::endl;
+    void outputCPP::writeValue(minmax_t &range, unsigned pos) {
+
+        // if(writeZero){
+        //     output_source << std::endl;
+        // }
+        
+        writeZero = false;
+
+        // std::cout << "TODO: print as rule: range:\t" << arg2str(range.front()) << " " << arg2str(range.back()) << std::endl;
+
+        output_source << "," << std::endl;
+        output_source << "        ";
+        output_source << "SCMP_A" << pos << "(SCMP_CMP_GE, " << arg2str(range.front()) << "), ";
+        output_source << "SCMP_A" << pos << "(SCMP_CMP_LE, " << arg2str(range.back()) << ")";
+        // output_source << std::endl;
+
         return;
     }
-    void outputCPP::writeValue(argument_t &arg) {
-        std::cout << "TODO: print as rule: val:\t" << arg2str(arg) << std::endl;
+    void outputCPP::writeValue(argument_t &arg, unsigned pos) {
+        
+        // if(writeZero){
+        //     output_source << std::endl;
+        // }
+
+        writeZero = false;
+
+        // std::cout << "TODO: print as rule: val:\t" << arg2str(arg) << std::endl;
+
+        output_source << "," << std::endl;
+        output_source << "        ";
+        output_source << "SCMP_A" << pos << "(SCMP_CMP_EQ, " << arg2str(arg) << ")";
+        // output_source << std::endl;
+
+
         return;
     }
 
@@ -178,14 +226,41 @@ namespace st2se {
 
         output_source << "rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS("
                       << sc.name
-                      << "), ";
+                      << ")";
 
         return;
     }
     void outputCPP::writeClosingBracket() {
-        output_source << "0);" << std::endl;
+        
+        if (writeZero) {
+            output_source << ", 0);" << std::endl;
+            return;
+        }
+
+        output_source << std::endl;
+        output_source << "    ";
+        output_source << ");" << std::endl;
         return;
     }
+
+    bool outputCPP::isPointer(minmax_t minmax) {
+
+        if(minmax.size() == 1){
+            return minmax.front().value_type == val_type_t::POINTER ? true : false;
+        }
+        else {
+            if (minmax.front().value_type == val_type_t::POINTER ||
+                minmax.back().value_type == val_type_t::POINTER)
+            {
+                return true;
+            }
+
+            return false;
+
+        }
+
+    }
+
 
 
 } // namespace st2se

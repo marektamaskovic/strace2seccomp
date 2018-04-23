@@ -27,23 +27,25 @@ namespace st2se {
         void writeFirstPart();
         void writeLastPart();
 
+        bool writeZero = true;
+
       public:
         outputCPP() = default;
 
 
         virtual void generate(Ids &ids);
         void generateScRules(std::pair<std::string, Syscall_t> sc);
-        void generateClusterRules(argument_t arg, const unsigned pos);
+        void generateClusterRules(argument_t pos, const unsigned pos_num);
         void generateRules(argument_t arg, const unsigned pos, const bool clustered);
 
         std::vector<argument_t> getMinMax(argument_t &arg);
 
-        void writeValue(minmax_t &range);
-        void writeValue(argument_t &arg);
+        void writeValue(minmax_t &range, unsigned pos);
+        void writeValue(argument_t &arg, unsigned pos);
 
         void writeSC(Syscall_t &sc, unsigned tab_len);
         void writeClosingBracket();
-
+        bool isPointer(minmax_t minmax);
     };
 
 } // namespace st2se
