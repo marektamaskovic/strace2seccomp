@@ -111,6 +111,33 @@ mmap(NULL, 202163, PROT\_READ, MAP\_PRIVATE, 3, 0) = 0x7fd781293000\linebreak
 close(3)\linebreak
 \fontfamily{\familydefault}\selectfont
 
+\paragraph{Strace grammar}
+Strace produces structured output. Simplified version in extended Backus–Naur form (eBNF) \cite{ISO14977}
+you can see in Figure \ref{strace_grammar_simple}.
+
+\begin{figure}[h]
+	\label{strace_grammar_simple}
+	\begin{bnf*}
+	\bnfprod{grammar}
+		{\bnfpn{system\_call} \bnfor \bnfpn{signal} \bnfor \bnfpn{exit\_line}}\\
+	\bnfprod{system\_call}
+		{\bnfpn{sc\_name} \bnfsp  \bnfts{''(''} \bnfsp \{\bnfpn{argument}\} \bnfsp \bnfts{'')''} \bnfsp \bnfts{''=''} \bnfsp \bnfpn{digit}}\\
+	\bnfprod{signal}
+			{\bnfts{''+++ killed with''} \bnfsp \bnfpn{signal\_name} \bnfsp \bnfts{''+++''}}\\
+	\bnfprod{exit\_line}
+		{\bnfts{''+++ exited with''} \bnfsp \bnfpn{digit} \bnfsp \bnfts{''+++''}}\\
+	\end{bnf*}
+	\caption{Strace output grammar in eBNF}
+\end{figure}
+
+As you can see the grammar is composed of main parts that are \emph{system\_call}, \emph{signal} and \emph{exit\_line}.
+We are interested the first one (\emph{system\_call}).
+The system call is composed of a name of syscall, arguments and return code.
+The argument can occur in a sequence and it is considered of atomic types
+(value, constant, structure, array, string, address and there can be find comments as  well).
+The string is represented in a program as a place in memory but strace can dereference this address
+and show it in analysis.
+
 \subsection{Ptrace}
 Strace is using ptrace \cite{ptrace_man} system call.
 Ptrace is used to  implement debuggers and other tools for process monitoring.
@@ -181,7 +208,6 @@ As you can see this tool is not for monitoring one specific program, but it is d
 In the output, there is specified who and when executed the syscall, current working directory, uid, gid, etc.
 Above specified functionality is useful for server administrators but not for our work.
 
-\pagebreak
 Entry example in a log file:\\
 \noindent
 \texttt{type=SYSCALL msg=audit(1434371271.277:135496): arch=c000003e syscall=2}\linebreak
@@ -202,59 +228,73 @@ This extension can better describe the behavior of seccomp.
 In the end, there will be a description of libseccomp which is an easy to use library to the kernel syscall filtering.
 
 \section{Systrace}
-Systrace is security facility which limits an application's access to the system.
-It is similar to a newer tool named seccomp-bpf which will be described later.
-The restrictions of a program are provided via system call blocking.
-The policy is generated interactively.
-Operations not covered by the defined policy raise an alarm.
-When an alarm is raised the user can refine the current policy.
-Systrace provides an option to generate policies automatically which can be immediately used in sandboxing
-(Sandbox is a security mechanism for separating programs, usually in an effort to mitigate system failures or software vulnerabilities from spreading.)\footnote{https://www.wikiwand.com/en/Sandbox\_(computer\_security)}.
-It is not flawless, so it sometimes needs minimal manual post-processing.
+Systrace is security facility which limits an application's access to the
+system. It is similar to a newer tool named seccomp-bpf which will be described
+later. The restrictions of a program are provided via system call blocking. The
+policy is generated interactively. Operations not covered by the defined policy
+raise an alarm. When an alarm is raised the user can refine the current policy.
+Systrace provides an option to generate policies automatically which can be
+immediately used in sandboxing (Sandbox is a security mechanism for separating
+programs, usually in order to mitigate system failures or software
+vulnerabilities from spreading.)
+\footnote{https://www.wikiwand.com/en/Sandbox\_(computer\_security)}. It is not
+flawless, so it sometimes needs minimal manual post-processing.
 
-This tool provides cybersecurity by providing intrusion prevention.
-One of the uses is that you run systrace on the server.
-The systrace monitors all running daemons (daemon is a computer program that runs as a background process, executed on system start up) and can generate a warning when some incident occurs.
-These alerts can be sent to a system administrator and can provide information what happened.
+This tool provides cybersecurity by providing intrusion prevention. One of the
+uses is that you run systrace on the server. The systrace monitors all running
+daemons (daemon is a computer program that runs as a background process,
+executed on system start up) and can generate a warning when some incident
+occurs. These alerts can be sent to a system administrator and can provide
+information what happened.
 
 \section{Seccomp}
-A large number of syscalls are exposed to user space of a process.
-Many of this syscalls are unused for the entire lifetime of the process.
-This exposes a possibility to misuse some syscalls to corrupt the process itself.
-A particular subset of applications benefits from a reduced set of syscalls by reducing exposed kernel surface to process.
-The filtering is done by seccomp.
-Seccomp filtering provides a means for a process to reduce the set of syscalls available to the process \cite{seccomp_kernel_doc}.
+A large number of syscalls are exposed to user space of a process. Many of this
+syscalls are unused for the entire lifetime of the process. This exposes a
+possibility to misuse some syscalls to corrupt the process itself. A particular
+subset of applications benefits from a reduced set of syscalls by reducing
+exposed kernel surface to process. The filtering is done by seccomp. Seccomp
+filtering provides means for a process to reduce the set of syscalls available
+to the process \cite{seccomp_kernel_doc}.
 
-In most contemporary distribution, a kernel module named Seccomp \cite{seccomp_sandbox} is enabled.
-Sec-comp stands for the shortcut of Secure Computing Mode.
-This module provides one way transition to a secure mode which restricts a thread to a few system calls \texttt{read()},\ \texttt{write()},\ \texttt{exit()},\ \texttt{sigreturn()}.
-If the thread tries to call another system call then the one from the four-member set, the whole process is terminated with signal \texttt{SIGTERM}.
-The drawback of this solution is that these four system calls are not enough for application to run correctly.
+In most contemporary distribution, a kernel module named Seccomp
+\cite{seccomp_sandbox} is enabled. Sec-comp stands for the shortcut of Secure
+Computing Mode. This module provides one way transition to a secure mode which
+restricts a thread to a few system calls \texttt{read()},\ \texttt{write()},\
+\texttt{exit()},\ \texttt{sigreturn()}. If the thread tries to call another
+system call then the one from the four-member set, the whole process is
+terminated with signal \texttt{SIGTERM}. The drawback of this solution is that
+these four system calls are not enough for application to run correctly.
 
 
 \section{Berkeley Packet Filter and Seccomp}
-The seccomp filter mode allows developers to write BPF programs that determine if a given syscall will be allowed or not.
-That allowance can be based on a system call number or specific syscall argument values.
-Only the passed values are available, as any pointer are not dereferenced by the BPF.
-Filters can be installed using \texttt{seccomp()} or \texttt{prctl()}.
-The BPF program should be constructed first, then installed in the kernel.
-After that, every system call triggers the filter code.
-The installed filter cannot be removed or modified.
-Another property of applied filter is that the filter is inherited from a parent process to every child process when using \texttt{fork(2)} or \texttt{exec(2)}.
+The seccomp filter mode allows developers to write BPF programs that determine
+if a given syscall will be allowed or not. That allowance can be based on a
+system call number or specific syscall argument values. Only the passed values
+are available, as any pointer are not dereferenced by the BPF. Filters can be
+installed using \texttt{seccomp()} or \texttt{prctl()}. First, the BPF program
+should be constructed, then installed in the kernel. After that, every system
+call triggers the filter code. The installed filter cannot be removed or
+modified. Another property of applied filter is that the every child process
+inherits the filter from a parent process when using \texttt{fork(2)} or
+\texttt{exec(2)}.
 
-A BPF language came in 1992 for a program called tcpdump which is a monitoring tool for network packets.
-The volume of packet can be colossal, so it makes the transfer to user-space expensive.
-The BPF provides a way to do filtering in the kernel and the user space only handles those packets which is interested in.
+A BPF language came in 1992 for a program called tcpdump which is a monitoring
+tool for network packets. The volume of packet can be colossal, so it makes the
+transfer to user-space expensive. The BPF provides a way to do filtering in the
+kernel and the user space only handles those packets which is interested in.
 
-The seccomp filter developers realised that they wanted very similar task.
-After that, the BPF was generalized to allow system call filtering.
-After the update, there is a tiny BPF virtual machine in the kernel space that interprets the BPF instructions.
+The seccomp filter developers realised that they wanted a very similar task. After
+that, the BPF was generalized to allow system call filtering. After the update,
+there is a tiny BPF virtual machine in the kernel space that interprets the BPF
+instructions.
 
-The next update of BPF was to eBPF which stands for extended BPF.
-This update was released in Linux Kernel 3.18 for tracepoints later in 3.19 for raw sockets and in 4.1 for performance monitors.
-The eBPF brought the performance improvements and new capabilities.
+The next update of BPF was eBPF which stands for extended BPF. This update
+was released in Linux Kernel 3.18 for tracepoints later in 3.19 for raw sockets
+and in 4.1 for performance monitors. The eBPF brought the performance
+improvements and new capabilities.
 
 The eBPF virtual machine is widely used in the kernel for various filtering:
+\todo{describe items}
 \begin{itemize}
 	\item eXpress Data Path (XDP) \textit{is a high performance, programmable network data path in the Linux Kernel}
     \item Traffic control,
@@ -269,7 +309,7 @@ The eBPF virtual machine is widely used in the kernel for various filtering:
 \paragraph{eBPF - Specification}
 The eBPF virtual machine has a 64-bit RISC architecture designed for one to one mapping to 64-bit CPUs.
 Instructions are similar to classic BPF for simple conversion to eBPF.
-The old format had registers A and X instead of current 11 registers, grouped by function as described below \cite{kernel_bpf_specification}.
+The old format had registers A and X instead of current 11 registers grouped by function as described below \cite{kernel_bpf_specification}.
 \pagebreak
 \begin{itemize}
 	\item R0 exit value for eBPF
@@ -284,10 +324,10 @@ Some of them may use 16/24/32 byte encoding.
 
 Same as the original BPF (the new format runs within controlled environment) is deterministic and the kernel can easily prove that.
 The safety of a program can be verified in two steps.
-First step does depth-first-search to forbid  loops and CFG\footnote{Control flow graph} validations.
+First step does depth-first-search to forbid  loops and Control flow graph (CFG) validations.
 The second step starts from first instruction and descends all possible paths in CFG. It simulates execution of every instruction and examines the state of registers and a stack \cite{kernel_bpf_specification}.
 
-\paragraph{eBPF - Instruction Encoding}
+\paragraph{eBPF - Instruction Encoding. }
 An eBPF program is a sequence of 64-bit instructions.
 All eBPF instructions use the same design of instruction encoding which is shown in Figure \ref{fig:tikz:eBPF_instruction}.
 As you can see in the figure, there are 5 parts that are opcode (operation code), dst (destination), src (source), offset, immediate~\cite{kernel_bpf_specification}.
@@ -312,7 +352,7 @@ The library accept on input a set of rules which are later transformed into a eB
 One of the advantages of a libseccomp is that you can write a function call based filter.
 This filter is then translated to eBPF and after that it is loaded into seccomp as filter.
 This method is not transitive from function call filter to eBPF.
-There are some differences but they are on so small-scale they can be ignored.
+There are some differences but they are on so small-scale that they can be ignored.
 
 Another advantages of seccomp is that it has a permissive mode in which every syscall violation is reported to the user.
 This feature can be helpful if you want to obtain information which syscalls was called.
@@ -329,7 +369,7 @@ We will discuss requirements and particular parts, its architecture and issues, 
 \label{sec:requirements}
 We will require from the application to fulfill the following requirements:
 \begin{enumerate}
-\item Application will have only CLI\footnote{Command Line Interface}.
+\item Application will have only command line interface (CLI).
 \item The application will be implemented in C++17 \cite{ISO14882}.
 \item Application will be designed with consideration of good OOP.
 \item Application will consist of these main parts:
@@ -339,7 +379,7 @@ We will require from the application to fulfill the following requirements:
     \item policy generator
     \item logger
 	\end{enumerate}
-\item Parser will be implemented using PEG\footnote{Parsing Expression Grammar} \cite{PEG_def} design.
+\item Parser will be implemented using parsing expression grammar (PEG) \cite{PEG_def} design.
 \item Optimizer will have at least three optimizing methods:
 	\begin{enumerate}
     \item strict - without use of advanced methods,
@@ -351,20 +391,19 @@ We will require from the application to fulfill the following requirements:
 
 \section{Architecture}
 The architecture of this application is based on architectural patterns.
-In this case \textit{Pipe-and-Filter} \cite{PipeAndFilter} architectural pattern was used.
-This pattern best fits our  problem.
-A big inspiration came from compilers.
-They are very similar to this application.
-They break down the processing required for input into separate components (or filters), each performing a single task.
-By normalization the format of the data that each component produces, this component can be arranged as a pipeline.
-The pattern is good for possibility of changing or adding components and reduces duplicit code.
-But in this case this pattern is slightly modified.
-The data in pipeline is processed as whole batch.
+In this case, \textit{Pipe-and-Filter} \cite{PipeAndFilter} architectural pattern was used.
+This pattern best fits our  problem. A big inspiration came from compilers. They
+are very similar to this application. They break down the processing required
+for input into separate components (or filters), each performing a single task.
+By normalization the format of the data that each component produces, this
+component can be arranged as a pipeline. The pattern is suitable for change or
+adding components and reduces duplicit code. But in this case, this pattern is
+slightly modified. The data in the pipeline is processed as the whole batch.
 
-The similar components with compilers are: parser, optimizer, output generator.
-As you can see the component is dependent on a component before.
-They have got parser, optimizer, output generator as well and every component is dependent on a component before.
-There are two main cases as shown in Figure \ref{fig:tikz:architecture}.
+The similar components with compilers. They have got a parser, optimizer and
+output generator as well and every component is dependent on a precendent
+component. There are two main cases as shown in Figure
+\ref{fig:tikz:architecture}.
 
 \begin{figure}[H]
   \centering
@@ -375,61 +414,76 @@ There are two main cases as shown in Figure \ref{fig:tikz:architecture}.
   \label{fig:tikz:architecture}
 \end{figure}
 
-\paragraph{Without Optimizer}
-In this case, optimizer is not in the pipeline, a raw input is translated into libseccomp commands.
-This pipeline is shown in Figure \ref{fig:tikz:architecture} \textit{(path: a., 1., b. in Figure \ref{fig:tikz:architecture})}.
-There are no optimizations when optimizer is turned off.
+\paragraph{Without Optimizer.}
+In this case, optimizer is not in the pipeline, a raw input is translated into
+libseccomp commands. This pipeline is shown in Figure
+\ref{fig:tikz:architecture} \textit{(path: a.1.b. in Figure
+\ref{fig:tikz:architecture})}. There are no optimizations when optimizer is
+turned off.
 
-The main problem of not using a optimizer is not proper working system call filter.
-There is a possibility that any minor change in system call parameters can results into a program termination.
-In complex program, there is no way to be definitely sure wheather every syscall was caught.
-That can be a big problem in programs which use seccomp.
-That is the main reason why this option is not recommended.
+The main problem of not using a optimizer is that a system call filter does not
+properly work. There is a possibility that any minor change in system call
+parameters can results into a program termination. In complex program, there is
+no way to be definitely sure wheather every syscall was caught. That can be a
+big problem in programs which use seccomp. That is the main reason why this
+option is not recommended.
 
-However there are some users which, may not want to optimize the strace.
-The reason for not running the optimizer is that their application does not have variable parameteres in system calls.
-Every syscall is the same on any running instance of the application.
-Attentive reader may notice that this option can be used only in small applications which has some limited functionality.
+However there are some users which may not want to optimize the strace. The
+reason for not running the optimizer is that their application does not have
+variable parameteres in system calls. Every syscall is the same on any running
+instance of the application. Attentive reader may notice that this option can be
+used only in small applications which have some limited functionality.
 
-The main disadvantage of this solution is that it is too robust to place it in a code and is very strict.
-It can kill a program even in a false positive case when user changes some of the parameters that was not covered in strace input files.
+The main disadvantage of this solution is that it is too robust to place it in a
+code and is very strict. It can kill a program even in a false positive case
+when an user changes some of the parameters that was not covered in strace input
+files.
 
-\paragraph{With Optimizer}
-In this case when optimizer is turned on \textit{(path: a., I., II., b. in Figure \ref{fig:tikz:architecture})}, we can specify which type of optimization we want.
-As mentioned in Section \ref{sec:requirements}, there are two optimization variants.
-Those variants can be switched with runtime arguments in CLI.
+\paragraph{With Optimizer.}
+In this case when optimizer is turned on \textit{(path: a. I. II. b. in Figure
+\ref{fig:tikz:architecture})}, we can specify which type of optimization we
+want. As mentioned in Section \ref{sec:requirements}, there are two variants of
+optimization. Those variants can be switched with runtime arguments in CLI.
 
-The pitfalls of this case is allowing program to continue even in inappropriate circumstances.
-Invalid circumstances can be defined as a bad syscall argument treated as a valid.
-It can happen when you allow a set of arguments for specific syscall.
-This is not secure however it is more suitable for work than the case without optimizer.
+The pitfalls of this case is allowing program to continue even in inappropriate
+circumstances. Invalid circumstances can be defined as a bad syscall argument
+treated as a valid. It can happen when you allow a set of arguments for specific
+syscall. This is not secure however it is more suitable for work than the case
+without optimizer.
 
-You can minimize these pitfalls by providing a lot of strace input files.
-The best case is when you provide strace files from every major complex test case (with big prime path coverage).
+You can minimize these pitfalls by providing a lot of strace input files. The
+best case is when you provide strace files from every major complex test case
+(with big prime path coverage).
 
 \subsection{Parser}
-The parser is crucial part of the whole application because it will put everything in an IR (intermediate representation).
-Input to the parser is a output from the \texttt{Strace} tool.
-The output was described in Section \ref{sec:strace} and correct configuration of strace to generate valid ouptut for \texttt{strace2seccomp} will be described in Section \ref{sec:strace_config}.
-As you can see the output is in a structured form and has an unambiguous syntax which means that no error should occur during the parsing part.
-When syntax error occurs, the program should inform where the error is located in the input file.
-Next step should be a proper exit.
-Parser should have an option to identify all errors in the input file which can be helpful for identifying more errors on once.
-Another feature is that the parser can print structured parsed data.
+The parser is crucial part of the whole application because
+it will put everything in an IR (intermediate representation). Input to the
+parser is a output from the \texttt{Strace} tool. The output was described in
+Section \ref{sec:strace} and correct configuration of strace to generate valid
+output for \texttt{strace2seccomp} will be described in Section
+\ref{sec:strace_config}. As you can see the output is in a structured form and
+has an unambiguous syntax which means that no error should occur during the
+parsing part. When syntax error occurs, the program should inform where the
+error is located in the input file. Next step should be a proper exit. Parser
+should have an option to identify all errors in the input file which can be
+helpful for identifying more errors at once. Another feature is that the parser
+can print structured parsed data.
 
 \subsection{Intermediate Data Structure}
-One of the main parts of strace2seccomp is intermediate data structure (IDS) in which the individual system calls are stored.
-The main idea of this abstract data type (ADT) is to be simple, readable with smallest redundancy possible.
+\label{ids:description}
+One of the main part of strace2seccomp is an intermediate data structure (IDS) in
+which the individual system calls are stored. The main idea of this abstract
+data type (ADT) is to be simple and readable with smallest redundancy possible.
 This can be done only with good abstraction and good design.
 
-IDS is represented as a tree structure.
-In this structure, there are different information about syscall represented on a different level in the tree.
-The root node has child elements which represent an individual system calls.
-In this case, we are naming these nodes as~a~system~call node (SCD).
-In SCD, information about a system call number is stored and it have multiple children.
-The \textit{n}-th level represents the \textit{n}-th argument of a specific system call.
-The whole system call (including arguments) can be read as a path from the root node to the leaf node.
-The IDS representation is shown in Figure \ref{fig:tikz:IDStree}.
+IDS is represented as a tree structure. In this structure, there are different
+information about syscall represented at a different level in the tree. The root
+node has child elements which represent individual system calls. In this case,
+we call these nodes system~call node (SCD). In SCD, information about a system
+call number is stored and it have multiple children. The \textit{n}-th level
+represents the \textit{n}-th argument of a specific system call. The whole
+system call (including arguments) can be read as a path from the root node to
+the leaf node. The IDS representation is shown in Figure \ref{fig:tikz:IDStree}.
 
 \begin{figure}[H]
 \centering
@@ -464,10 +518,10 @@ The IDS representation is shown in Figure \ref{fig:tikz:IDStree}.
 \subsection{Optimizer}
 Optimizer is the main part of this tool.
 This part will reduce the intermediate data structure (IDS).
-There are three approaches of reducing IDS (strict, advanced, minmax).
+There are three approaches to reducing IDS (strict, advanced and minmax).
 
-	\paragraph{Strict}
-	optimization is defined as 1:1 to strace input file.
+	\paragraph{Strict optimization.}
+	Strict optimization is defined as 1:1 to strace input file.
 	It means that it will interpret every record in strace as a strict rule.
 	So only that one case is only possible to run.
 	Every minor change in system call will kill the process.
@@ -501,20 +555,20 @@ There are three approaches of reducing IDS (strict, advanced, minmax).
 		}
 	\end{algorithm}
 
-	\paragraph{Minmax}
-	optimization is the most basic one of this set of optimizations.
+	\paragraph{Minmax optimization.}
+	Minmax optimization is the most basic one of this set of optimizations.
 	The main idea is to find minimum and maximum for each argument of each syscall.
-	The model uses a simple  tecniques to find extremes on every position of the system call.
-	Firstly it serialize the arguments from $n$-th position. Then the serialization is
-	looked for extremes.
+	The model uses a simple  techniques to find extremes on every position of the system call.
+	Firstly it serialize the arguments from $n$-th position. Then the serialization
+	searches for extremes.
 
-	So the abstracted algoritm follows as this:
+	The abstracted algoritm follows as this:
 	\begin{enumerate}
 		\item Serialize $n$-th argument position of a system call.
-		\item Search for extremes in serialization
-		\item increment $n$
-		\item if $n$ is bigger than number of arguments in syscall then exit.
-		\item go to number 1.
+		\item Search for extremes in serialization.
+		\item Increment $n$.
+		\item If $n$ is bigger than a number of arguments in syscall then exit.
+		\item Go to number 1.
 	\end{enumerate}
 
 	\begin{algorithm}[H]
@@ -545,25 +599,30 @@ There are three approaches of reducing IDS (strict, advanced, minmax).
 		}
 	\end{algorithm}
 
-	\paragraph{Clustering} is learning algoritm from family of unsupervised machine learning. It is
-	a bunch of numerous operation focused on decomposition of informations.
-	When we decompose information then we can clasify it by clasificators.
-	One of them is clustering. Clustering has many definitions, e.g.
-	 in book about data minig from Carlo Vercellis is clustering defined as
-	''\emph{clustering models is to subdivide the records of a dataset into homo-
-	geneous groups of observations, called clusters , so that observations belonging
-	to one group are similar to one another and dissimilar from observations
-	included in other groups.}''. \cite{doi:10.1002/9780470753866.ch12}
+	\paragraph{Clustering.}
+	Clustering is learning algoritm from a family of unsupervised machine
+	learning. It is a bunch of numerous operations focused on decomposition of
+	informations. When we decompose information then we can clasify it by
+	clasificators. One of them is clustering. Clustering has many definitions,
+	e.g. in book about data mining from Carlo Vercellis
+	\cite{doi:10.1002/9780470753866.ch12} is clustering defined as
+	''\emph{Clustering models is to subdivide the records of a dataset into homo-
+	geneous groups of observations, called clusters , so that observations
+	belonging to one group are similar to one another and dissimilar from
+	observations included in other groups.}''.
 
-	The goal of this method is to find subsets (clusters) in given set.
-	Cluster is defined by Paolo S. R. Diniz and group as ''\emph{In describing a cluster,
-	most researchers consider internal homogeneity and external separation,
-	i.e., patterns in the same cluster should be similar to each other, while patterns in different
-	clusters should not. Similarities and dissimilarities both should have the potential to be examined in a
-	clear and meaningful way.}''. \cite{Lam20141115}
+
+	The goal of this method is to find subsets (clusters) in given set. Cluster is
+	defined by Paolo S. R. Diniz and group \cite{Lam20141115} as ''\emph{In
+	describing a cluster, most researchers consider internal homogeneity and
+	external separation, i.e., patterns in the same cluster should be similar to
+	each other, while patterns in different clusters should not. Similarities and
+	dissimilarities both should have the potential to be examined in a clear and
+	meaningful way.}''.
 
 	The clasification of raw data can be done in mulitple ways.
 	Some basic methods are:
+	\todo{mention some example algorithms}
 	\begin{itemize}
 		\item partitioning,
 		\item hierarchical,
@@ -572,23 +631,27 @@ There are three approaches of reducing IDS (strict, advanced, minmax).
 			\item DBSCAN clustering,
 		\end{itemize}
 		\item fuzzy clustering,
-		\item Model-based clustering.
+		\item model-based clustering.
 	\end{itemize}
 
-	\paragraph{Advanced}
-	optimization is defined as combination of both strict and weak optimizations.
-	In some specific cases it will use only the exact values and in other cases it will use weak optimizations.
-	This combination should be more strict than the weak optimization and weaker than the strict optimization.
+	\paragraph{Advanced optimization.}
+	Advanced optimization is defined as combination of both strict and weak
+	optimizations. In some specific cases, it will use only the exact values and in
+	other cases, it will use weak optimizations. This combination should be more
+	strict than the weak optimization and weaker than the strict optimization.
 
-	In this case is used DBSCAN clustering method\cite{Schubert:2017:DRR:3129336.3068335}.
-	The model introduced by DBSCAN uses a simple minimum denisty level estimation.
-	It defines a treshold for the number of neighbors (minPts) within the radius $\epsilon$.
-	Objects with more than treshold neighbors within $\epsilon$ are treated as core points.
-	The intention of DBSCAN is to find all areas, which satisfy at least the minimum density separated by areas with lower density (noise).
-	Every point in $\epsilon$ radius is part of the same cluster as a core point.
-	If any neighbour is again a core point, their neighbourhoods are transitively included to a core point.
-	This is very simple and basic algorithm as you can see later in this section.
-	The strength and weakness of DBSCAN clustering is that it does not require a number of output clusters.
+	In this case, DBSCAN clustering method is used
+	\cite{Schubert:2017:DRR:3129336.3068335}. The model introduced by DBSCAN uses
+	a simple minimum density level estimation. It defines a treshold for the
+	number of neighbors (minPts) within the radius $\epsilon$. Objects with more
+	than treshold neighbors within $\epsilon$ are treated as core points. The
+	intention of DBSCAN is to find all areas, which satisfy at least the minimum
+	density separated by areas with lower density (noise). Every point in
+	$\epsilon$ radius is a part of the same cluster as a core point. If any
+	neighbour is again a core point, their neighbourhoods are transitively
+	included to a core point. This is very simple and basic algorithm as you can
+	see later in this section. The strength and weakness of DBSCAN clustering is
+	that it does not require a number of output clusters.
 
 	\begin{figure}[h]
 		\centering
@@ -598,9 +661,9 @@ There are three approaches of reducing IDS (strict, advanced, minmax).
 	\end{figure}
 
 	Figure \ref{dbscan_ilustration} illustrates the model DBSCAN.
-	In this illustration are defined parameters:
+	Following parameters are defined:
 	\begin{itemize}
-			\item minPts is 4
+			\item minPts is 4, and
 			\item $epsilon$ is indicated by circles
 	\end{itemize}
 
@@ -610,12 +673,14 @@ There are three approaches of reducing IDS (strict, advanced, minmax).
 
 	The abstracted algorithm is:\nopagebreak
 	\begin{enumerate}
-			\item find neighbors in $\epsilon$ radius of every point, and find core points with more that minimum neigthnours (minPts)
-			\item find connected core points on the graph and merge them into clusters.
-			\item assign every non-core point to a core point if that non-core point is in $\epsilon$ radius of that core-point else assign it to noise.
+			\item Find neighbors in $\epsilon$ radius of every point, and find core
+			points with more that minimum neigthnours (minPts).
+			\item Find connected core points on the graph and merge them into clusters.
+			\item Assign every non-core point to a core point. If the non-core point
+			is in $\epsilon$ radius of that core-point else assign it to noise.
 	\end{enumerate}
 
-	The whole algorithm is:
+	The whole algorithm is:\todo{rewrite it and add output}
 	\nopagebreak
 	\begin{figure}[H]
 		\centering
@@ -625,34 +690,44 @@ There are three approaches of reducing IDS (strict, advanced, minmax).
 	\end{figure}
 
 
-\subsection{Pitfalls of clustering}
+\subsection{Pitfalls of Clustering}
 The clustering of the arguments of system call has some pitfalls.
 Some of them are described bellow.
 
-\paragraph{Address space layout randomization}
-(ASLR) was introduced in 2001 by Page EXec (PaX) team to defense over buffer overflow attack. \cite{ASLR:PAX, Ganz2017}
-The goal of ASLR is to provide randomness into address space of a given task.
-This will add another layer of protection to exploits which uses buffer overflow to change behavior of attacked software.
+\paragraph{Address space layout randomization.}
+ASLR was introduced in 2001 by Page EXec (PaX) team to defense over buffer
+overflow attack, \cite{ASLR:PAX, Ganz2017}. The goal of ASLR is to provide
+randomness into address space of a given task. This will add another layer of
+protection against exploits which uses buffer overflow to change behavior of
+attacked software.
 
-The idea behind ASLR is that the memory segments (stack, heap, libraries, ...) are located on different offsets during the runtime.
-With this technique you can achieve that exploits can not know where exactly is located e.g. stack segment in the memory.
-When is ASLR enabled, the analysis of the addresess in systemcall make no sense.
-You can not know on which offset will be any segment.
+The idea behind ASLR is that the memory segments (stack, heap, libraries, ...)
+are located on different offsets during the runtime. With this technique you can
+achieve that exploits can not know where exactly is located, e.g., a stack
+segment in the memory. When ASLR is enabled, the analysis of the addresess in
+a system call make no sense. You can not know on which offset any segment will be.
 
 ASLR is by now implemented in many modern OS (MS Windows, GNU/Linux, NetBSD, OpenBSD, MacOS).
-In Linux this feature is enabled by kernel. You can chagne this option in file e.g.:
+In Linux, this feature is enabled by a kernel. You can get information if ASLR is enabled in file e.g.:
 \begin{center}
-	\texttt{echo 2 > /proc/sys/kernel/randomize\_va\_space}
+	\texttt{cat /proc/sys/kernel/randomize\_va\_space}
 \end{center}
+
+Value description:
+\begin{itemize}
+	\item \textbf{0} ASLR is turned off,
+	\item \textbf{1} ASLR is enabled only for Shared libraries,  mmap(), VDSO, stack and heap,
+	\item \textbf{2} ASLR is fully enabled.
+\end{itemize}
 
 
 \paragraph{String represented in memory}
 The strings are represented in memory as an offset where the string
-begins and ends with null termination.\cite{ISO9899} \todo{TODO cite}
+begins and ends with null termination. \cite{ISO9899} \todo{TODO cite}
 For this reason seccomp can not operate with strings and we will skip string arguments as well.
 
 \section{Parsing Expression Grammar}
-Parsing expression grammar was introduced by Ford in 2004.
+Parsing expression grammar was introduced by Ford in 2004. \cite{Ford:PEG}
 PEG is a type of analytic formal grammar which describes a formal language in terms of a set of rules for recognizing strings in the language.
 This type of grammar is really similar to a top-down parsing languages.
 As well it looks very similar to context-free grammars.
@@ -670,15 +745,15 @@ The one of the many problems with right to left parsing algorithm is that it com
 Other inconvenience is that we must carefully determine the order in which the results for a particular column are computed.
 \textit{Packrat parsing} is a lazy derivation of a tabular algorithm that solves both of these problems.
 It computes results only when they are needed, in the same order as the original recursive descent parser would.
-\cite{Ford:PEG}
+
 
 \begin{table}[h]
 	\begin{center}
   \begin{tabular}{lcl}
-      Additive  & $\leftarrow$ & Multititve '+' Additive | Multitive \\
-      Multitive & $\leftarrow$ & Primary '*' Multitive | Primary     \\
-      Primary   & $\leftarrow$ & '(' Additive ')' | Decimal          \\
-      Decimal   & $\leftarrow$ & '0' | \ldots | '9'
+      Addition       & $\leftarrow$ & Multiplication '+' Addition | Multiplication \\
+      Multiplication & $\leftarrow$ & Primary '*' Multiplication | Primary     \\
+      Primary        & $\leftarrow$ & '(' Addition ')' | Number          \\
+      Number        & $\leftarrow$ & '0' | \ldots | '9'
   \end{tabular}
   \end{center}
   \caption{Example of a grammar for a trivial language}
@@ -697,129 +772,156 @@ It computes results only when they are needed, in the same order as the original
 %test it with some fuzzer
 
 \section{Input}
-As an input was used output from strace tool. As I mentioned earlier strace tool was
-chosen because it is easy to use system call monitoring tool. It can monitor what observed
-program demanded from kernel. With strace tool it is possible to trace child processes.
-The main advantage of strace tool is that is doesn't need any of the source code files,
-program has not to be compiled with extra flags or withount any library or
-it does not have to be statically linked.
+As I mentioned earlier strace tool was chosen because it is easy to use system
+call monitoring tool. It can monitor what observed program demanded from kernel.
+With strace tool it is possible to trace child processes. The main advantage of
+strace tool is that is does not need any of the source code files, program is not
+compiled with extra flags or withount any library or it does not have to be
+statically linked. This were the reasons why I chose the strace tool as an input
+for the strace2seccomp.
 
-\subsection{Configure Strace to Produce Expected Input}
-\label{sec:strace_config}
-
-The output from strace tool has to be normalised before procesing with strace2seccomp.
-The normalization is done by providing a few runtime arguments to strace tool.
+The output from strace tool has to be normalized before procesing with strace2seccomp.
+The normalization is done by providing a few runtime arguments to the strace tool.
 Example:
 
-\texttt{\$ strace -s 0 -xx -yy -o dataset -ff nautilus }
+\texttt{\$ strace -s 0 -xx -o dataset -ff nautilus }
 \\
 I would like to describe what they are doing in the first place.\cite{strace_man}
 
-\paragraph{-s} is a string size. We are setting a string size to zero because the
-libseccomp does not have the ability to work with strings. It does not know how long is
-the string or if it is really a string. By this option the filenames are not affected.
-They are printed in full length.
+\paragraph{-s} is a string size. We are setting a string size to zero because
+the libseccomp does not have the ability to work with strings. It does not know
+how long is the string or if it is really a string. By this option the filenames
+are not affected. They are printed in full length.
 
-\paragraph{-xx} this option will switch the format of strings to hexadecimal format.
+\paragraph{-xx} this option will switch the format of strings to a hexadecimal format.
 It is much easier to parse strings in this format. It affects the filename as well.
-This option is used because sometimes can occure a non ascii (UTF--8) character in filename.
+This option is used because sometimes a non ASCII (UTF--8) character can occure in filename.
 
-\paragraph{-f} trace children processes.
-
-\paragraph{-yy} will print protocol specific information associated with socket file descriptor.
-It is here for future enhancements of strace2seccomp tool.
+\paragraph{-f} traces children processes.
 
 \paragraph{-o} is used for specifying the output file.
 
-\paragraph{-ff} is helpfull when you are tracing a multiprocess program.
-In this case it will create a multiple files in format
-NAME.PID where NAME is a provided filename in option \texttt{-o} and PID is a process id.
-
-
-
-\subsection{Strace grammar}
-Strace produces structured output. Simplified version in extended Backus–Naur form (eBNF)\cite{ISO14977}
-you can see in Figure \ref{strace_grammar_simple}.
-
-\begin{figure}[h]
-	\label{strace_grammar_simple}
-	\begin{bnf*}
-	\bnfprod{grammar}
-		{\bnfpn{system\_call} \bnfor \bnfpn{signal} \bnfor \bnfpn{exit\_line}}\\
-	\bnfprod{system\_call}
-		{\bnfpn{sc\_name} \bnfsp  \bnfts{''(''} \bnfsp \{\bnfpn{argument}\} \bnfsp \bnfts{'')''} \bnfsp \bnfts{''=''} \bnfsp \bnfpn{digit}}\\
-	\bnfprod{signal}
-			{\bnfts{''+++ killed with''} \bnfsp \bnfpn{signal\_name} \bnfsp \bnfts{''+++''}}\\
-	\bnfprod{exit\_line}
-		{\bnfts{''+++ exited with''} \bnfsp \bnfpn{digit} \bnfsp \bnfts{''+++''}}\\
-	\end{bnf*}
-	\caption{Strace output grammar in eBNF}
-\end{figure}
-
-As you can see the grammar is composed of main parts that are \emph{system\_call}, \emph{signal} and \emph{exit\_line}.
-For us are interesting the first one (\emph{system\_call}).
-The system call is composed of a name of syscall, arguments and return code.
-The argument can occur in a sequence and it is made of som atomic types
-(value, constant, structure, array, string, address and there can be find comments as  well).
-The string is in program represented as a place in memory but strace can dereference this address
-and show it in analysis.
+\paragraph{-ff} is helpfull when you are tracing a multiprocess program. In this
+case it will create a multiple files in format NAME.PID where NAME is a provided
+filename in option \texttt{-o} and PID is a process id.
 
 \section{Class Hierarchy}
-class diagrams?
+This section provides information about class hierarchy in this project.
+
+At the beginning is the \texttt{Params} class as we can see in Figure
+\ref{fig:class:params}. In constructor of \texttt{Params} class is executed
+getopt library to acquire a runtime arguments. The omitted arguments are then
+saved in class variables. By this variables the whole tool is instrumented.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.35\linewidth]{obrazky-figures/class/params.pdf}
+	\caption{Class diagram that shows representation of runtime arguments}
+	\label{fig:class:params}
+\end{figure}
+
+The next class diagram in Figure \ref{fig:class:ids} show us an Intermediate
+Data Structure (IDS). The IDS is handled with multiple components in this
+project, i.e., parser saves information there, etc., description is in Section
+\ref{ids:description}. As you can see the \texttt{\_argument\_t} class has three
+constructors.  Here could be used design pattern factory however there are only
+two different cases of creating an object so it was not needed. The
+\texttt{\_argument\_t} class contains individual data about argument, e.g., the
+format value says if the argument is in 'key=value' or 'value' form. The actual
+value is stored in container \texttt{std::variant}. This is the C++17 equivalent
+of enumeration in C language.
+
+\texttt{Syscall\_t} class in Figure \ref{fig:class:ids} is dependant  on the
+\texttt{\_argument\_t}. This class contains information about syscall, e.g.,
+name, number of arguments, and actual arguments. In this class is defined
+\texttt{print()} method that can print structurised data from syscall.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/class/arg_sc.pdf}
+	\caption{IDS representation in class diagram}
+	\label{fig:class:ids}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/class/algo.pdf}
+	\caption{algorithms}
+	\label{fig:class:algo}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\linewidth]{obrazky-figures/class/output.pdf}
+	\caption{output}
+	\label{fig:class:output}
+\end{figure}
 
 \section{Output}
 The strace2seccomp tool is generating a source code for C/C++.
 In the source code is used seccomp library to provide system call blocking.
 The example of a generated source code is in Appendix \ref{lst:example1}
+
 \section{Used software}
-In this section I want to mention which software I used to develop strace2seccomp tool.
-Firstly I mention compilers used in this project and after that valuable tools for developments.
+In this section, I want to mention which software I used to develop a strace2seccomp tool.
+Firstly, I mention compilers used in this project and after that valuable tools for developments.
 
 \subsection{Compilers}
 \label{subsec:compilers}
-In this project I used two compilers. The reason is simple.
-Every compiler can detect another set of errors and warnings during the compilation.
+In this project, I used two compilers. The reason is simple.
+Every compiler can detect a different set of errors and warnings during the compilation.
 And at the time of doing project one of the reason of compiling with two compilers
-was to compare the execution times with an optimizations turned on.
+was to compare the execution times with optimizations turned on.
 
-In the project was used \texttt{libc++} and \texttt{libc++ ABI} from LLVM project.
-The reason for using implementation from LLVM project was that in the GNU implementation
-was a bug which affected a C++17 functionality.\footnote{\url{https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=877838}}.
+In the project, \texttt{libc++} and \texttt{libc++ ABI} from LLVM project was
+used. The reason for using implementation from LLVM project was that in the GNU
+implementation, there was a bug which affected a C++17
+functionality\footnote{\url{https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=877838}}.
 
-\paragraph{GNU Compiler Collection} is a part of the GNU project.
+\paragraph{GNU Compiler Collection.}GNU Compiler Collection is a part of the GNU project.
 It aims to improve compiler used in the GNU ecosystem.
 GCC\footnote{\url{https://gcc.gnu.org/}} uses an open development environment.
 It includes front ends for C, C++, Objective-C, Go etc.
-as well as libraries for these languages. It was firstly written for GNU operating system\footnote{\url{https://www.gnu.org/gnu/thegnuproject.html}}
-The compiler collection is released under the GPL license, other components e.g. as runtime libraries are distributed under various free licenses.
+as well as libraries for these languages. It was firstly written for GNU operating system\footnote{\url{https://www.gnu.org/gnu/thegnuproject.html}}.
+The compiler collection is released under the GPL license, other components, e.g., as runtime libraries are distributed under various free licenses.
 
-\paragraph{LLVM/Clang}
+\paragraph{LLVM/Clang.}
 The goal of Clang\footnote{\url{https://clang.llvm.org/}} project is to provide a new C based language front-end (C, C++, Objective-C,) for the LLVM\footnote{\url{http://www.llvm.org/}} compiler.
 It is released under NCSA Open Source Licence. Clang is designed to be highly compatible with GCC.
 It supports most of the GCC compilation flags and unofficial language extensions\footnote{\url{https://clang.llvm.org/docs/LanguageExtensions.html}}.
+\todo{maybe mention error logs}
 
-\subsection{LLVM/Clang-tidy} is clang-based ''linter'' tool\footnote{\url{http://clang.llvm.org/extra/clang-tidy/}}.
+
+\subsection{Dynamic and Static Code Analysis}
+For correct development is necessary to find as many bugs as possible during the this phase.
+This goal was achieved by ussing dynamic and static analysis tools.
+For static analysis was used an LLVM project named clang-tidy and for
+
+\paragraph{LLVM/Clang-tidy.}
+Clang-tidy is a clang-based ''linter'' tool\footnote{\url{http://clang.llvm.org/extra/clang-tidy/}}.
 Its purpose is to diagnose and fix typical programming errors,
 like interface misuse, style violation, or bugs that can be deduced via static analysis.
-clang-tidy diagnostics are designed to assert cote that has invalid coding standard or is otherwise problematic.
+Clang-tidy diagnostics are designed to assert code that has invalid coding standard or is otherwise problematic.
 It has options to diasable some false positive warnings (e.g. \texttt{\textbackslash\textbackslash NOLINT}).
 
-\subsection{AddressSanitizer}
-(ASan)\footnote{\url{https://github.com/google/sanitizers/wiki/AddressSanitizer}} is a memory error detector for C/C++ developed by Google.
-ASan is a very fast and the average slowdown of the instrumented program is \textasciitilde 2x.
-The tool consist of a runtime library which replaces the \texttt{malloc} function and compiler module (currently as LLVM pass).
-The tool supports multiple architectures e.g. (x86, x86\_64, ARM, ARM\_64, MIPS, PowerPC64, etc.).
+\paragraph{AddressSanitizer.}
+AddressSanitizer\footnote{\url{https://github.com/google/sanitizers/wiki/AddressSanitizer}} (ASan) is a memory error detector for C/C++ developed by Google.
+ASan is very fast and the average slowdown of the instrumented program is \textasciitilde 2x.
+The tool consists of a runtime library which replaces the \texttt{malloc} function and compiler module (currently as LLVM pass).
+The tool supports multiple architectures, e.g., x86, x86\_64, ARM, ARM\_64, MIPS, PowerPC64, etc.
 It is part of the both compilers mentioned above in Subsection \ref{subsec:compilers}.
 
-Usage of ASan is very straightforward. You have to add only:\\
+Usage of ASan is very straightforward. You have to only add compiler arguments:\\
 \begin{center}
 	\texttt{-fsanitize=address -fno-omit-frame-pointer}
 \end{center}
-The first parameter turns on the ASan and the second one print a nicer stack trace in error messages.
-It is adviced by developers to use optimization e.g. \texttt{-O1}, to get reasonable performance.
+The first parameter turns on the ASan and the second one prints a nicer stack trace in error messages.
+It is adviced by developers to use optimization, e.g., \texttt{-O1}, to get reasonable performance.
 
-\subsection{Git}
-The Git\footnote{\url{https://git-scm.com/about}} is a source code manager (SCM). It stand out of the group of SCMs by its branching model.
+\subsection{Others}
+asdf
+\paragraph{Git}
+Git\footnote{\url{https://git-scm.com/about}} is a source code manager (SCM). It stands out of the group of SCMs by its branching model.
 Git allows and encourage you to have multiple local or remote branches that can be entirely independent.
 This provides features like:
 \begin{itemize}
@@ -828,28 +930,28 @@ This provides features like:
 	\item Role-based Codelines
 	\item Disposable Experimentation
 \end{itemize}
-Other benefit of Git it is doing nearly all operations locally.
+Other benefit of Git is that it does nearly all operations locally.
 This gives the tool huge speed advantage.
 Git was built to work with Linux kernel, that means it can effectively handle large repositories.
 The st2se used repository hosting on GitHub.
 
-\subsection{Artistic Style}
-Astyle\footnote{\url{http://astyle.sourceforge.net/}} is  source code formatter and beautifuller.
+\paragraph{Artistic Style}
+Astyle\footnote{\url{http://astyle.sourceforge.net/}} is a source code formatter and beautifuller.
 Works with C, C++ Objective-C, C\# and Java programming languages.
-The motivation to use this tool is to has uniform code style.
-Some of the editors by default insert spaces instead of tabs when pressing key.
+The motivation to use this tool is to have uniform code style.
+Some of the editors by default insert spaces instead of tabs when pressing a key.
 Other editors have the abillity to insert space before tab lines to ''pretty up'' the code (Emacs).
 The solution to this problem is to use Artistic Style formatter.
-It can normalise the source code by rules defined in configuration file provided by developer of the project.
+It can normalise the source code by rules defined in a configuration file provided by a developer of the project.
 
-\subsection{LCOV \& GCOV}
+\paragraph{LCOV and GCOV}
 LCOV\footnote{\url{http://ltp.sourceforge.net/coverage/lcov.php}} is an extension to GCOV, a GNU tool which can determine what parts of a program was executed while running particular testcase.
-It can provide information about how many times was that part of program executed.
+It can provide information about how many times that part of program was executed.
 LCOV implements to GCOV following additional functionality:
 \begin{itemize}
-	\item HTML based output with coverage rates indicated by specific color i.e. (green is 100\% and red is 0\% coverage).
+	\item HTML based output with coverage rates indicated by specific color, i.e., green is 100\% and red is 0\% coverage.
 	\item Support for large projects. It allows you to browse over overview pages that shows coverage data
-	by providing: directory view, file view and source code view.
+	by providing: a directory view, a file view and a source code view.
 \end{itemize}
 LCOV was designed like Git to support Linux kernel, but works as well on standard user space applications.
 This tool uses line coverage technique and it is the poorest coverage from the coverage types point of view.
@@ -866,10 +968,10 @@ First, I want to introduce on which aspects we will focus.
 One of the aspects is \textit{module testing}.
 The main purpose of module testing is to detect errors in submodules, in communication among them, in passing data through data structures.
 Another aspect of verification is \textit{system testing} merged with \textit{acceptance testing}.
-In this type of testing we will check if the strace2seccomp tool has valid architectural design.
+In this type of testing we will check if the strace2seccomp tool has a valid architectural design.
 Next aspect which will be checked is \textit{static analysis}.
-Static analysis is type of testing which does not requires run the program but requires a source code of the tool.
-The static analyzer will analyse the source codes with different heuristics and produces a analysis of detected errors. % cite ITS lectures.
+Static analysis is type of testing which does not require to run the program but requires a source code of the tool.
+The static analyzer will analyse the source codes with different heuristics and produces an analysis of detected errors. % cite ITS lectures.
 
 
 \section{Module Testing}
@@ -942,13 +1044,13 @@ a little comparison of most popular fuzzers:
 	This fuzzer  subset of American Fuzzy Lop. This project is now deprecated.
 
 	\item \textbf{American Fuzzy Lop}\footnote{\url{http://lcamtuf.coredump.cx/afl/}}
-	is a security oriented fuzzer that add compile-time instrumentation.
-	It is supperset to really similar Bunny the Fuzzer.
-	The fuzzer has implemented many researched fuzzing capabilities (bit / byte flips,  simple arithmetics, known integers, test case splicing, \ldots).
-	Compared to other instrumented fuzzers it has moderate overhead and as little
-	configuration as possible.
-	The disadvantage of the tool is that it needs to be executed
-	multiple times to achieve multiprocess or multithread fuzzing.
+	is a security oriented fuzzer that add compile-time instrumentation. It is
+	supperset to really similar Bunny the Fuzzer. The fuzzer has implemented many
+	researched fuzzing capabilities (bit / byte flips,  simple arithmetics, known
+	integers, test case splicing, \ldots). Compared to other instrumented fuzzers it
+	has moderate overhead and as little configuration as possible. The disadvantage
+	of the tool is that it needs to be executed multiple times to achieve
+	multiprocess or multithread fuzzing.
 
 	\item \textbf{Honggfuzz}\footnote{\url{http://honggfuzz.com/}} us a evolutionary, security oriented, easy to use fuzzer with analysis options.
 	The main advantage of this mutation based fuzzer is that it is multi-process and multi-threded without need to run multiple copies of fuzzer.
@@ -969,12 +1071,14 @@ a little comparison of most popular fuzzers:
 	Radamsa is multiplatform so it is built for Windows and Linux.\cite{radamsaThesis}
 
 	\item \textbf{Oss-fuzz} is a complex project developed by Google.\footnote{\url{https://github.com/google/oss-fuzz}}
-	The architecture of this project is that the ClusterFuzz (fuzzer tools) automatically pulls the newest source code
-	from repository and it will starts fuzzers and sanitizers
-	\footnote{Dynamic testing tool that can detect bugs and faults during the execution. Typicall sanitizers are \textit{ASan}, \textit{DFSan}, \ldots}.
-	When some bug or fault occurs it is automaticaly reported to the OSS-fuzz issue tracker.
-	Project owners are then notified with email about the issue.
-	When the fix is submitted ClusterFuzz automaticaly verifies the fix adds a comment to issue tracker and closes the issue.
+	The architecture of this project is that the ClusterFuzz (fuzzer tools)
+	automatically pulls the newest source code from repository and it will starts
+	fuzzers and sanitizers \footnote{Dynamic testing tool that can detect bugs and
+	faults during the execution. Typicall sanitizers are \textit{ASan},
+	\textit{DFSan}, \ldots}. When some bug or fault occurs it is automaticaly
+	reported to the OSS-fuzz issue tracker. Project owners are then notified with
+	email about the issue. When the fix is submitted ClusterFuzz automaticaly
+	verifies the fix adds a comment to issue tracker and closes the issue.
 
 \end{itemize}
 
@@ -983,9 +1087,109 @@ a little comparison of most popular fuzzers:
 The chosen fuzzer was AFL for its ability of fast deployment and easy of use.
 The opposite example is Oss-fuzz which is the whole infrastructure for fuzzing and bug hunting.
 
-The fuzzer run straight two and a half week and during this time it was discovered dozen hangs and 2 sefmentation faults.
-The hangs were caused of loops in grammar. There were possibility to infinitely parse no character.
+In fuzzed program was enabled only parsin every other module was turned off.
+The fuzzer run straight twenty one days and during this time it was discovered
+three false positive hangs and no crashes. Fuzzing run in four threads on Intel
+Core i7-4810MQ. Overall was the fuzzed program executed 3,567,228,619 times.
+
+The number of execution per second was not stable on master thread because it
+was necessary to instrument other three processes. This instability can be
+seen among Figures \ref{fuz:result1a}, \ref{fuz:result2a}, \ref{fuz:result3a}
+and \ref{fuz:result4a}.
+
 \todo{check the fuzzer output}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/master/exec_speed.pdf}
+	\caption{master/exec\_speed}
+	\label{fuz:result1a}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/exec_speed.pdf}
+	\caption{thread\_1/exec\_speed}
+	\label{fuz:result2a}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/exec_speed.pdf}
+	\caption{thread\_2/exec\_speed}
+	\label{fuz:result3a}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/exec_speed.pdf}
+	\caption{thread\_3/exec\_speed}
+	\label{fuz:result4a}
+\end{figure}
+
+asdfasdfasf
+asdfasdfasf
+asdfasdfasf
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/master/high_freq.pdf}
+	\caption{master/high\_freq}
+	\label{fuz:result1b}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/high_freq.pdf}
+	\caption{thread\_1/high\_freq}
+	\label{fuz:result2b}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/high_freq.pdf}
+	\caption{thread\_2/high\_freq}
+	\label{fuz:result3b}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/high_freq.pdf}
+	\caption{thread\_3/high\_freq}
+	\label{fuz:result4b}
+\end{figure}
+
+asdfasdfasfasdfasdfasfasdfasdfasfasdfasdfasf
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/master/low_freq.pdf}
+	\caption{master/low\_freq}
+	\label{fuz:result1c}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/low_freq.pdf}
+	\caption{thread\_1/low\_freq}
+	\label{fuz:result2c}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/low_freq.pdf}
+	\caption{thread\_2/low\_freq}
+	\label{fuz:result3c}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/low_freq.pdf}
+	\caption{thread\_3/low\_freq}
+	\label{fuz:result4c}
+\end{figure}
+
+asdfasdfasfasdfasdfasfasdfasdfasfasdfasdfasfasdfasdfasf
 
 \subsection{Algorithms}
 How should we test the algorithms?
