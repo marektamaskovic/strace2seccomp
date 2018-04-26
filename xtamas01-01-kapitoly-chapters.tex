@@ -805,8 +805,22 @@ This option is used because sometimes a non ASCII (UTF--8) character can occure 
 case it will create a multiple files in format NAME.PID where NAME is a provided
 filename in option \texttt{-o} and PID is a process id.
 
+\section{Output}
+The strace2seccomp tool is generating a source code for C/C++.
+In the source code is used seccomp library to provide system call blocking.
+The example of a generated source code is in Appendix \ref{lst:example1}
+
 \section{Class Hierarchy}
-This section provides information about class hierarchy in this project.
+This section provides information about class hierarchy in this project. The
+color of classes in figures does not mean anything it is there only for better
+readability.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.35\linewidth]{obrazky-figures/class/params.pdf}
+	\caption{Class diagram that shows representation of runtime arguments}
+	\label{fig:class:params}
+\end{figure}
 
 At the beginning is the \texttt{Params} class as we can see in Figure
 \ref{fig:class:params}. In constructor of \texttt{Params} class is executed
@@ -815,9 +829,9 @@ saved in class variables. By this variables the whole tool is instrumented.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.35\linewidth]{obrazky-figures/class/params.pdf}
-	\caption{Class diagram that shows representation of runtime arguments}
-	\label{fig:class:params}
+	\includegraphics[width=0.8\linewidth]{obrazky-figures/class/arg_sc.pdf}
+	\caption{IDS representation in class diagram}
+	\label{fig:class:ids}
 \end{figure}
 
 The next class diagram in Figure \ref{fig:class:ids} show us an Intermediate
@@ -836,31 +850,45 @@ of enumeration in C language.
 name, number of arguments, and actual arguments. In this class is defined
 \texttt{print()} method that can print structurised data from syscall.
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/class/arg_sc.pdf}
-	\caption{IDS representation in class diagram}
-	\label{fig:class:ids}
-\end{figure}
+Class \texttt{Ids} in Figure \ref{fig:class:ids} describes the whole IDS. In
+this class is located class variable of type \texttt{std::map<std::string,
+Syscall\_t>} wich hold syscall data. This means that \texttt{Ids} class is
+dependant on class \texttt{Syscall\_t}. The \texttt{Ids} class includes methods,
+e.g., for structuralised print of whole class, or syscall only. It has
+implemented method for inserting new Syscall object into the map.
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth]{obrazky-figures/class/algo.pdf}
-	\caption{algorithms}
+	\caption{Class hierarchy that demostrate relationship among algorithms and optimizer}
 	\label{fig:class:algo}
 \end{figure}
 
-\begin{figure}[h]
+The Figure \ref{fig:class:algo} ilustrate dependency and generalization in class
+hierarchy in optimizer. As you can see the \texttt{Optimizer} is dependant on
+\texttt{Algorithm} class. The \texttt{Algorithm} class is generalized by
+specific algorithms, e.g., \texttt{Algo\_strict} class or
+\texttt{Algo\_advanced} class. The optimizer contains a pointer to the
+\texttt{Algorithm}. By this mechanism is really simple to change the algorithm
+in optimizer and keep the logical structure. It contains methods for
+initializing and removing algorithm from an object. The algorithms has to
+override the \texttt{optimize} method in \texttt{Algorithm} class thus is pure
+virtual in the base class. Because of that the compiler requests the optimize
+method in new class that inherits from \texttt{Algorithm} class. The
+generalization is used for simple extension of algorithms in current solution.
+Every algorithm includes supportive methods for the optimization, e.g.,
+\texttt{Algo\_weak} has implemented method \texttt{findMinMax}.
+
+\begin{figure}[H]
 	\centering
-	\includegraphics[width=0.6\linewidth]{obrazky-figures/class/output.pdf}
+	\includegraphics[width=0.5\linewidth]{obrazky-figures/class/output.pdf}
 	\caption{output}
 	\label{fig:class:output}
 \end{figure}
 
-\section{Output}
-The strace2seccomp tool is generating a source code for C/C++.
-In the source code is used seccomp library to provide system call blocking.
-The example of a generated source code is in Appendix \ref{lst:example1}
+In Policy generator is used the same approach as in the optimizer. The hierarchy
+among classes in policy generator shows the Figure \ref{fig:class:output}.
+\todo{finish this after final decision in src}
 
 \section{Used software}
 In this section, I want to mention which software I used to develop a strace2seccomp tool.
@@ -918,8 +946,8 @@ Usage of ASan is very straightforward. You have to only add compiler arguments:\
 The first parameter turns on the ASan and the second one prints a nicer stack trace in error messages.
 It is adviced by developers to use optimization, e.g., \texttt{-O1}, to get reasonable performance.
 
-\subsection{Others}
-asdf
+\subsection{Miscellaneous}
+This section describe miscellaneous software used in the project, e.g., Artistic Style, \ldots
 \paragraph{Git}
 Git\footnote{\url{https://git-scm.com/about}} is a source code manager (SCM). It stands out of the group of SCMs by its branching model.
 Git allows and encourage you to have multiple local or remote branches that can be entirely independent.
@@ -958,7 +986,7 @@ This tool uses line coverage technique and it is the poorest coverage from the c
 
 
 \section{Usage}
-How to run the st2se tool
+The usage of the tool is straightforward.
 
 
 
