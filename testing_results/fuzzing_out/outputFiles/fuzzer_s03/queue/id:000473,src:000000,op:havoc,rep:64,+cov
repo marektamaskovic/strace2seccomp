@@ -1,0 +1,16 @@
+fcntl'10O7XEC, 0)       B   = 1L
+fcntl(1, F_GETFL)     )
+fcntl(11, TFL)    O_NONBLOCK)
+fcitl(11, {_OEXEC)          = '
+fcdtCK) 0
+fcntl(13, F_GETBLjCKETlags O_dDONLY)
+fcntl(13,, ^O)          = 0
+fcntl(13,, O((((CKETFL)                  "   =0x2 (glags O_RDWR)
+fcntl(€4, F_SEgs O_RDWR)
+fcntl F_Sl(19,6FF
+fcntL, p O_RDWR)
+fcnl(18, F_SETFL NONBLOCK)   = 0
+fcntl(19, F_D_CLOEXEC, 0)           = 20
+fcntl(19,6FFD,          = °
+fcntl(5, F_GETFL) ²       s O_RDWR)
+fcntl(5, F_SEkFFL, fags O_FDWR)

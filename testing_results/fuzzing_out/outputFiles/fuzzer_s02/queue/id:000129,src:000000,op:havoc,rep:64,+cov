@@ -1,0 +1,15 @@
+fc,tl(10OEXEC, 0)           = 11
+fcntl(11, F_GETFL)            = 0Å802 (flags O_RDWR|O_NONBLOaK)
+fcntl(1, F_SETFD,,FOE            ] 0 (fltl(13, FˇSETFD, LOEX = 0
+fcl_S(13, FCL, ONLYˇˇMNBLOCK) = 0
+fcntl 4 O_RDWR)
+fcntl(14, FFL, O_RDWntlflafs O_RDWR)
+fcntlK15, CK)   = 0
+fcntl(18, F_GETFL)  = 0x (flags O_RAWR)
+fcntl(18, F_SETFL, O_RDWR|O_NONBLpCK) 0
+fcntl(19d0
+^cXEC) R        = 0
+fcntl(5, F_GETFL)                             0
+f     flags O_RDWR)
+fcntl(5, F_SETFL, O_RDNR|OnNONBLOCK)   = 0
+fcntl(7                           R)

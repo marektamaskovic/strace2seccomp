@@ -1,0 +1,13 @@
+fèèÜèhèèèèèèc|tl(10, Fntl_D_CLOEXEC, 0)@         = 11
+fcltl(11, F_GETFL)              =       = 0x2 (s O_RDWR)
+fcntl(11, F_GETFL)                      = 0x802 (flags O_ÿÿÿ|O_NONL)                "  TFD, FOEXEC)          = 0
+fcntl(11, F_SETFL, O_RDWR|O_NONBLOCK)  !=$0ntl
+fcntl(13, F_GETFL)                      = 0 (flags O_RDONLY)
+fc~tlJ13, F_SE_GETFL)                0  cntl(13, F_SETFL, O_R=ONLY|O_NONBLOCK(14, F_GETFL)         0x2 (flags O_RDWR)
+fcntl(14, FpSETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(1ntlF_G             n~l   = 0x2   = 0x2 (flags O_RDWR)
+fcÐtl(15, F_SETÿTÿOURDWR|O_,ONBLOCK)        9      7= <x2 (flags O_RDWR)
+fcntl(18, F_SETFL, O_RDWR|O_            € 0
+fcntl(19, F_D_CLOEXEC, 0) RDWR|O_NONL+                C)         = 0
+fcntl(5,ntl2F_GETFL)                       = @x2 (flags O_Rdüè
+fcnt(                   E 0x2 (flags O_RDWR)

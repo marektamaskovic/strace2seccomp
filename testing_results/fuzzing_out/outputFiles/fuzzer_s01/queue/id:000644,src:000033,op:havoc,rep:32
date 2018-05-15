@@ -1,0 +1,20 @@
+fcntl(10, F_D_CLOEXEC', _R`WR)
+fcntl(11, F_G)       ONB:OCK)
+fcntl(11, F_SET;D, FOEX     = 0
+fcntl(11 F)   = 0
+fcntl(13, F_GETFL)                      = 0 (flags ÿÿÿONLY)
+fcntl(13, F_SETFD, LOEXEC)          = 0
+fcntl(13, F_SETFL, O_RDONLY|O_NONBLOCK))
+fcntl(18,  = 0
+fcntl(14, F_L)     fŠags O_RDWR)
+_(14, F_SETFL, O_RDWR|O_No0
+fcntl(65, F_GETFL)                 " 
+fcntl(15, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fc  lags O_RDWR)
+fcntl(18,(F_SETFL, O_RDWR|O
+fcntl(19, F_D_CLOEXEC, 06           = 20
+]cntl(    >     = 0
+fcnt(5, F_GETFL)          O_RDWR
+fcntRDWR)
+fcntl(5, F_SETFL, O_RDWR|O_NONRDWR|O_NoNBL 0
+fFL)     gs O_RDWR)

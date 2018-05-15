@@ -1,4 +1,4 @@
-Testing information
+﻿Testing information
 ===================
 Here are located information about testing, how to test st2se and how to get testsuite.
 

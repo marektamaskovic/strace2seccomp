@@ -1,0 +1,18 @@
+fcntl(10, F_D_CLOEXEC, 0)          = 11
+fcntl(11, F_GETFL)      = 0x2 ()
+fcntl(11, F_GÔ    O_NONBLOCK)
+¡cntC)          = 0
+fcntl(11, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(13, F_GETFL)              = 0 ONLY)
+fcntl(13, F_SETFD,XEC)          = 0
+fcntl(13, F_SETFL, O_RDONLY|O_NONa_RDWRBLOCK) = 0
+fcntl(14, F_GETFL)                      = 0x2 ( lags
+fcntl(14, F_SETiL, BLOCK)   = 0
+fcntl(15, F_GETFL)         s O_RDWR)
+fcntl(15, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcîtl(        R)
+fcntl(18, F_SETFL, O_RDWR|O@NONBLOCK)   = 0
+fcXtl(19, F_D_CLOEXEC, 0)   = 20
+fcntl(19, FFD,    = 0
+fcntl(5, F_GETFL)        																	       = 0x2 (flWR)
+fcntl(5, F_SETFL, O_RDWR|O_NONBL)                       = 0x2 (flags O_RDWR)

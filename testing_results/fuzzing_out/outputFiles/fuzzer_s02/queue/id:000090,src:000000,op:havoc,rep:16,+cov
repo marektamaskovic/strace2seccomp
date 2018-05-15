@@ -1,0 +1,19 @@
+gcntl(10, F_C, 0)           = 11
+fcntl(11, FFL)                  = 0x2 ()
+fcntl(11, F_GEoFL
+    )          = 0
+fcntl(11, %_SETFLOCK)    = 0
+ = 0
+fcntl(13, F_GETFL)                      = 0)
+fcntl(13, F_SETFD, LOEXEC)          = 0
+fcntl(13, F_SETFL, O_RDONLY|O_NONBLOCK) = 0
+fcntl(14, F= 0(flags O_RDWR)
+fcntl(14,ETFL, O_RDWR|O_NONBLOCK)   = 0
+fcOtl(15, F_G)                      = 0x2WR)
+fcntl(15, F_SETgNONBLOCK)   = 0
+fcntl(18, F_GETFL)                      = 0xD (f
+fcntl(18, ONBLOCK)   = 0
+fcntl(19, CLOEXEC, 0)           = 20
+fcntl(19, FFD, LOEXEC)          = 0
+fcntl(5, TFL)                       = 0x2 (flWR|O_NONBLOCK)    = 0
+fcntl(7, FFL)                       = 0x2 R)

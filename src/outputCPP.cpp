@@ -69,6 +69,8 @@ namespace st2se {
 
         writeSC(sc.second, 1);
 
+        // TODO add param for syscall without args
+
         if (sc.second.clustered == true) {
             std::cout << "clustered branch" << std::endl;
 
@@ -162,7 +164,7 @@ namespace st2se {
                 vec.push_back(item);
         }
 
-        vec.push_back(arg);
+        // vec.push_back(arg);
 
         // std::cout << "arg.next.size()" << arg.next.size() << std::endl;
 
@@ -186,13 +188,20 @@ namespace st2se {
         // if(writeZero){
         //     output_source << std::endl;
         // }
+
+        std::cout << range.back().value_type <<std::endl;
+
+        if(range.back().value_type == val_type_t::BITFIELD){
+            std::cout << "skiping bitfield" << std::endl;
+            return;
+        }
         
         writeZero = false;
 
         // std::cout << "TODO: print as rule: range:\t" << arg2str(range.front()) << " " << arg2str(range.back()) << std::endl;
 
         output_source << "," << std::endl;
-        output_source << "        ";
+        output_source << "        ";  // indentation 8 spaces
         output_source << "SCMP_A" << pos << "(SCMP_CMP_GE, " << arg2str(range.front()) << "), ";
         output_source << "SCMP_A" << pos << "(SCMP_CMP_LE, " << arg2str(range.back()) << ")";
         // output_source << std::endl;
@@ -205,12 +214,19 @@ namespace st2se {
         //     output_source << std::endl;
         // }
 
+        std::cout << arg.value_type <<std::endl;
+
+        if(arg.value_type == val_type_t::BITFIELD){
+            std::cout << "skiping bitfield" << std::endl;
+            return;
+        }
+
         writeZero = false;
 
         // std::cout << "TODO: print as rule: val:\t" << arg2str(arg) << std::endl;
 
         output_source << "," << std::endl;
-        output_source << "        ";
+        output_source << "        ";  // indentation 8 spaces
         output_source << "SCMP_A" << pos << "(SCMP_CMP_EQ, " << arg2str(arg) << ")";
         // output_source << std::endl;
 
