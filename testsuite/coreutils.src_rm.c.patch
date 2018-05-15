@@ -1,0 +1,68 @@
+diff --git a/src/rm.c b/src/rm.c
+index 0a690ab..76365a1 100644
+--- a/src/rm.c
++++ b/src/rm.c
+@@ -23,6 +23,7 @@
+ #include <getopt.h>
+ #include <sys/types.h>
+ #include <assert.h>
++#include <seccomp.h>
+ 
+ #include "system.h"
+ #include "argmatch.h"
+@@ -100,6 +101,47 @@ ARGMATCH_VERIFY (interactive_args, interactive_types);
+ /* Advise the user about invalid usages like "rm -foo" if the file
+    "-foo" exists, assuming ARGC and ARGV are as with 'main'.  */
+ 
++bool
++setupSeccompWhitelist(void)
++{
++  scmp_filter_ctx ctx = seccomp_init(/*SCMP_ACT_ERRNO(EACCES)*/SCMP_ACT_KILL);
++
++  if (!ctx) {
++    return false;
++  }
++
++  int ret = 0;
++
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(access), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(arch_prctl), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(brk), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(close), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(execve), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit_group), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fstat), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(ioctl), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(lseek), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mprotect), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(munmap), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(openat), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(read), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 0);
++
++  if (ret != 0) {
++    goto out;
++  }
++
++  if (seccomp_load(ctx) != 0) {
++    ret = -1;
++    goto out;
++  }
++
++out:
++  seccomp_release(ctx);
++  return (ret == 0);
++}
++
+ static void
+ diagnose_leading_hyphen (int argc, char **argv)
+ {
+@@ -203,6 +246,7 @@ rm_option_init (struct rm_options *x)
+ int
+ main (int argc, char **argv)
+ {
++  setupSeccompWhitelist();
+   bool preserve_root = true;
+   struct rm_options x;
+   bool prompt_once = false;

@@ -1,0 +1,258 @@
+execve("./setEnv.sh", ["./setEnv.sh", "tests"], 0x7ffffdbac748 /* 52 vars */) = 0
+brk(NULL)                               = 0x561b01ac3000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=220291, ...}) = 0
+mmap(NULL, 220291, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f17592c7000
+close(3)                                = 0
+openat(AT_FDCWD, "/usr/lib/libreadline.so.7", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0n\1\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0555, st_size=363064, ...}) = 0
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f17592c5000
+mmap(NULL, 2413768, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f1758e8b000
+mprotect(0x7f1758ecf000, 2097152, PROT_NONE) = 0
+mmap(0x7f17590cf000, 32768, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x44000) = 0x7f17590cf000
+mmap(0x7f17590d7000, 5320, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f17590d7000
+close(3)                                = 0
+openat(AT_FDCWD, "/usr/lib/libdl.so.2", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0@\r\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=14144, ...}) = 0
+mmap(NULL, 2109584, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f1758c87000
+mprotect(0x7f1758c8a000, 2093056, PROT_NONE) = 0
+mmap(0x7f1758e89000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7f1758e89000
+close(3)                                = 0
+openat(AT_FDCWD, "/usr/lib/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\2001\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=2105608, ...}) = 0
+mmap(NULL, 3914128, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f17588cb000
+mprotect(0x7f1758a7e000, 2093056, PROT_NONE) = 0
+mmap(0x7f1758c7d000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1b2000) = 0x7f1758c7d000
+mmap(0x7f1758c83000, 14736, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f1758c83000
+close(3)                                = 0
+openat(AT_FDCWD, "/usr/lib/libncursesw.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\260`\1\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=457800, ...}) = 0
+mmap(NULL, 2542936, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f175865e000
+mprotect(0x7f17586c6000, 2093056, PROT_NONE) = 0
+mmap(0x7f17588c5000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x67000) = 0x7f17588c5000
+close(3)                                = 0
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f17592c3000
+arch_prctl(ARCH_SET_FS, 0x7f17592c3b80) = 0
+mprotect(0x7f1758c7d000, 16384, PROT_READ) = 0
+mprotect(0x7f17588c5000, 20480, PROT_READ) = 0
+mprotect(0x7f1758e89000, 4096, PROT_READ) = 0
+mprotect(0x7f17590cf000, 8192, PROT_READ) = 0
+mprotect(0x561b00458000, 12288, PROT_READ) = 0
+mprotect(0x7f17592fd000, 4096, PROT_READ) = 0
+munmap(0x7f17592c7000, 220291)          = 0
+openat(AT_FDCWD, "/dev/tty", O_RDWR|O_NONBLOCK) = 3
+close(3)                                = 0
+brk(NULL)                               = 0x561b01ac3000
+brk(0x561b01ae4000)                     = 0x561b01ae4000
+openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=2936576, ...}) = 0
+mmap(NULL, 2936576, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f1758391000
+close(3)                                = 0
+getuid()                                = 1000
+getgid()                                = 1000
+geteuid()                               = 1000
+getegid()                               = 1000
+rt_sigprocmask(SIG_BLOCK, NULL, [], 8)  = 0
+ioctl(-1, TIOCGPGRP, 0x7ffe6ca45ea4)    = -1 EBADF (Bad file descriptor)
+sysinfo({uptime=76152, loads=[148480, 120224, 139072], totalram=16683692032, freeram=2800259072, sharedram=2275319808, bufferram=1123164160, totalswap=18253606912, freeswap=18253606912, procs=1054, totalhigh=0, freehigh=0, mem_unit=1}) = 0
+rt_sigaction(SIGCHLD, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGCHLD, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigaction(SIGQUIT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGQUIT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigaction(SIGTSTP, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGTSTP, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigaction(SIGTTIN, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGTTIN, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigaction(SIGTTOU, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGTTOU, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigprocmask(SIG_BLOCK, NULL, [], 8)  = 0
+rt_sigaction(SIGQUIT, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+uname({sysname="Linux", nodename="FordPerfect", ...}) = 0
+stat("/home/xtamas01/School/3BIT/IBP/testsuite", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat(".", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("/home", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("/home/xtamas01", {st_mode=S_IFDIR|0700, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School", {st_mode=S_IFDIR|0777, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT", {st_mode=S_IFDIR|0777, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT/IBP", {st_mode=S_IFDIR|0777, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT/IBP/testsuite", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT/IBP/testsuite/backup_local", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+getpid()                                = 24806
+openat(AT_FDCWD, "/usr/lib/gconv/gconv-modules.cache", O_RDONLY) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/usr/lib/gconv/gconv-modules", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=56282, ...}) = 0
+read(3, "# GNU libc iconv configuration.\n"..., 4096) = 4096
+read(3, "1002//\tJUS_I.B1.002//\nmodule\tJUS"..., 4096) = 4096
+read(3, "ISO-IR-110//\t\tISO-8859-4//\nalias"..., 4096) = 4096
+read(3, "\t\tISO-8859-14//\nalias\tISO_8859-1"..., 4096) = 4096
+read(3, "IC-ES//\nalias\tEBCDICES//\t\tEBCDIC"..., 4096) = 4096
+read(3, "DIC-CP-ES//\t\tIBM284//\nalias\tCSIB"..., 4096) = 4096
+read(3, "\tIBM863//\nalias\tOSF1002035F//\t\tI"..., 4096) = 4096
+read(3, "37//\t\tIBM937//\nmodule\tIBM937//\t\t"..., 4096) = 4096
+read(3, "JIS//\t\t\tEUC-JP//\nmodule\tEUC-JP//"..., 4096) = 4096
+brk(0x561b01b05000)                     = 0x561b01b05000
+read(3, "ias\tISO2022CN//\t\tISO-2022-CN//\nm"..., 4096) = 4096
+read(3, "_5427-EXT//\nalias\tISO_5427EXT//\t"..., 4096) = 4096
+read(3, "st\nmodule\tMAC-SAMI//\t\tINTERNAL\t\t"..., 4096) = 4096
+read(3, "rom\t\t\tto\t\t\tmodule\t\tcost\nalias\tIB"..., 4096) = 4096
+read(3, "TERNAL\t\tIBM9448\t\t1\nmodule\tINTERN"..., 4096) = 3034
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+getppid()                               = 24804
+getpid()                                = 24806
+getpgrp()                               = 24804
+ioctl(2, TIOCGPGRP, [24804])            = 0
+rt_sigaction(SIGCHLD, {sa_handler=0x561b001d68c0, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f17589018f0}, 8) = 0
+prlimit64(0, RLIMIT_NPROC, NULL, {rlim_cur=63351, rlim_max=63351}) = 0
+rt_sigprocmask(SIG_BLOCK, NULL, [], 8)  = 0
+openat(AT_FDCWD, "./setEnv.sh", O_RDONLY) = 3
+stat("./setEnv.sh", {st_mode=S_IFREG|0755, st_size=4408, ...}) = 0
+ioctl(3, TCGETS, 0x7ffe6ca45e30)        = -1 ENOTTY (Inappropriate ioctl for device)
+lseek(3, 0, SEEK_CUR)                   = 0
+read(3, "#! /bin/bash\n\n#================="..., 80) = 80
+lseek(3, 0, SEEK_SET)                   = 0
+prlimit64(0, RLIMIT_NOFILE, NULL, {rlim_cur=1024, rlim_max=4*1024}) = 0
+fcntl(255, F_GETFD)                     = -1 EBADF (Bad file descriptor)
+dup2(3, 255)                            = 255
+close(3)                                = 0
+fcntl(255, F_SETFD, FD_CLOEXEC)         = 0
+fcntl(255, F_GETFL)                     = 0x8000 (flags O_RDONLY|O_LARGEFILE)
+fstat(255, {st_mode=S_IFREG|0755, st_size=4408, ...}) = 0
+lseek(255, 0, SEEK_CUR)                 = 0
+read(255, "#! /bin/bash\n\n#================="..., 4408) = 4408
+brk(0x561b01b26000)                     = 0x561b01b26000
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 0), ...}) = 0
+write(1, "\33[1;37m Start 'set environment' "..., 48) = 48
+write(1, "\33[1;37m Running tests \33[0m\n", 27) = 27
+write(1, "\t\33[1;37m COREUTILS: \33[0m\n", 25) = 25
+pipe([3, 4])                            = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [INT CHLD], [], 8) = 0
+lseek(255, -1, SEEK_CUR)                = 4407
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f17592c3e50) = 24807
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigaction(SIGCHLD, {sa_handler=0x561b001d68c0, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f17589018f0}, {sa_handler=0x561b001d68c0, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f17589018f0}, 8) = 0
+close(4)                                = 0
+read(3, "coreutils-8.29\n", 128)        = 15
+read(3, "", 128)                        = 0
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=24807, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 24807
+wait4(-1, 0x7ffe6ca44010, WNOHANG, NULL) = -1 ECHILD (No child processes)
+rt_sigreturn({mask=[]})                 = 0
+close(3)                                = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigaction(SIGINT, {sa_handler=0x561b001d3150, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=0x561b001d3150, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+stat("/home", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("/home/xtamas01", {st_mode=S_IFDIR|0700, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School", {st_mode=S_IFDIR|0777, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT", {st_mode=S_IFDIR|0777, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT/IBP", {st_mode=S_IFDIR|0777, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT/IBP/testsuite", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT/IBP/testsuite/coreutils-8.29", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+chdir("/home/xtamas01/School/3BIT/IBP/testsuite/coreutils-8.29") = 0
+openat(AT_FDCWD, "tests/cp/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3
+fstat(3, {st_mode=S_IFDIR|0755, st_size=12288, ...}) = 0
+getdents(3, /* 181 entries */, 32768)   = 7000
+getdents(3, /* 0 entries */, 32768)     = 0
+close(3)                                = 0
+rt_sigprocmask(SIG_BLOCK, NULL, [], 8)  = 0
+pipe([3, 4])                            = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [INT CHLD], [], 8) = 0
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f17592c3e50) = 24808
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigaction(SIGCHLD, {sa_handler=0x561b001d68c0, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f17589018f0}, {sa_handler=0x561b001d68c0, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f17589018f0}, 8) = 0
+close(4)                                = 0
+read(3, "8\n", 128)                     = 2
+read(3, "", 128)                        = 0
+close(3)                                = 0
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=24808, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 24808
+wait4(-1, 0x7ffe6ca43d90, WNOHANG, NULL) = -1 ECHILD (No child processes)
+rt_sigreturn({mask=[]})                 = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigaction(SIGINT, {sa_handler=0x561b001d3150, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=0x561b001d3150, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [INT CHLD], [], 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [INT CHLD], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [INT CHLD], NULL, 8) = 0
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f17592c3e50) = 24809
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigaction(SIGINT, {sa_handler=0x561b001d3150, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 24809
+rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=0x561b001d3150, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=24809, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+wait4(-1, 0x7ffe6ca440d0, WNOHANG, NULL) = -1 ECHILD (No child processes)
+rt_sigreturn({mask=[]})                 = 0
+openat(AT_FDCWD, "tests/rm/", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3
+fstat(3, {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+getdents(3, /* 51 entries */, 32768)    = 1768
+getdents(3, /* 0 entries */, 32768)     = 0
+close(3)                                = 0
+rt_sigprocmask(SIG_BLOCK, NULL, [], 8)  = 0
+pipe([3, 4])                            = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [INT CHLD], [], 8) = 0
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f17592c3e50) = 8954
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigaction(SIGCHLD, {sa_handler=0x561b001d68c0, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f17589018f0}, {sa_handler=0x561b001d68c0, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f17589018f0}, 8) = 0
+close(4)                                = 0
+read(3, "8\n", 128)                     = 2
+read(3, "", 128)                        = 0
+close(3)                                = 0
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=8954, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 8954
+wait4(-1, 0x7ffe6ca43e90, WNOHANG, NULL) = -1 ECHILD (No child processes)
+rt_sigreturn({mask=[]})                 = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigaction(SIGINT, {sa_handler=0x561b001d3150, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=0x561b001d3150, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [INT CHLD], [], 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [INT CHLD], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [INT CHLD], NULL, 8) = 0
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f17592c3e50) = 8955
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigaction(SIGINT, {sa_handler=0x561b001d3150, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 8955
+rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, {sa_handler=0x561b001d3150, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f17589018f0}, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=8955, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+wait4(-1, 0x7ffe6ca441d0, WNOHANG, NULL) = -1 ECHILD (No child processes)
+rt_sigreturn({mask=[]})                 = 0
+stat("/home", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("/home/xtamas01", {st_mode=S_IFDIR|0700, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School", {st_mode=S_IFDIR|0777, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT", {st_mode=S_IFDIR|0777, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT/IBP", {st_mode=S_IFDIR|0777, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT/IBP/testsuite", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT/IBP/testsuite/coreutils-8.29", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("/home/xtamas01/School/3BIT/IBP/testsuite/coreutils-8.29", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+chdir("/home/xtamas01/School/3BIT/IBP/testsuite") = 0
+write(1, "\33[1;37m End 'set environment' sc"..., 46) = 46
+read(255, "\n", 4408)                   = 1
+read(255, "", 4408)                     = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+exit_group(0)                           = ?
++++ exited with 0 +++

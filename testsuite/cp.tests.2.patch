@@ -1,0 +1,1957 @@
+diff --git a/tests/cp/abuse.sh b/tests/cp/abuse.sh
+index 2e68cde..57a378f 100755
+--- a/tests/cp/abuse.sh
++++ b/tests/cp/abuse.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# ensure that cp does not write through a just-copied symlink
++# ensure that strace -xx -ff -o ../abuse.strace cp does not write through a just-copied symlink
+ 
+ # Copyright (C) 2007-2017 Free Software Foundation, Inc.
+ 
+@@ -17,7 +17,7 @@
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ 
+ . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
+-print_ver_ cp
++print_ver_  cp
+ 
+ mkdir a b c || framework_failure_
+ ln -s ../t a/1 || framework_failure_
+@@ -32,17 +32,17 @@ for i in dangling-dest existing-dest; do
+   test $i = existing-dest && echo i > t
+   test $i = dangling-dest && rm -f t
+ 
+-  cp -dR a/1 b/1 c 2> out && fail=1
++  strace -xx -ff -o ../abuse.strace cp -dR a/1 b/1 c 2> out && fail=1
+ 
+   compare exp out || fail=1
+ 
+   # When the destination is a dangling symlink,
+-  # ensure that cp does not create it.
++  # ensure that strace -xx -ff -o ../abuse.strace cp does not create it.
+   test $i = dangling-dest \
+     && test -f t && fail=1
+ 
+   # When the destination symlink points to a writable file,
+-  # ensure that cp does not change it.
++  # ensure that strace -xx -ff -o ../abuse.strace cp does not change it.
+   test $i = existing-dest \
+     && case $(cat t) in i);; *) fail=1;; esac
+ done
+diff --git a/tests/cp/acl.sh b/tests/cp/acl.sh
+index 9a55480..cce4b02 100755
+--- a/tests/cp/acl.sh
++++ b/tests/cp/acl.sh
+@@ -22,7 +22,7 @@ print_ver_ cp
+ 
+ require_acl_
+ 
+-# Skip this test if cp was built without ACL support:
++# Skip this test if strace -xx -ff -o ../acl.strace cp was built without ACL support:
+ grep '^#define USE_ACL 1' $CONFIG_HEADER > /dev/null ||
+   skip_ "insufficient ACL support"
+ 
+@@ -37,7 +37,7 @@ test $skip = yes &&
+   skip_ "'.' is not on a suitable file system for this test"
+ 
+ # copy a file without preserving permissions
+-cp a/file b/ || fail=1
++strace -xx -ff -o ../acl.strace cp a/file b/ || fail=1
+ acl2=$(cd b && getfacl file) || framework_failure_
+ test "$acl1" = "$acl2" || fail=1
+ 
+@@ -45,14 +45,14 @@ test "$acl1" = "$acl2" || fail=1
+ acl1=$(cd a && getfacl file) || framework_failure_
+ 
+ # copy a file, preserving permissions
+-cp -p a/file b/ || fail=1
++strace -xx -ff -o ../acl.strace cp -p a/file b/ || fail=1
+ acl2=$(cd b && getfacl file) || framework_failure_
+ test "$acl1" = "$acl2" || fail=1
+ 
+ # copy a file, preserving permissions, with --attributes-only
+ echo > a/file || framework_failure_ # add some data
+ test -s a/file || framework_failure_
+-cp -p --attributes-only a/file b/ || fail=1
++strace -xx -ff -o ../acl.strace cp -p --attributes-only a/file b/ || fail=1
+ compare /dev/null b/file || fail=1
+ acl2=$(cd b && getfacl file) || framework_failure_
+ test "$acl1" = "$acl2" || fail=1
+diff --git a/tests/cp/attr-existing.sh b/tests/cp/attr-existing.sh
+index 74a58b9..252b853 100755
+--- a/tests/cp/attr-existing.sh
++++ b/tests/cp/attr-existing.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Make sure cp --attributes-only doesn't truncate existing data
++# Make sure strace -xx -ff -o ../attr-existing.strace cp --attributes-only doesn't truncate existing data
+ 
+ # Copyright 2012-2017 Free Software Foundation, Inc.
+ 
+@@ -23,7 +23,7 @@ printf '1' > file1
+ printf '2' > file2
+ printf '2' > file2.exp
+ 
+-cp --attributes-only file1 file2 || fail=1
++strace -xx -ff -o ../attr-existing.strace cp --attributes-only file1 file2 || fail=1
+ cmp file2 file2.exp || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/backup-1.sh b/tests/cp/backup-1.sh
+index dcdc1ac..09f6c86 100755
+--- a/tests/cp/backup-1.sh
++++ b/tests/cp/backup-1.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Test cp backup.
++# Test strace -xx -ff -o ../backup-1.strace cp backup.
+ 
+ # Copyright (C) 1997-2017 Free Software Foundation, Inc.
+ 
+@@ -27,8 +27,8 @@ echo test > $file || framework_failure_
+ 
+ # Specify both version control and suffix so the environment variables
+ # (possibly set by the user running these tests) aren't used.
+-cp --force --backup=simple --suffix=$suffix $file $file || fail=1
+-cp -T --force --backup=simple --suffix=$suffix $file $file || fail=1
++strace -xx -ff -o ../backup-1.strace cp --force --backup=simple --suffix=$suffix $file $file || fail=1
++strace -xx -ff -o ../backup-1.strace cp -T --force --backup=simple --suffix=$suffix $file $file || fail=1
+ 
+ test -f $file || fail=1
+ test -f $file_backup || fail=1
+diff --git a/tests/cp/backup-dir.sh b/tests/cp/backup-dir.sh
+index a3719b8..f121d98 100755
+--- a/tests/cp/backup-dir.sh
++++ b/tests/cp/backup-dir.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Ensure that cp -b doesn't back up directories.
++# Ensure that strace -xx -ff -o ../backup-dir.strace cp -b doesn't back up directories.
+ 
+ # Copyright (C) 2006-2017 Free Software Foundation, Inc.
+ 
+@@ -17,15 +17,15 @@
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ 
+ . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
+-print_ver_ cp
++print_ver_  cp
+ 
+ mkdir x y || framework_failure_
+ 
+ 
+-cp -a x y || fail=1
++strace -xx -ff -o ../backup-dir.strace cp -a x y || fail=1
+ 
+ # This would mistakenly create a backup of y/x (y/x~) in coreutils-6.3.
+-cp -ab x y || fail=1
++strace -xx -ff -o ../backup-dir.strace cp -ab x y || fail=1
+ test -d y/x || fail=1
+ test -d y/x~ && fail=1
+ 
+diff --git a/tests/cp/backup-is-src.sh b/tests/cp/backup-is-src.sh
+index d6c45d0..ad65375 100755
+--- a/tests/cp/backup-is-src.sh
++++ b/tests/cp/backup-is-src.sh
+@@ -23,7 +23,7 @@ echo a > a || framework_failure_
+ echo a-tilde > a~ || framework_failure_
+ 
+ # This cp command should exit nonzero.
+-cp --b=simple a~ a > out 2>&1 && fail=1
++strace -xx -ff -o ../backup-is-src.strace cp --b=simple a~ a > out 2>&1 && fail=1
+ 
+ sed "s,cp:,XXX:," out > out2
+ 
+diff --git a/tests/cp/capability.sh b/tests/cp/capability.sh
+index dc1a231..c555cf3 100755
+--- a/tests/cp/capability.sh
++++ b/tests/cp/capability.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Ensure cp --preserves copies capabilities
++# Ensure strace -xx -ff -o ../capability.strace cp --preserves copies capabilities
+ 
+ # Copyright (C) 2010-2017 Free Software Foundation, Inc.
+ 
+@@ -39,11 +39,11 @@ setcap 'cap_net_bind_service=ep' file ||
+ getcap file | grep cap_net_bind_service >/dev/null ||
+   skip_ "getcap doesn't work"
+ 
+-cp --preserve=xattr file copy1 || fail=1
++strace -xx -ff -o ../capability.strace cp --preserve=xattr file copy1 || fail=1
+ 
+ # Before coreutils 8.5 the capabilities would not be preserved,
+ # as the owner was set _after_ copying xattrs, thus clearing any capabilities.
+-cp --preserve=all   file copy2 || fail=1
++strace -xx -ff -o ../capability.strace cp --preserve=all   file copy2 || fail=1
+ 
+ for file in copy1 copy2; do
+   getcap $file | grep cap_net_bind_service >/dev/null || fail=1
+diff --git a/tests/cp/cp-HL.sh b/tests/cp/cp-HL.sh
+index 7c014d0..9530866 100755
+--- a/tests/cp/cp-HL.sh
++++ b/tests/cp/cp-HL.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# test cp's -H and -L options
++# test strace -xx -ff -o ../cp-HL.strace cp's -H and -L options
+ 
+ # Copyright (C) 2000-2017 Free Software Foundation, Inc.
+ 
+@@ -25,7 +25,7 @@ ln -s f slink || framework_failure_
+ ln -s no-such-file src-dir/slink || framework_failure_
+ 
+ 
+-cp -H -R slink src-dir dest-dir || fail=1
++strace -xx -ff -o ../cp-HL.strace cp -H -R slink src-dir dest-dir || fail=1
+ test -d src-dir || fail=1
+ test -d dest-dir/src-dir || fail=1
+ 
+diff --git a/tests/cp/cp-a-selinux.sh b/tests/cp/cp-a-selinux.sh
+index bc1ea95..7b04a9a 100755
+--- a/tests/cp/cp-a-selinux.sh
++++ b/tests/cp/cp-a-selinux.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Ensure that cp -Z, -a and cp --preserve=context work properly.
++# Ensure that strace -xx -ff -o ../cp-a-selinux.strace cp -Z, -a and strace -xx -ff -o ../cp-a-selinux.strace cp --preserve=context work properly.
+ # In particular, test on a writable NFS partition.
+ # Check also locally if --preserve=context, -a and --preserve=all
+ # does work
+@@ -34,9 +34,9 @@ mls_enabled_ && ctx="$ctx:s0"
+ # Check basic functionality - before check on fixed context mount
+ touch c || framework_failure_
+ chcon $ctx c || skip "Failed to set context: $ctx"
+-cp -a c d 2>err || framework_failure_
+-cp --preserve=context c e || framework_failure_
+-cp --preserve=all c f || framework_failure_
++strace -xx -ff -o ../cp-a-selinux.strace cp -a c d 2>err || framework_failure_
++strace -xx -ff -o ../cp-a-selinux.strace cp --preserve=context c e || framework_failure_
++strace -xx -ff -o ../cp-a-selinux.strace cp --preserve=all c f || framework_failure_
+ ls -Z d | grep $ctx || fail=1
+ # there must be no stderr output for -a
+ compare /dev/null err || fail=1
+@@ -56,7 +56,7 @@ chcon $ctx backup/existing_dir/file || framework_failure_
+ # Set the dir context to ensure it is reset
+ mkdir -p --context="$ctx" restore/existing_dir || framework_failure_
+ # Copy and ensure existing directories updated
+-cp -a backup/. restore/ || fail=1
++strace -xx -ff -o ../cp-a-selinux.strace cp -a backup/. restore/ || fail=1
+ ls -Zd restore/existing_dir > ed_ctx || fail=1
+ grep $ctx ed_ctx &&
+   { ls -lZd restore/existing_dir; fail=1; }
+@@ -71,7 +71,7 @@ chcon $ctx parents/a/b || framework_failure_
+ # Set the dir context to ensure it is reset
+ mkdir -p --context="$ctx" parents_dest/parents/a || framework_failure_
+ # Copy and ensure existing directories updated
+-cp -r --parents --preserve=context parents/a/b/file parents_dest || fail=1
++strace -xx -ff -o ../cp-a-selinux.strace cp -r --parents --preserve=context parents/a/b/file parents_dest || fail=1
+ # Check new context
+ ls -Zd parents_dest/parents/a/b > ed_ctx || fail=1
+ grep $ctx ed_ctx ||
+@@ -90,34 +90,34 @@ old_type_f=$(get_selinux_type c)
+ old_type_d=$(get_selinux_type c_d)
+ # Setup copies for manipulation with restorecon
+ # and get the adjusted type for comparison
+-cp -a c Z1 || fail=1
+-cp -a c_d Z1_d || fail=1
++strace -xx -ff -o ../cp-a-selinux.strace cp -a c Z1 || fail=1
++strace -xx -ff -o ../cp-a-selinux.strace cp -a c_d Z1_d || fail=1
+ if restorecon Z1 Z1_d 2>restorecon.err \
+    && compare /dev/null restorecon.err; then
+   new_type_f=$(get_selinux_type Z1)
+   new_type_d=$(get_selinux_type Z1_d)
+ 
+   # Ensure -Z sets the type like restorecon does
+-  cp -Z c Z2 || fail=1
+-  cpZ_type_f=$(get_selinux_type Z2)
+-  test "$cpZ_type_f" = "$new_type_f" || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cp -Z c Z2 || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cpZ_type_f=$(get_selinux_type Z2)
++  test "$strace -xx -ff -o ../cp-a-selinux.strace cpZ_type_f" = "$new_type_f" || fail=1
+ 
+   # Ensure -Z overrides -a and that dirs are handled too
+-  cp -aZ c Z3 || fail=1
+-  cp -aZ c_d Z3_d || fail=1
+-  cpaZ_type_f=$(get_selinux_type Z3)
+-  cpaZ_type_d=$(get_selinux_type Z3_d)
+-  test "$cpaZ_type_f" = "$new_type_f" || fail=1
+-  test "$cpaZ_type_d" = "$new_type_d" || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cp -aZ c Z3 || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cp -aZ c_d Z3_d || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cpaZ_type_f=$(get_selinux_type Z3)
++  strace -xx -ff -o ../cp-a-selinux.strace cpaZ_type_d=$(get_selinux_type Z3_d)
++  test "$strace -xx -ff -o ../cp-a-selinux.strace cpaZ_type_f" = "$new_type_f" || fail=1
++  test "$strace -xx -ff -o ../cp-a-selinux.strace cpaZ_type_d" = "$new_type_d" || fail=1
+ 
+   # Ensure -Z sets the type for existing files
+   mkdir -p existing/c_d || framework_failure_
+   touch existing/c || framework_failure_
+-  cp -aZ c c_d existing || fail=1
+-  cpaZ_type_f=$(get_selinux_type existing/c)
+-  cpaZ_type_d=$(get_selinux_type existing/c_d)
+-  test "$cpaZ_type_f" = "$new_type_f" || fail=1
+-  test "$cpaZ_type_d" = "$new_type_d" || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cp -aZ c c_d existing || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cpaZ_type_f=$(get_selinux_type existing/c)
++  strace -xx -ff -o ../cp-a-selinux.strace cpaZ_type_d=$(get_selinux_type existing/c_d)
++  test "$strace -xx -ff -o ../cp-a-selinux.strace cpaZ_type_f" = "$new_type_f" || fail=1
++  test "$strace -xx -ff -o ../cp-a-selinux.strace cpaZ_type_d" = "$new_type_d" || fail=1
+ fi
+ 
+ skip=0
+@@ -139,24 +139,24 @@ echo > g                                     || framework_failure_
+ test "$(stat -c%C ../f)" = "$(stat -c%C g)" &&
+   skip_ "files on separate file systems have the same security context"
+ 
+-# /bin/cp from coreutils-6.7-3.fc7 would fail this test by letting cp
++# /bin/strace -xx -ff -o ../cp-a-selinux.strace cp from coreutils-6.7-3.fc7 would fail this test by letting strace -xx -ff -o ../cp-a-selinux.strace cp
+ # succeed (giving no diagnostics), yet leaving the destination file empty.
+-cp -a ../f g 2>err || fail=1
++strace -xx -ff -o ../cp-a-selinux.strace cp -a ../f g 2>err || fail=1
+ test -s g       || fail=1     # The destination file must not be empty.
+ compare /dev/null err || fail=1
+ 
+ # =====================================================
+-# Here, we expect cp to succeed and not warn with "Operation not supported"
++# Here, we expect strace -xx -ff -o ../cp-a-selinux.strace cp to succeed and not warn with "Operation not supported"
+ rm -f g
+ echo > g
+-cp --preserve=all ../f g 2>err || fail=1
++strace -xx -ff -o ../cp-a-selinux.strace cp --preserve=all ../f g 2>err || fail=1
+ test -s g || fail=1
+ grep "Operation not supported" err && fail=1
+ 
+ # =====================================================
+ # The same as above except destination does not exist
+ rm -f g
+-cp --preserve=all ../f g 2>err || fail=1
++strace -xx -ff -o ../cp-a-selinux.strace cp --preserve=all ../f g 2>err || fail=1
+ test -s g || fail=1
+ grep "Operation not supported" err && fail=1
+ 
+@@ -165,18 +165,18 @@ grep "Operation not supported" err && fail=1
+ # to the file type.
+ # Note: this test could also be run by a regular (non-root) user in an
+ # NFS mounted directory.  When doing that, I get this diagnostic:
+-# cp: failed to set the security context of 'g' to 'system_u:object_r:nfs_t': \
++# strace -xx -ff -o ../cp-a-selinux.strace cp: failed to set the security context of 'g' to 'system_u:object_r:nfs_t': \
+ #   Operation not supported
+ cat <<\EOF > exp || framework_failure_
+-cp: failed to set the security context of
++strace -xx -ff -o ../cp-a-selinux.strace cp: failed to set the security context of
+ EOF
+ 
+ rm -f g
+ echo > g
+ # =====================================================
+-# Here, we expect cp to fail, because it cannot set the SELinux
++# Here, we expect strace -xx -ff -o ../cp-a-selinux.strace cp to fail, because it cannot set the SELinux
+ # security context through NFS or a mount with fixed context.
+-cp --preserve=context ../f g 2> out && fail=1
++strace -xx -ff -o ../cp-a-selinux.strace cp --preserve=context ../f g 2> out && fail=1
+ # Here, we *do* expect the destination to be empty.
+ compare /dev/null g || fail=1
+ sed "s/ .g'.*//" out > k
+@@ -186,7 +186,7 @@ compare exp out || fail=1
+ rm -f g
+ echo > g
+ # Check if -a option doesn't silence --preserve=context option diagnostics
+-cp -a --preserve=context ../f g 2> out2 && fail=1
++strace -xx -ff -o ../cp-a-selinux.strace cp -a --preserve=context ../f g 2> out2 && fail=1
+ # Here, we *do* expect the destination to be empty.
+ compare /dev/null g || fail=1
+ sed "s/ .g'.*//" out2 > k
+@@ -200,29 +200,29 @@ for no_g_cmd in '' 'rm -f g'; do
+ 
+    # With absolute path
+   $no_g_cmd
+-  cp -Z ../f $(realpath g) || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cp -Z ../f $(realpath g) || fail=1
+    # With relative path
+   $no_g_cmd
+-  cp -Z ../f g || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cp -Z ../f g || fail=1
+    # -Z overrides -a
+   $no_g_cmd
+-  cp -Z -a ../f g || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cp -Z -a ../f g || fail=1
+    # -Z doesn't take an arg
+   $no_g_cmd
+-  returns_ 1 cp -Z "$ctx" ../f g || fail=1
++  returns_ 1 strace -xx -ff -o ../cp-a-selinux.strace cp -Z "$ctx" ../f g || fail=1
+ 
+   # Explicit context
+   $no_g_cmd
+    # Explicitly defaulting to the global $ctx should work
+-  cp --context="$ctx" ../f g || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cp --context="$ctx" ../f g || fail=1
+    # --context overrides -a
+   $no_g_cmd
+-  cp -a --context="$ctx" ../f g || fail=1
++  strace -xx -ff -o ../cp-a-selinux.strace cp -a --context="$ctx" ../f g || fail=1
+ done
+ 
+ # Mutually exclusive options
+-returns_ 1 cp -Z --preserve=context ../f g || fail=1
+-returns_ 1 cp --preserve=context -Z ../f g || fail=1
+-returns_ 1 cp --preserve=context --context="$ctx" ../f g || fail=1
++returns_ 1 strace -xx -ff -o ../cp-a-selinux.strace cp -Z --preserve=context ../f g || fail=1
++returns_ 1 strace -xx -ff -o ../cp-a-selinux.strace cp --preserve=context -Z ../f g || fail=1
++returns_ 1 strace -xx -ff -o ../cp-a-selinux.strace cp --preserve=context --context="$ctx" ../f g || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/cp-deref.sh b/tests/cp/cp-deref.sh
+index 36c8580..42fdcfc 100755
+--- a/tests/cp/cp-deref.sh
++++ b/tests/cp/cp-deref.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# cp -RL dir1 dir2' must handle the case in which each of dir1 and dir2
++# strace -xx -ff -o ../cp-deref.strace cp -RL dir1 dir2' must handle the case in which each of dir1 and dir2
+ # contain a symlink pointing to some third directory.
+ 
+ # Copyright (C) 2006-2017 Free Software Foundation, Inc.
+@@ -26,8 +26,8 @@ ln -s ../c b || framework_failure_
+ 
+ 
+ # Before coreutils-5.94, the following would fail with this message:
+-# cp: will not create hard link 'd/b/c' to directory 'd/a/c'
+-cp -RL a b d || fail=1
++# strace -xx -ff -o ../cp-deref.strace cp: will not create hard link 'd/b/c' to directory 'd/a/c'
++strace -xx -ff -o ../cp-deref.strace cp -RL a b d || fail=1
+ test -d a/c || fail=1
+ test -d b/c || fail=1
+ 
+diff --git a/tests/cp/cp-i.sh b/tests/cp/cp-i.sh
+index 6e5451c..e7c9c4d 100755
+--- a/tests/cp/cp-i.sh
++++ b/tests/cp/cp-i.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Test whether cp -i prompts in the right place.
++# Test whether strace -xx -ff -o ../cp-i.strace cp -i prompts in the right place.
+ 
+ # Copyright (C) 2006-2017 Free Software Foundation, Inc.
+ 
+@@ -23,8 +23,8 @@ mkdir -p a b/a/c || framework_failure_
+ touch a/c || framework_failure_
+ 
+ 
+-# coreutils 6.2 cp would neglect to prompt in this case.
+-echo n | cp -iR a b 2>/dev/null || fail=1
++# coreutils 6.2 strace -xx -ff -o ../cp-i.strace cp would neglect to prompt in this case.
++echo n | strace -xx -ff -o ../cp-i.strace cp -iR a b 2>/dev/null || fail=1
+ 
+ # test miscellaneous combinations of -f -i -n parameters
+ touch c d || framework_failure_
+@@ -32,34 +32,34 @@ echo "'c' -> 'd'" > out_copy
+ > out_empty
+ 
+ # ask for overwrite, answer no
+-echo n | cp -vi  c d 2>/dev/null > out1 || fail=1
++echo n | strace -xx -ff -o ../cp-i.strace cp -vi  c d 2>/dev/null > out1 || fail=1
+ compare out1 out_empty || fail=1
+ 
+ # ask for overwrite, answer yes
+-echo y | cp -vi  c d 2>/dev/null > out2 || fail=1
++echo y | strace -xx -ff -o ../cp-i.strace cp -vi  c d 2>/dev/null > out2 || fail=1
+ compare out2 out_copy  || fail=1
+ 
+ # -i wins over -n
+-echo y | cp -vni c d 2>/dev/null > out3 || fail=1
++echo y | strace -xx -ff -o ../cp-i.strace cp -vni c d 2>/dev/null > out3 || fail=1
+ compare out3 out_copy  || fail=1
+ 
+ # -n wins over -i
+-echo y | cp -vin c d 2>/dev/null > out4 || fail=1
++echo y | strace -xx -ff -o ../cp-i.strace cp -vin c d 2>/dev/null > out4 || fail=1
+ compare out4 out_empty || fail=1
+ 
+ # ask for overwrite, answer yes
+-echo y | cp -vfi c d 2>/dev/null > out5 || fail=1
++echo y | strace -xx -ff -o ../cp-i.strace cp -vfi c d 2>/dev/null > out5 || fail=1
+ compare out5 out_copy  || fail=1
+ 
+ # do not ask, prevent from overwrite
+-echo n | cp -vfn c d 2>/dev/null > out6 || fail=1
++echo n | strace -xx -ff -o ../cp-i.strace cp -vfn c d 2>/dev/null > out6 || fail=1
+ compare out6 out_empty || fail=1
+ 
+ # do not ask, prevent from overwrite
+-echo n | cp -vnf c d 2>/dev/null > out7 || fail=1
++echo n | strace -xx -ff -o ../cp-i.strace cp -vnf c d 2>/dev/null > out7 || fail=1
+ compare out7 out_empty || fail=1
+ 
+ # options --backup and --no-clobber are mutually exclusive
+-returns_ 1 cp -bn c d 2>/dev/null || fail=1
++returns_ 1 strace -xx -ff -o ../cp-i.strace cp -bn c d 2>/dev/null || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/cp-mv-backup.sh b/tests/cp/cp-mv-backup.sh
+index dda009c..25e3bf2 100755
+--- a/tests/cp/cp-mv-backup.sh
++++ b/tests/cp/cp-mv-backup.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Test basic --backup functionality for both cp and mv.
++# Test basic --backup functionality for both strace -xx -ff -o ../cp-mv-backup.strace cp and mv.
+ 
+ # Copyright (C) 1999-2017 Free Software Foundation, Inc.
+ 
+@@ -34,7 +34,7 @@ for prog in cp mv; do
+   for initial_files in 'x' 'x y' 'x y y~' 'x y y.~1~' 'x y y~ y.~1~'; do
+     for opt in none off  numbered t  existing nil  simple never; do
+       touch $initial_files
+-        $prog --backup=$opt x y || fail=1
++        strace -xx -ff -o ../cp-mv-backup.strace $prog --backup=$opt x y || fail=1
+       echo $initial_files $opt: $(ls [xy]*); rm -f x y y~ y.~?~
+     done
+   done
+diff --git a/tests/cp/cp-mv-enotsup-xattr.sh b/tests/cp/cp-mv-enotsup-xattr.sh
+index b7be9f8..b360741 100755
+--- a/tests/cp/cp-mv-enotsup-xattr.sh
++++ b/tests/cp/cp-mv-enotsup-xattr.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Ensure that mv, cp -a and cp --preserve=xattr(all) options do work
++# Ensure that mv, strace -xx -ff -o ../cp-mv-enotsup-xattr.strace cp -a and strace -xx -ff -o ../cp-mv-enotsup-xattr.strace cp --preserve=xattr(all) options do work
+ # as expected on file systems without their support and do show correct
+ # diagnostics when required
+ 
+@@ -67,33 +67,33 @@ grep -F "$xattr_pair" out_a >/dev/null \
+ 
+ 
+ # This should pass without diagnostics
+-cp -a xattr/a noxattr/ 2>err || fail=1
++strace -xx -ff -o ../cp-mv-enotsup-xattr.strace cp -a xattr/a noxattr/ 2>err || fail=1
+ test -s noxattr/a   || fail=1  # destination file must not be empty
+ compare /dev/null err || fail=1
+ 
+ rm -f err noxattr/a
+ 
+ # This should pass without diagnostics (new file)
+-cp --preserve=all xattr/a noxattr/ 2>err || fail=1
++strace -xx -ff -o ../cp-mv-enotsup-xattr.strace cp --preserve=all xattr/a noxattr/ 2>err || fail=1
+ test -s noxattr/a   || fail=1  # destination file must not be empty
+ compare /dev/null err || fail=1
+ 
+ # This should pass without diagnostics (existing file)
+-cp --preserve=all xattr/a noxattr/ 2>err || fail=1
++strace -xx -ff -o ../cp-mv-enotsup-xattr.strace cp --preserve=all xattr/a noxattr/ 2>err || fail=1
+ test -s noxattr/a   || fail=1  # destination file must not be empty
+ compare /dev/null err || fail=1
+ 
+ rm -f err noxattr/a
+ 
+ # This should fail with corresponding diagnostics
+-cp -a --preserve=xattr xattr/a noxattr/ 2>err && fail=1
++strace -xx -ff -o ../cp-mv-enotsup-xattr.strace cp -a --preserve=xattr xattr/a noxattr/ 2>err && fail=1
+ if grep '^#define USE_XATTR 1' $CONFIG_HEADER > /dev/null; then
+ cat <<\EOF > exp
+ cp: setting attributes for 'noxattr/a': Operation not supported
+ EOF
+ else
+ cat <<\EOF > exp
+-cp: cannot preserve extended attributes, cp is built without xattr support
++cp: cannot preserve extended attributes, strace -xx -ff -o ../cp-mv-enotsup-xattr.strace cp is built without xattr support
+ EOF
+ fi
+ 
+diff --git a/tests/cp/cp-parents.sh b/tests/cp/cp-parents.sh
+index 3f70f0d..7838ada 100755
+--- a/tests/cp/cp-parents.sh
++++ b/tests/cp/cp-parents.sh
+@@ -32,29 +32,29 @@ skip_if_setgid_
+ 
+ # With 4.0.37 and earlier (back to when?), this would fail
+ # with the failed assertion from dirname.c due to the trailing slash.
+-cp -R --parents foo/ bar || fail=1
++strace -xx -ff -o ../cp-parents.strace cp -R --parents foo/ bar || fail=1
+ 
+-# Exercise the make_path and re_protect code in cp.c.
++# Exercise the make_path and re_protect code in strace -xx -ff -o ../cp-parents.strace cp.c.
+ # FIXME: compare verbose output with expected output.
+-cp --verbose -a --parents a/b/c d > /dev/null 2>&1 || fail=1
++strace -xx -ff -o ../cp-parents.strace cp --verbose -a --parents a/b/c d > /dev/null 2>&1 || fail=1
+ test -d d/a/b/c || fail=1
+ 
+-# With 6.7 and earlier, cp --parents f/g d would mistakenly create a
++# With 6.7 and earlier, strace -xx -ff -o ../cp-parents.strace cp --parents f/g d would mistakenly create a
+ # directory d/f, even though f is a regular file.
+-returns_ 1 cp --parents f/g d 2>/dev/null || fail=1
++returns_ 1 strace -xx -ff -o ../cp-parents.strace cp --parents f/g d 2>/dev/null || fail=1
+ test -d d/f && fail=1
+ 
+ # Check that re_protect works.
+ chmod go=w d/a || framework_failure_
+-cp -a --parents d/a/b/c e || fail=1
+-cp -a --parents sym/b/c g || fail=1
++strace -xx -ff -o ../cp-parents.strace cp -a --parents d/a/b/c e || fail=1
++strace -xx -ff -o ../cp-parents.strace cp -a --parents sym/b/c g || fail=1
+ p=$(ls -ld e/d|cut -b-10); case $p in drwxr-xr-x);; *) fail=1;; esac
+ p=$(ls -ld e/d/a|cut -b-10); case $p in drwx-w--w-);; *) fail=1;; esac
+ p=$(ls -ld g/sym|cut -b-10); case $p in drwx-w--w-);; *) fail=1;; esac
+ p=$(ls -ld e/d/a/b/c|cut -b-10); case $p in drwxr-xr-x);; *) fail=1;; esac
+ p=$(ls -ld g/sym/b/c|cut -b-10); case $p in drwxr-xr-x);; *) fail=1;; esac
+ 
+-# Before 8.25 cp --parents --no-preserve=mode would copy
++# Before 8.25 strace -xx -ff -o ../cp-parents.strace cp --parents --no-preserve=mode would copy
+ # the mode bits from the source directories
+ {
+   mkdir -p np/b &&
+@@ -63,7 +63,7 @@ p=$(ls -ld g/sym/b/c|cut -b-10); case $p in drwxr-xr-x);; *) fail=1;; esac
+   chmod 775 np/b/file &&
+   mkdir np_dest
+ } || framework_failure_
+-cp --parents --no-preserve=mode np/b/file np_dest/ || fail=1
++strace -xx -ff -o ../cp-parents.strace cp --parents --no-preserve=mode np/b/file np_dest/ || fail=1
+ p=$(ls -ld np_dest/np|cut -b-10); case $p in drwxr-xr-x);; *) fail=1;; esac
+ 
+ Exit $fail
+diff --git a/tests/cp/deref-slink.sh b/tests/cp/deref-slink.sh
+index 71bad3a..22c5781 100755
+--- a/tests/cp/deref-slink.sh
++++ b/tests/cp/deref-slink.sh
+@@ -23,6 +23,6 @@ print_ver_ cp
+ touch f slink-target || framework_failure_
+ ln -s slink-target slink || framework_failure_
+ 
+-cp -d f slink || fail=1
++strace -xx -ff -o ../deref-slink.strace cp -d f slink || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/dir-rm-dest.sh b/tests/cp/dir-rm-dest.sh
+index 4d69025..5cbc19b 100755
+--- a/tests/cp/dir-rm-dest.sh
++++ b/tests/cp/dir-rm-dest.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# verify that cp's --remove-destination option works with -R
++# verify that strace -xx -ff -o ../dir-rm-dest.strace cp's --remove-destination option works with -R
+ 
+ # Copyright (C) 2000-2017 Free Software Foundation, Inc.
+ 
+@@ -22,9 +22,9 @@ print_ver_ cp
+ mkdir d e || framework_failure_
+ 
+ # Do it once with no destination...
+-cp -R --remove-destination d e || fail=1
++strace -xx -ff -o ../dir-rm-dest.strace cp -R --remove-destination d e || fail=1
+ 
+ # ...and again, with an existing destination.
+-cp -R --remove-destination d e || fail=1
++strace -xx -ff -o ../dir-rm-dest.strace cp -R --remove-destination d e || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/dir-slash.sh b/tests/cp/dir-slash.sh
+index f6ccec9..7ddbbf4 100755
+--- a/tests/cp/dir-slash.sh
++++ b/tests/cp/dir-slash.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Make sure that cp -R DIR1 DIR2 does the right thing
++# Make sure that strace -xx -ff -o ../dir-slash.strace cp -R DIR1 DIR2 does the right thing
+ # when DIR1 is written with a trailing slash.
+ 
+ # Copyright (C) 2000-2017 Free Software Foundation, Inc.
+@@ -23,7 +23,7 @@ print_ver_ cp
+ mkdir dir1 dir2 || framework_failure_
+ touch dir1/file || framework_failure_
+ 
+-cp -R dir1/ dir2 || fail=1
++strace -xx -ff -o ../dir-slash.strace cp -R dir1/ dir2 || fail=1
+ 
+ # This file should not exist, but it did with fileutils-4.0w.
+ test -r dir2/file && fail=1
+diff --git a/tests/cp/dir-vs-file.sh b/tests/cp/dir-vs-file.sh
+index 9d3fc3d..15ae3c1 100755
+--- a/tests/cp/dir-vs-file.sh
++++ b/tests/cp/dir-vs-file.sh
+@@ -23,8 +23,8 @@ mkdir dir || framework_failure_
+ touch file || framework_failure_
+ 
+ 
+-# In 4.0.35, this cp invocation silently succeeded.
+-returns_ 1 cp -R dir file 2>/dev/null || fail=1
++# In 4.0.35, this strace -xx -ff -o ../dir-vs-file.strace cp invocation silently succeeded.
++returns_ 1 strace -xx -ff -o ../dir-vs-file.strace cp -R dir file 2>/dev/null || fail=1
+ 
+ # Make sure file is not replaced with a directory.
+ # In 4.0.35, it was.
+diff --git a/tests/cp/existing-perm-dir.sh b/tests/cp/existing-perm-dir.sh
+index 224bfba..cecefed 100755
+--- a/tests/cp/existing-perm-dir.sh
++++ b/tests/cp/existing-perm-dir.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Make sure cp -p doesn't "restore" permissions it shouldn't (Bug#9170).
++# Make sure strace -xx -ff -o ../existing-perm-dir.strace cp -p doesn't "restore" permissions it shouldn't (Bug#9170).
+ 
+ # Copyright 2011-2017 Free Software Foundation, Inc.
+ 
+@@ -23,7 +23,7 @@ umask 002
+ mkdir -p -m ug-s,u=rwx,g=rwx,o=rx src/dir || fail=1
+ mkdir -p -m ug-s,u=rwx,g=,o= dst/dir || fail=1
+ 
+-cp -r src/. dst/ || fail=1
++strace -xx -ff -o ../existing-perm-dir.strace cp -r src/. dst/ || fail=1
+ 
+ mode=$(stat --p=%A dst/dir)
+ test "$mode" = drwx------ || fail=1
+diff --git a/tests/cp/existing-perm-race.sh b/tests/cp/existing-perm-race.sh
+index 0e58372..c2bd382 100755
+--- a/tests/cp/existing-perm-race.sh
++++ b/tests/cp/existing-perm-race.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Make sure cp -p isn't too generous with existing file permissions.
++# Make sure strace -xx -ff -o ../existing-perm-race.strace cp -p isn't too generous with existing file permissions.
+ 
+ # Copyright (C) 2006-2017 Free Software Foundation, Inc.
+ 
+@@ -21,7 +21,7 @@ print_ver_ cp
+ 
+ require_membership_in_two_groups_
+ 
+-# cp -p gives ENOTSUP on NFS on Linux 2.6.9 at least
++# strace -xx -ff -o ../existing-perm-race.strace cp -p gives ENOTSUP on NFS on Linux 2.6.9 at least
+ require_local_dir_
+ 
+ require_no_default_acl_ .
+@@ -39,15 +39,15 @@ chgrp $g1 fifo &&
+ chgrp $g2 fifo-copy &&
+ chmod g+r fifo-copy || framework-failure
+ 
+-# Terminate any background cp process
++# Terminate any background strace -xx -ff -o ../existing-perm-race.strace cp process
+ cleanup_() { kill $pid 2>/dev/null && wait $pid; }
+ 
+ # Copy a fifo's contents.  That way, we can examine the
+ # destination permissions before they're finalized.
+-cp -p --copy-contents fifo fifo-copy & pid=$!
++strace -xx -ff -o ../existing-perm-race.strace cp -p --copy-contents fifo fifo-copy & pid=$!
+ 
+ (
+-  # Now 'cp' is reading the fifo.  Wait for the destination file to
++  # Now 'strace -xx -ff -o ../existing-perm-race.strace cp' is reading the fifo.  Wait for the destination file to
+   # be written to, encouraging things along by echoing to the fifo.
+   while test ! -s fifo-copy; do
+     echo foo
+@@ -56,7 +56,7 @@ cp -p --copy-contents fifo fifo-copy & pid=$!
+   # Check the permissions of the destination.
+   ls -l -n fifo-copy >ls.out &&
+ 
+-  # Close the fifo so that "cp" can continue.  But output first,
++  # Close the fifo so that "strace -xx -ff -o ../existing-perm-race.strace cp" can continue.  But output first,
+   # before exiting, otherwise some shells would optimize away the file
+   # descriptor that holds the fifo open.
+   echo foo
+@@ -69,7 +69,7 @@ case $mode in
+ 
+   # FIXME: Remove the following case; the file mode should always be
+   # 600 while the data are being copied.  This will require changing
+-  # cp so that it also does not put $g1's data in a file that is
++  # strace -xx -ff -o ../existing-perm-race.strace cp so that it also does not put $g1's data in a file that is
+   # accessible to $g2.  This fix will not close a security hole, since
+   # a $g2 process can maintain an open file descriptor to the
+   # destination, but it's safer anyway.
+diff --git a/tests/cp/fail-perm.sh b/tests/cp/fail-perm.sh
+index f66b835..3f2d9a0 100755
+--- a/tests/cp/fail-perm.sh
++++ b/tests/cp/fail-perm.sh
+@@ -27,7 +27,7 @@ chmod u=rx,go=,-st D || framework_failure_
+ 
+ 
+ # This is expected to exit non-zero, because it can't read D/a.
+-returns_ 1 cp -pR D DD > /dev/null 2>&1 || fail=1
++returns_ 1 strace -xx -ff -o ../fail-perm.strace cp -pR D DD > /dev/null 2>&1 || fail=1
+ 
+ # Permissions on DD must be 'dr-x------'
+ 
+@@ -41,7 +41,7 @@ cat > exp <<\EOF
+ cp: failed to access 'symlink': Permission denied
+ EOF
+ 
+-cp F symlink 2> out && fail=1
++strace -xx -ff -o ../fail-perm.strace cp F symlink 2> out && fail=1
+ # HPUX appears to fail with EACCES rather than EPERM.
+ # Transform their diagnostic
+ #   ...: The file access permissions do not allow the specified action.
+@@ -49,7 +49,7 @@ cp F symlink 2> out && fail=1
+ sed 's/: The file access permissions.*/: Permission denied/'<out>o1;mv o1 out
+ compare exp out || fail=1
+ 
+-cp --target-directory=symlink F 2> out && fail=1
++strace -xx -ff -o ../fail-perm.strace cp --target-directory=symlink F 2> out && fail=1
+ sed 's/: The file access permissions.*/: Permission denied/'<out>o1;mv o1 out
+ compare exp out || fail=1
+ 
+diff --git a/tests/cp/fiemap-2.sh b/tests/cp/fiemap-2.sh
+index 2998929..fe8a857 100755
+--- a/tests/cp/fiemap-2.sh
++++ b/tests/cp/fiemap-2.sh
+@@ -33,7 +33,7 @@ dd bs=1k seek=128 of=k < /dev/null || framework_failure_
+ for append in no yes; do
+   test $append = yes && printf y >> k
+   for i in always never; do
+-    cp --sparse=$i k k2 || fail=1
++    strace -xx -ff -o ../fiemap-2.strace cp --sparse=$i k k2 || fail=1
+     cmp k k2 || fail=1
+   done
+ done
+@@ -44,12 +44,12 @@ rm -f k
+ printf x > k || framework_failure_
+ dd bs=1k seek=1 of=k count=255 < /dev/zero || framework_failure_
+ 
+-# cp should detect the all-zero blocks and convert some of them to holes.
++# strace -xx -ff -o ../fiemap-2.strace cp should detect the all-zero blocks and convert some of them to holes.
+ # How many it detects/converts currently depends on io_blksize.
+ # Currently, on my F14/ext4 desktop, this K starts off with size 256KiB,
+ # (note that the K in the preceding test starts off with size 4KiB).
+-# cp from coreutils-8.9 with --sparse=always reduces the size to 32KiB.
+-cp --sparse=always k k2 || fail=1
++# strace -xx -ff -o ../fiemap-2.strace cp from coreutils-8.9 with --sparse=always reduces the size to 32KiB.
++strace -xx -ff -o ../fiemap-2.strace cp --sparse=always k k2 || fail=1
+ test $(stat -c %b k2) -lt $(stat -c %b k) || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/fiemap-FMR.sh b/tests/cp/fiemap-FMR.sh
+index 8bd6c94..17a146d 100755
+--- a/tests/cp/fiemap-FMR.sh
++++ b/tests/cp/fiemap-FMR.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Trigger a free-memory read bug in cp from coreutils-[8.11..8.19]
++# Trigger a free-memory read bug in strace -xx -ff -o ../fiemap-FMR.strace cp from coreutils-[8.11..8.19]
+ 
+ # Copyright (C) 2012-2017 Free Software Foundation, Inc.
+ 
+@@ -25,7 +25,7 @@ require_perl_
+ 
+ $PERL -e 'for (1..600) { sysseek (*STDOUT, 4096, 1)' \
+   -e '&& syswrite (*STDOUT, "a" x 1024) or die "$!"}' > j || fail=1
+-valgrind --quiet --error-exitcode=3 cp j j2 || fail=1
++valgrind --quiet --error-exitcode=3 strace -xx -ff -o ../fiemap-FMR.strace cp j j2 || fail=1
+ cmp j j2 || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/fiemap-extents.sh b/tests/cp/fiemap-extents.sh
+index 5f235ed..edc1502 100755
+--- a/tests/cp/fiemap-extents.sh
++++ b/tests/cp/fiemap-extents.sh
+@@ -57,7 +57,7 @@ rm space.test
+ 
+ # Ensure we read a large empty file quickly
+ fallocate -l 300MiB empty.big || framework_failure_
+-timeout 3 cp --sparse=always empty.big cp.test || fail=1
++timeout 3 strace -xx -ff -o ../fiemap-extents.strace cp --sparse=always empty.big cp.test || fail=1
+ test $(stat -c %s empty.big) = $(stat -c %s cp.test) || fail=1
+ rm empty.big cp.test
+ fi
+@@ -74,10 +74,10 @@ for sparse_mode in always auto never; do
+     dd count=10 if=/dev/urandom iflag=fullblock of=unwritten.withdata
+     truncate -s 2MiB unwritten.withdata || framework_failure_
+     fallocate $alloc -n unwritten.withdata || framework_failure_
+-    cp --sparse=$sparse_mode unwritten.withdata cp.test || fail=1
+-    test $(stat -c %s unwritten.withdata) = $(stat -c %s cp.test) || fail=1
++    strace -xx -ff -o ../fiemap-extents.strace cp --sparse=$sparse_mode unwritten.withdata cp.test || fail=1
++    test $(stat -c %s unwritten.withdata) = $(stat -c %scp.test) || fail=1
+     cmp unwritten.withdata cp.test || fail=1
+-    rm unwritten.withdata cp.test || framework_failure_
++    rm unwritten.withdatacp.test || framework_failure_
+   done
+ done
+ 
+diff --git a/tests/cp/fiemap-perf.sh b/tests/cp/fiemap-perf.sh
+index e122537..3989795 100755
+--- a/tests/cp/fiemap-perf.sh
++++ b/tests/cp/fiemap-perf.sh
+@@ -40,7 +40,7 @@ filefrag f | grep -F ': 0 extents found' > /dev/null ||
+   skip_ 'this file system reports extents for holes'
+ 
+ # Nothing can read (much less write) that many bytes in so little time.
+-timeout 10 cp f f2 || fail=1
++timeout 10 strace -xx -ff -o ../fiemap-perf.strace cp f f2 || fail=1
+ 
+ # Ensure that the sparse file copied through fiemap has the same size
+ # in bytes as the original.
+diff --git a/tests/cp/file-perm-race.sh b/tests/cp/file-perm-race.sh
+index 27766d3..4cc9cd5 100755
+--- a/tests/cp/file-perm-race.sh
++++ b/tests/cp/file-perm-race.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Make sure cp -p isn't too generous with file permissions.
++# Make sure strace -xx -ff -o ../file-perm-race.strace cp -p isn't too generous with file permissions.
+ 
+ # Copyright (C) 2006-2017 Free Software Foundation, Inc.
+ 
+@@ -19,21 +19,21 @@
+ . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
+ print_ver_ cp
+ 
+-# cp -p gives ENOTSUP on NFS on Linux 2.6.9 at least
++# strace -xx -ff -o ../file-perm-race.strace cp -p gives ENOTSUP on NFS on Linux 2.6.9 at least
+ require_local_dir_
+ 
+ umask 022
+ mkfifo_or_skip_ fifo
+ 
+-# Terminate any background cp process
++# Terminate any background strace -xx -ff -o ../file-perm-race.strace cp process
+ cleanup_() { kill $pid 2>/dev/null && wait $pid; }
+ 
+ # Copy a fifo's contents.  That way, we can examine the
+ # destination permissions before they're finalized.
+-cp -p --copy-contents fifo fifo-copy & pid=$!
++strace -xx -ff -o ../file-perm-race.strace cp -p --copy-contents fifo fifo-copy & pid=$!
+ 
+ (
+-  # Now 'cp' is reading the fifo.  Wait for the destination file to
++  # Now 'strace -xx -ff -o ../file-perm-race.strace cp' is reading the fifo.  Wait for the destination file to
+   # be created, encouraging things along by echoing to the fifo.
+   while test ! -f fifo-copy; do
+     echo foo
+@@ -42,7 +42,7 @@ cp -p --copy-contents fifo fifo-copy & pid=$!
+   # Check the permissions of the destination.
+   ls -l fifo-copy >ls.out
+ 
+-  # Close the fifo so that "cp" can continue.  But output first,
++  # Close the fifo so that "strace -xx -ff -o ../file-perm-race.strace cp" can continue.  But output first,
+   # before exiting, otherwise some shells would optimize away the file
+   # descriptor that holds the fifo open.
+   echo foo
+diff --git a/tests/cp/into-self.sh b/tests/cp/into-self.sh
+index 9ef352b..c9bf9c1 100755
+--- a/tests/cp/into-self.sh
++++ b/tests/cp/into-self.sh
+@@ -16,10 +16,10 @@
+ # You should have received a copy of the GNU General Public License
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ 
+-# In 4.0.35 and earlier, 'mkdir dir && cp -R dir dir' would produce this:
+-#   cp: won't create hard link 'dir/dir/dir' to directory ''
++# In 4.0.35 and earlier, 'mkdir dir && strace -xx -ff -o ../into-self.strace cp -R dir dir' would produce this:
++#   strace -xx -ff -o ../into-self.strace cp: won't create hard link 'dir/dir/dir' to directory ''
+ # Now it gives this:
+-#   cp: can't copy a directory 'dir' into itself 'dir/dir'
++#   strace -xx -ff -o ../into-self.strace cp: can't copy a directory 'dir' into itself 'dir/dir'
+ 
+ . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
+ print_ver_ cp
+@@ -28,16 +28,16 @@ mkdir a dir || framework_failure_
+ 
+ 
+ # This command should exit nonzero.
+-cp -R dir dir 2> out && fail=1
++strace -xx -ff -o ../into-self.strace cp -R dir dir 2> out && fail=1
+ echo 1 >> out
+ 
+ # This should, too.  However, with coreutils-7.1 it would infloop.
+-cp -rl dir dir 2>> out && fail=1
++strace -xx -ff -o ../into-self.strace cp -rl dir dir 2>> out && fail=1
+ echo 2 >> out
+ 
+-cp -rl a dir dir 2>> out && fail=1
++strace -xx -ff -o ../into-self.strace cp -rl a dir dir 2>> out && fail=1
+ echo 3 >> out
+-cp -rl a dir dir 2>> out && fail=1
++strace -xx -ff -o ../into-self.strace cp -rl a dir dir 2>> out && fail=1
+ echo 4 >> out
+ 
+ cat > exp <<\EOF
+diff --git a/tests/cp/link-deref.sh b/tests/cp/link-deref.sh
+index 01c6f23..34dde7f 100755
+--- a/tests/cp/link-deref.sh
++++ b/tests/cp/link-deref.sh
+@@ -57,7 +57,7 @@ for src in dirlink filelink danglink; do
+ 
+     for r in '' -R; do
+ 
+-      command="cp --link $o $r $src dst"
++      command="strace -xx -ff -o ../link-deref.strace cp --link $o $r $src dst"
+       $command 2> err
+       result=$?
+ 
+@@ -76,7 +76,7 @@ for src in dirlink filelink danglink; do
+ 
+       # What was expected?
+       if [ "$o" = "-P" ]; then
+-        # cp --link should not dereference if -P is given.
++        # strace -xx -ff -o ../link-deref.strace cp --link should not dereference if -P is given.
+         exp_result=0
+         exp_inode=$ino_src
+         exp_ftype=$typ_src
+@@ -94,13 +94,13 @@ for src in dirlink filelink danglink; do
+         exp_ftype=
+         exp_error="cp: -r not specified; omitting directory 'dirlink'"
+       elif [ "$src" = 'dirlink' ]; then
+-        # cp --link -R 'dirlink' should create a new directory.
++        # strace -xx -ff -o ../link-deref.strace cp --link -R 'dirlink' should create a new directory.
+         exp_result=0
+         exp_inode=$ino_dst
+         exp_ftype=$typ_dst
+         exp_error=
+       else
+-        # cp --link 'filelink' should create a hard link to the target.
++        # strace -xx -ff -o ../link-deref.strace cp --link 'filelink' should create a hard link to the target.
+         exp_result=0
+         exp_inode=$ino_tgt
+         exp_ftype=$typ_tgt
+diff --git a/tests/cp/link-heap.sh b/tests/cp/link-heap.sh
+index b399f72..6381aaf 100755
+--- a/tests/cp/link-heap.sh
++++ b/tests/cp/link-heap.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# ensure that cp --preserve=link --link doesn't waste heap
++# ensure that strace -xx -ff -o ../link-heap.strace cp --preserve=link --link doesn't waste heap
+ 
+ # Copyright (C) 2008-2017 Free Software Foundation, Inc.
+ 
+@@ -20,9 +20,9 @@
+ print_ver_ cp
+ expensive_
+ 
+-# Determine basic amount of memory needed for 'cp -al'.
++# Determine basic amount of memory needed for 'strace -xx -ff -o ../link-heap.strace cp -al'.
+ touch f || framework_failure_
+-vm=$(get_min_ulimit_v_ cp -al f f2) \
++vm=$(get_min_ulimit_v_ strace -xx -ff -o ../link-heap.strace cp -al f f2) \
+   || skip_ "this shell lacks ulimit support"
+ rm f f2 || framework_failure_
+ 
+@@ -32,11 +32,11 @@ b=$(printf %031d 1)
+    && cd $a \
+    && seq --format=%031g 10000 |xargs touch \
+    && seq --format=d%030g 10000 |xargs mkdir ) || framework_failure_
+-cp -al $a $b || framework_failure_
++strace -xx -ff -o ../link-heap.strace cp -al $a $b || framework_failure_
+ mkdir e || framework_failure_
+ mv $a $b e || framework_failure_
+ 
+-# Allow cp(1) to use 4MiB more virtual memory than for the above trivial case.
+-(ulimit -v $(($vm+4000)) && cp -al e f) || fail=1
++# Allow strace -xx -ff -o ../link-heap.strace cp(1) to use 4MiB more virtual memory than for the above trivial case.
++(ulimit -v $(($vm+4000)) && strace -xx -ff -o ../link-heap.strace cp -al e f) || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/link-no-deref.sh b/tests/cp/link-no-deref.sh
+index 42a5b0d..05873b1 100755
+--- a/tests/cp/link-no-deref.sh
++++ b/tests/cp/link-no-deref.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Ensure that cp --link --no-dereference works properly
++# Ensure that strace -xx -ff -o ../link-no-deref.strace cp --link --no-dereference works properly
+ 
+ # Copyright (C) 2006-2017 Free Software Foundation, Inc.
+ 
+@@ -24,6 +24,6 @@ ln -s no-such-file dangling-slink || framework_failure_
+ 
+ # Prior to coreutils-6.0, this would fail on non-Linux kernels,
+ # with link being applied to the dangling symlink.
+-cp --link --no-dereference dangling-slink d2 || fail=1
++strace -xx -ff -o ../link-no-deref.strace cp --link --no-dereference dangling-slink d2 || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/link-preserve.sh b/tests/cp/link-preserve.sh
+index 8636897..9f900c6 100755
+--- a/tests/cp/link-preserve.sh
++++ b/tests/cp/link-preserve.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# ensure that 'cp -d' preserves hard-links between command line arguments
++# ensure that 'strace -xx -ff -o ../link-preserve.strace cp -d' preserves hard-links between command line arguments
+ # ensure that --preserve=links works with -RH and -RL
+ 
+ # Copyright (C) 2001-2017 Free Software Foundation, Inc.
+@@ -23,7 +23,7 @@ print_ver_ cp
+ touch a || framework_failure_
+ ln a b || framework_failure_
+ mkdir c || framework_failure_
+-cp -d a b c || framework_failure_
++strace -xx -ff -o ../link-preserve.strace cp -d a b c || framework_failure_
+ test -f c/a || framework_failure_
+ test -f c/b || framework_failure_
+ 
+@@ -37,16 +37,16 @@ rm -rf a b c
+ touch a
+ ln -s a b
+ mkdir c
+-cp --preserve=links -R -H a b c || fail=1
++strace -xx -ff -o ../link-preserve.strace cp --preserve=links -R -H a b c || fail=1
+ a_inode=$(ls -i c/a|sed 's,c/.*,,')
+ b_inode=$(ls -i c/b|sed 's,c/.*,,')
+ test "$a_inode" = "$b_inode" || fail=1
+ # --------------------------------------
+ 
+-# Ensure that -L makes cp follow the b->a symlink
++# Ensure that -L makes strace -xx -ff -o ../link-preserve.strace cp follow the b->a symlink
+ # and translates to hard-linked a and b in the destination dir.
+ rm -rf a b c d; mkdir d; (cd d; touch a; ln -s a b)
+-cp --preserve=links -R -L d c || fail=1
++strace -xx -ff -o ../link-preserve.strace cp --preserve=links -R -L d c || fail=1
+ a_inode=$(ls -i c/a|sed 's,c/.*,,')
+ b_inode=$(ls -i c/b|sed 's,c/.*,,')
+ test "$a_inode" = "$b_inode" || fail=1
+@@ -54,7 +54,7 @@ test "$a_inode" = "$b_inode" || fail=1
+ 
+ # Same as above, but starting with a/b hard linked.
+ rm -rf a b c d; mkdir d; (cd d; touch a; ln a b)
+-cp --preserve=links -R -L d c || fail=1
++strace -xx -ff -o ../link-preserve.strace cp --preserve=links -R -L d c || fail=1
+ a_inode=$(ls -i c/a|sed 's,c/.*,,')
+ b_inode=$(ls -i c/b|sed 's,c/.*,,')
+ test "$a_inode" = "$b_inode" || fail=1
+@@ -62,7 +62,7 @@ test "$a_inode" = "$b_inode" || fail=1
+ 
+ # Ensure that --no-preserve=links works.
+ rm -rf a b c d; mkdir d; (cd d; touch a; ln a b)
+-cp -dR --no-preserve=links d c || fail=1
++strace -xx -ff -o ../link-preserve.strace cp -dR --no-preserve=links d c || fail=1
+ a_inode=$(ls -i c/a|sed 's,c/.*,,')
+ b_inode=$(ls -i c/b|sed 's,c/.*,,')
+ test "$a_inode" = "$b_inode" && fail=1
+@@ -72,7 +72,7 @@ test "$a_inode" = "$b_inode" && fail=1
+ rm -rf a b c d
+ touch a; ln a b
+ mkdir c
+-cp -d a b c || fail=1
++strace -xx -ff -o ../link-preserve.strace cp -d a b c || fail=1
+ a_inode=$(ls -i c/a|sed 's,c/.*,,')
+ b_inode=$(ls -i c/b|sed 's,c/.*,,')
+ test "$a_inode" = "$b_inode" || fail=1
+@@ -82,7 +82,7 @@ test "$a_inode" = "$b_inode" || fail=1
+ rm -rf a b c d
+ touch a; chmod 731 a
+ umask 077
+-cp -a --no-preserve=mode a b || fail=1
++strace -xx -ff -o ../link-preserve.strace cp -a --no-preserve=mode a b || fail=1
+ mode=$(ls -l b|cut -b-10)
+ test "$mode" = "-rw-------" || fail=1
+ umask 022
+diff --git a/tests/cp/link-symlink.sh b/tests/cp/link-symlink.sh
+index 2d064f4..1134172 100755
+--- a/tests/cp/link-symlink.sh
++++ b/tests/cp/link-symlink.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Ensure that cp -a --link maintains timestamps if possible
++# Ensure that strace -xx -ff -o ../link-symlink.strace cp -a --link maintains timestamps if possible
+ 
+ # Copyright (C) 2011-2017 Free Software Foundation, Inc.
+ 
+@@ -30,9 +30,9 @@ case $(stat --format=%y link) in
+   *) skip_ "Your system doesn't support updating symlink timestamps" ;;
+ esac
+ 
+-# link.cp is probably a hardlink, but may also be a symlink
++# link.strace -xx -ff -o ../link-symlink.strace cp is probably a hardlink, but may also be a symlink
+ # In either case the timestamp should match the original.
+-cp -al link link.cp || fail=1
++strace -xx -ff -o ../link-symlink.strace cp -al link link.cp || fail=1
+ case $(stat --format=%y link.cp) in
+   2011-01-01*) ;;
+   *) fail=1 ;;
+diff --git a/tests/cp/link.sh b/tests/cp/link.sh
+index f41d2d5..9004800 100755
+--- a/tests/cp/link.sh
++++ b/tests/cp/link.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Make sure cp --link -f works when the target exists.
++# Make sure strace -xx -ff -o ../link.strace cp --link -f works when the target exists.
+ # This failed for 4.0z (due to a bug introduced in that test release).
+ 
+ # Copyright (C) 2000-2017 Free Software Foundation, Inc.
+@@ -25,7 +25,7 @@ touch dest || framework_failure_
+ touch dest2 || framework_failure_
+ 
+ 
+-cp -f --link src dest || fail=1
+-cp -f --symbolic-link src dest2 || fail=1
++strace -xx -ff -o ../link.strace cp -f --link src dest || fail=1
++strace -xx -ff -o ../link.strace cp -f --symbolic-link src dest2 || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/nfs-removal-race.sh b/tests/cp/nfs-removal-race.sh
+index 61a1f22..9e643f4 100755
+--- a/tests/cp/nfs-removal-race.sh
++++ b/tests/cp/nfs-removal-race.sh
+@@ -1,7 +1,7 @@
+ #!/bin/sh
+-# Running cp S D on an NFS client while another client has just removed D
+-# would lead (w/coreutils-8.16 and earlier) to cp's initial stat call
+-# seeing (via stale NFS cache) that D exists, so that cp would then call
++# Running strace -xx -ff -o ../nfs-removal-race.strace cp S D on an NFS client while another client has just removed D
++# would lead (w/coreutils-8.16 and earlier) to strace -xx -ff -o ../nfs-removal-race.strace cp's initial stat call
++# seeing (via stale NFS cache) that D exists, so that strace -xx -ff -o ../nfs-removal-race.strace cp would then call
+ # open without the O_CREAT flag.  Yet, the open must actually consult
+ # the server, which confesses that D has been deleted, thus causing the
+ # open call to fail with ENOENT.
+@@ -67,7 +67,7 @@ touch d2 || framework_failure_
+ echo xyz > src || framework_failure_
+ 
+ # Finally, run the test:
+-LD_PRELOAD=$LD_PRELOAD:./k.so cp src d || fail=1
++LD_PRELOAD=$LD_PRELOAD:./k.so strace -xx -ff -o ../nfs-removal-race.strace cp src d || fail=1
+ 
+ test -f preloaded || skip_ 'LD_PRELOAD was ineffective?'
+ 
+diff --git a/tests/cp/no-ctx.sh b/tests/cp/no-ctx.sh
+index bcdca92..21fdad0 100755
+--- a/tests/cp/no-ctx.sh
++++ b/tests/cp/no-ctx.sh
+@@ -50,15 +50,15 @@ gcc_shared_ k.c k.so \
+ touch file_src
+ 
+ # New file with SELinux context optionally included
+-LD_PRELOAD=$LD_PRELOAD:./k.so cp -a file_src file_dst || fail=1
++LD_PRELOAD=$LD_PRELOAD:./k.so strace -xx -ff -o ../no-ctx.strace cp -a file_src file_dst || fail=1
+ 
+ # Existing file with SELinux context optionally included
+-LD_PRELOAD=$LD_PRELOAD:./k.so cp -a file_src file_dst || fail=1
++LD_PRELOAD=$LD_PRELOAD:./k.so strace -xx -ff -o ../no-ctx.strace cp -a file_src file_dst || fail=1
+ 
+ # ENODATA should give an immediate error when required to preserve ctx
+ # This is debatable, and maybe we should not fail when no context available?
+ ( export LD_PRELOAD=$LD_PRELOAD:./k.so
+-  returns_ 1 cp --preserve=context file_src file_dst ) || fail=1
++  returns_ 1 strace -xx -ff -o ../no-ctx.strace cp --preserve=context file_src file_dst ) || fail=1
+ 
+ test -e preloaded || skip_ 'LD_PRELOAD interception failed'
+ 
+diff --git a/tests/cp/no-deref-link1.sh b/tests/cp/no-deref-link1.sh
+index b6ea8ee..70ea937 100755
+--- a/tests/cp/no-deref-link1.sh
++++ b/tests/cp/no-deref-link1.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# cp from 3.16 fails this test
++# strace -xx -ff -o ../no-deref-link1.strace cp from 3.16 fails this test
+ 
+ # Copyright (C) 1997-2017 Free Software Foundation, Inc.
+ 
+@@ -28,9 +28,9 @@ cd ..
+ 
+ 
+ # It should fail with a message something like this:
+-#   ./cp: 'a/foo' and 'b/foo' are the same file
++#   ./strace -xx -ff -o ../no-deref-link1.strace cp: 'a/foo' and 'b/foo' are the same file
+ # Fail this test if the exit status is not 1
+-returns_ 1 cp -d a/foo b 2>/dev/null || fail=1
++returns_ 1 strace -xx -ff -o ../no-deref-link1.strace cp -d a/foo b 2>/dev/null || fail=1
+ 
+ test "$(cat a/foo)" = $msg || fail=1
+ 
+diff --git a/tests/cp/no-deref-link2.sh b/tests/cp/no-deref-link2.sh
+index 10861ae..697a752 100755
+--- a/tests/cp/no-deref-link2.sh
++++ b/tests/cp/no-deref-link2.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# cp from 3.16 fails this test
++# strace -xx -ff -o ../no-deref-link2.strace cp from 3.16 fails this test
+ 
+ # Copyright (C) 1997-2017 Free Software Foundation, Inc.
+ 
+@@ -28,9 +28,9 @@ cd ..
+ 
+ 
+ # It should fail with a message something like this:
+-#   cp: 'a' and 'b/foo' are the same file
++#   strace -xx -ff -o ../no-deref-link2.strace cp: 'a' and 'b/foo' are the same file
+ # Fail this test if the exit status is not 1
+-returns_ 1 cp -d a b 2>/dev/null || fail=1
++returns_ 1 strace -xx -ff -o ../no-deref-link2.strace cp -d a b 2>/dev/null || fail=1
+ 
+ test "$(cat a)" = $msg || fail=1
+ 
+diff --git a/tests/cp/no-deref-link3.sh b/tests/cp/no-deref-link3.sh
+index a7332a3..f75d2df 100755
+--- a/tests/cp/no-deref-link3.sh
++++ b/tests/cp/no-deref-link3.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# cp from 3.16 fails this test
++# strace -xx -ff -o ../no-deref-link3.strace cp from 3.16 fails this test
+ 
+ # Copyright (C) 1997-2017 Free Software Foundation, Inc.
+ 
+@@ -25,9 +25,9 @@ ln -s a b
+ 
+ 
+ # It should fail with a message something like this:
+-#   cp: 'a' and 'b' are the same file
++#   strace -xx -ff -o ../no-deref-link3.strace cp: 'a' and 'b' are the same file
+ # Fail this test if the exit status is not 1
+-returns_ 1 cp -d a b 2>/dev/null || fail=1
++returns_ 1 strace -xx -ff -o ../no-deref-link3.strace cp -d a b 2>/dev/null || fail=1
+ 
+ test "$(cat a)" = $msg || fail=1
+ 
+diff --git a/tests/cp/parent-perm-race.sh b/tests/cp/parent-perm-race.sh
+index 68fb721..c812793 100755
+--- a/tests/cp/parent-perm-race.sh
++++ b/tests/cp/parent-perm-race.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Make sure cp -pR --parents isn't too generous with parent permissions.
++# Make sure strace -xx -ff -o ../parent-perm-race.strace cp -pR --parents isn't too generous with parent permissions.
+ 
+ # Copyright (C) 2006-2017 Free Software Foundation, Inc.
+ 
+@@ -19,14 +19,14 @@
+ . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
+ print_ver_ cp
+ 
+-# cp -p gives ENOTSUP on NFS on Linux 2.6.9 at least
++# strace -xx -ff -o ../parent-perm-race.strace cp -p gives ENOTSUP on NFS on Linux 2.6.9 at least
+ require_local_dir_
+ 
+ umask 002
+ mkdir mode ownership d || framework_failure_
+-chmod g+s d 2>/dev/null # The cp test is valid either way.
++chmod g+s d 2>/dev/null # The strace -xx -ff -o ../parent-perm-race.strace cp test is valid either way.
+ 
+-# Terminate any background cp process.
++# Terminate any background strace -xx -ff -o ../parent-perm-race.strace cp process.
+ pid=
+ cleanup_() { kill $pid 2>/dev/null && wait $pid; }
+ 
+@@ -35,11 +35,11 @@ do
+   mkfifo_or_skip_ $attr/fifo
+ 
+   # Copy a fifo's contents.  That way, we can examine d/$attr's
+-  # state while cp is running.
+-  timeout 10 cp --preserve=$attr -R --copy-contents --parents $attr d & pid=$!
++  # state while strace -xx -ff -o ../parent-perm-race.strace cp is running.
++  timeout 10 strace -xx -ff -o ../parent-perm-race.strace cp --preserve=$attr -R --copy-contents --parents $attr d & pid=$!
+ 
+-  # Check the permissions of the destination directory that 'cp' has made.
+-  # 'ls' won't start until after 'cp' has made the destination directory
++  # Check the permissions of the destination directory that 'strace -xx -ff -o ../parent-perm-race.strace cp' has made.
++  # 'ls' won't start until after 'strace -xx -ff -o ../parent-perm-race.strace cp' has made the destination directory
+   # $d/attr and has started to read the source file $attr/fifo.
+   timeout 10 sh -c "ls -ld d/$attr >$attr/fifo" || fail=1
+ 
+diff --git a/tests/cp/parent-perm.sh b/tests/cp/parent-perm.sh
+index 81684df..416cbf8 100755
+--- a/tests/cp/parent-perm.sh
++++ b/tests/cp/parent-perm.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Ensure that cp --parents works properly with a preexisting dest. directory
++# Ensure that strace -xx -ff -o ../parent-perm.strace cp --parents works properly with a preexisting dest. directory
+ 
+ # Copyright (C) 2008-2017 Free Software Foundation, Inc.
+ 
+@@ -20,19 +20,19 @@
+ print_ver_ cp
+ 
+ working_umask_or_skip_
+-# cp -p gives ENOTSUP on NFS on Linux 2.6.9 at least
++# strace -xx -ff -o ../parent-perm.strace cp -p gives ENOTSUP on NFS on Linux 2.6.9 at least
+ require_local_dir_
+ 
+ mkdir -p a/b/c a/b/d e || framework_failure_
+ touch a/b/c/foo a/b/d/foo || framework_failure_
+-cp -p --parent a/b/c/foo e || framework_failure_
++strace -xx -ff -o ../parent-perm.strace cp -p --parent a/b/c/foo e || framework_failure_
+ 
+ # Make permissions of e/a different, so that we exercise the
+-# code in cp -p --parents that propagates permissions even
++# code in strace -xx -ff -o ../parent-perm.strace cp -p --parents that propagates permissions even
+ # to a destination directory that it doesn't create.
+ chmod g-rx e/a e/a/b || framework_failure_
+ 
+-cp -p --parent a/b/d/foo e || fail=1
++strace -xx -ff -o ../parent-perm.strace cp -p --parent a/b/d/foo e || fail=1
+ 
+ # Ensure that permissions on just-created directory, e/a/,
+ # are the same as those on original, a/.
+diff --git a/tests/cp/perm.sh b/tests/cp/perm.sh
+index d685c68..cba0f69 100755
+--- a/tests/cp/perm.sh
++++ b/tests/cp/perm.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Make sure the permission-preserving code in copy.c (mv, cp, install) works.
++# Make sure the permission-preserving code in copy.c (mv, strace -xx -ff -o ../perm.strace cp, install) works.
+ 
+ # Copyright (C) 2000-2017 Free Software Foundation, Inc.
+ 
+@@ -44,7 +44,7 @@ for u in 31 37 2; do
+               }
+             $cmd $force src dest || exit 1
+             test "$cmd" = mv && test -f src && exit 1
+-            test "$cmd" = cp && { test -f src || exit 1; }
++            test "$cmd" = strace -xx -ff -o ../perm.strace cp && { test -f src || exit 1; }
+             actual_perms=$(stat --format=%A dest)
+ 
+             case "$cmd:$force:$existing_dest" in
+diff --git a/tests/cp/preserve-2.sh b/tests/cp/preserve-2.sh
+index 41e62ee..f11e64f 100755
+--- a/tests/cp/preserve-2.sh
++++ b/tests/cp/preserve-2.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# ensure that cp's --preserve=X,Y option is parsed properly
++# ensure that strace -xx -ff -o ../preserve-2.strace cp's --preserve=X,Y option is parsed properly
+ 
+ # Copyright (C) 2002-2017 Free Software Foundation, Inc.
+ 
+@@ -19,11 +19,11 @@
+ . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
+ print_ver_ cp
+ 
+-# cp -p gives ENOTSUP on NFS on Linux 2.6.9 at least
++# strace -xx -ff -o ../preserve-2.strace cp -p gives ENOTSUP on NFS on Linux 2.6.9 at least
+ require_local_dir_
+ 
+ touch f || framework_failure_
+ 
+-cp --preserve=mode,links f g || fail=1
++strace -xx -ff -o ../preserve-2.strace cp --preserve=mode,links f g || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/preserve-gid.sh b/tests/cp/preserve-gid.sh
+index 9b895ef..407bf35 100755
+--- a/tests/cp/preserve-gid.sh
++++ b/tests/cp/preserve-gid.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Verify that cp -p preserves GID when it is possible.
++# Verify that strace -xx -ff -o ../preserve-gid.strace cp -p preserves GID when it is possible.
+ 
+ # Copyright (C) 2007-2017 Free Software Foundation, Inc.
+ 
+@@ -25,7 +25,7 @@ require_root_
+ working_umask_or_skip_
+ 
+ # Record primary group number, usually 0.
+-# This is the group ID used when cp (without -p) creates a new file.
++# This is the group ID used when strace -xx -ff -o ../preserve-gid.strace cp (without -p) creates a new file.
+ primary_group_num=$(id -g)
+ 
+ create() {
+@@ -109,7 +109,7 @@ cleanup_() { rm -rf "$tmp_path"; }
+ # is not readable by our nameless IDs.
+ test -d /tmp && TMPDIR=/tmp
+ tmp_path=$(mktemp -d) || fail_ "failed to create temporary directory"
+-cp "$abs_path_dir_/cp" "$tmp_path"
++strace -xx -ff -o ../preserve-gid.strace cp "$abs_path_dir_/strace -xx -ff -o ../preserve-gid.strace cp" "$tmp_path"
+ chmod -R a+rx "$tmp_path"
+ 
+ t1() {
+@@ -123,16 +123,16 @@ t1() {
+         / env PATH="$tmp_path" "$@"
+ }
+ 
+-t1 a0 "$nameless_uid" "$nameless_gid1" cp
+-t1 b0 "$nameless_uid" "$nameless_gid1" cp
+-t1 b1 "$nameless_uid" "$nameless_gid1" cp
+-t1 c0 "$nameless_uid" "$nameless_gid1" cp
+-t1 c1 "$nameless_uid" "$nameless_gid1" cp
+-
+-t1 a0 "$nameless_uid" "$nameless_gid1" cp -p
+-t1 b0 "$nameless_uid" "$nameless_gid1" cp -p
+-t1 b1 "$nameless_uid" "$nameless_gid2" cp -p
+-t1 c0 "$nameless_uid" "$nameless_gid1" cp -p
+-t1 c1 "$nameless_uid" "$nameless_gid2" cp -p
++t1 a0 "$nameless_uid" "$nameless_gid1" strace -xx -ff -o ../preserve-gid.strace cp
++t1 b0 "$nameless_uid" "$nameless_gid1" strace -xx -ff -o ../preserve-gid.strace cp
++t1 b1 "$nameless_uid" "$nameless_gid1" strace -xx -ff -o ../preserve-gid.strace cp
++t1 c0 "$nameless_uid" "$nameless_gid1" strace -xx -ff -o ../preserve-gid.strace cp
++t1 c1 "$nameless_uid" "$nameless_gid1" strace -xx -ff -o ../preserve-gid.strace cp
++
++t1 a0 "$nameless_uid" "$nameless_gid1" strace -xx -ff -o ../preserve-gid.strace cp -p
++t1 b0 "$nameless_uid" "$nameless_gid1" strace -xx -ff -o ../preserve-gid.strace cp -p
++t1 b1 "$nameless_uid" "$nameless_gid2" strace -xx -ff -o ../preserve-gid.strace cp -p
++t1 c0 "$nameless_uid" "$nameless_gid1" strace -xx -ff -o ../preserve-gid.strace cp -p
++t1 c1 "$nameless_uid" "$nameless_gid2" strace -xx -ff -o ../preserve-gid.strace cp -p
+ 
+ Exit $fail
+diff --git a/tests/cp/preserve-link.sh b/tests/cp/preserve-link.sh
+index 5d34a3c..8cf3223 100755
+--- a/tests/cp/preserve-link.sh
++++ b/tests/cp/preserve-link.sh
+@@ -68,8 +68,8 @@ create_target_tree()
+ 
+ # Note we repeat this, creating either one of
+ # two hard linked files from source in the dest, so as to
+-# test both paths in $(cp) for creating the hard links.
+-# The path taken by cp is dependent on which cp encounters
++# test both paths in $(strace -xx -ff -o ../preserve-link.strace cp) for creating the hard links.
++# The path taken by strace -xx -ff -o ../preserve-link.strace cp is dependent on which strace -xx -ff -o ../preserve-link.strace cp encounters
+ # first in the source, which is non deterministic currently
+ # (I'm guessing that results are sorted by inode and
+ # beauses they're the same here, and due to the sort
+@@ -79,9 +79,9 @@ create_source_tree
+ for f in f linkm; do
+   create_target_tree $f
+ 
+-  # Copy all the hard links across.  With cp from coreutils-8.12
++  # Copy all the hard links across.  With strace -xx -ff -o ../preserve-link.strace cp from coreutils-8.12
+   # and prior, it would sometimes mistakenly copy rather than link.
+-  cp -au s t || fail=1
++  strace -xx -ff -o ../preserve-link.strace cp -au s t || fail=1
+ 
+   same_inode t/s/f t/s/linkm || fail=1
+   same_inode t/s/f t/s/linke || fail=1
+diff --git a/tests/cp/preserve-mode.sh b/tests/cp/preserve-mode.sh
+index d25f561..055e474 100755
+--- a/tests/cp/preserve-mode.sh
++++ b/tests/cp/preserve-mode.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# ensure that cp's --no-preserve=mode works correctly
++# ensure that strace -xx -ff -o ../preserve-mode.strace cp's --no-preserve=mode works correctly
+ 
+ # Copyright (C) 2002-2017 Free Software Foundation, Inc.
+ 
+@@ -28,7 +28,7 @@ touch b
+ chmod 600 b
+ 
+ #regular file test
+-cp --no-preserve=mode b c || fail=1
++strace -xx -ff -o ../preserve-mode.strace cp --no-preserve=mode b c || fail=1
+ test "$(get_mode a)" = "$(get_mode c)" || fail=1
+ 
+ rm -rf d1 d2 d3
+@@ -36,7 +36,7 @@ mkdir d1 d2
+ chmod 705 d2
+ 
+ #directory test
+-cp --no-preserve=mode -r d2 d3 || fail=1
++strace -xx -ff -o ../preserve-mode.strace cp --no-preserve=mode -r d2 d3 || fail=1
+ test "$(get_mode d1)" = "$(get_mode d3)" || fail=1
+ 
+ rm -f a b c
+@@ -44,7 +44,7 @@ touch a
+ chmod 600 a
+ 
+ #contradicting options test
+-cp --no-preserve=mode --preserve=all a b || fail=1
++strace -xx -ff -o ../preserve-mode.strace cp --no-preserve=mode --preserve=all a b || fail=1
+ test "$(get_mode a)" = "$(get_mode b)" || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/preserve-slink-time.sh b/tests/cp/preserve-slink-time.sh
+index 23150bd..59c24ae 100755
+--- a/tests/cp/preserve-slink-time.sh
++++ b/tests/cp/preserve-slink-time.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Verify that cp -Pp preserves times even on symlinks.
++# Verify that strace -xx -ff -o ../preserve-slink-time.strace cp -Pp preserves times even on symlinks.
+ 
+ # Copyright (C) 2009-2017 Free Software Foundation, Inc.
+ 
+@@ -34,7 +34,7 @@ esac
+ copy_timestamp_() {
+   sleep $1
+   rm -f d2
+-  cp -Pp dangle d2 || framework_failure_
++  strace -xx -ff -o ../preserve-slink-time.strace cp -Pp dangle d2 || framework_failure_
+   # Can't use --format=%x, as lstat() modifies atime on some platforms.
+   stat --format=%y dangle > t1 || framework_failure_
+   stat --format=%y d2 > t2 || framework_failure_
+@@ -43,7 +43,7 @@ copy_timestamp_() {
+ 
+ # We retry with a delay at least 1.5s because on GPFS
+ # it was seen that the timestamp wasn't updated unless there
+-# was sufficient delay between the ln and cp.
++# was sufficient delay between the ln and strace -xx -ff -o ../preserve-slink-time.strace cp.
+ # I.e., if there wasn't sufficient difference in
+ # the timestamp being updated, the update was discarded.
+ retry_delay_ copy_timestamp_ .1 4 || fail=1
+diff --git a/tests/cp/proc-short-read.sh b/tests/cp/proc-short-read.sh
+index ef00b13..81078fa 100755
+--- a/tests/cp/proc-short-read.sh
++++ b/tests/cp/proc-short-read.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# exercise cp's short-read failure when operating on >4KB files in /proc
++# exercise strace -xx -ff -o ../proc-short-read.strace cp's short-read failure when operating on >4KB files in /proc
+ 
+ # Copyright (C) 2009-2017 Free Software Foundation, Inc.
+ 
+@@ -23,8 +23,8 @@ kall=/proc/kallsyms
+ 
+ test -r $kall || skip_ "your system lacks $kall"
+ 
+-# Before coreutils-7.3, cp would copy less than 4KiB of this 1MB+ file.
+-cp $kall 1    || fail=1
++# Before coreutils-7.3, strace -xx -ff -o ../proc-short-read.strace cp would copy less than 4KiB of this 1MB+ file.
++strace -xx -ff -o ../proc-short-read.strace cp $kall 1    || fail=1
+ cat $kall > 2 || fail=1
+ compare 1 2   || fail=1
+ 
+diff --git a/tests/cp/proc-zero-len.sh b/tests/cp/proc-zero-len.sh
+index e64c147..27e7908 100755
+--- a/tests/cp/proc-zero-len.sh
++++ b/tests/cp/proc-zero-len.sh
+@@ -29,7 +29,7 @@ cat $f > out || fail=1
+ # With coreutils-6.9, this would create a zero-length "exp" file.
+ # Skip this test on architectures like aarch64 where the inode
+ # number of the file changed during the cp run.
+-cp $f exp 2>err \
++strace -xx -ff -o ../proc-zero-len.strace cp $f exp 2>err \
+   || { fail=1;
+        grep 'replaced while being copied' err \
+          && skip_ "File $f is being replaced while being copied"; }
+diff --git a/tests/cp/r-vs-symlink.sh b/tests/cp/r-vs-symlink.sh
+index 063226a..4d4661b 100755
+--- a/tests/cp/r-vs-symlink.sh
++++ b/tests/cp/r-vs-symlink.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# cp -r should not create symlinks.  Fixed in fileutils-4.1.5.
++# strace -xx -ff -o ../r-vs-symlink.strace cp -r should not create symlinks.  Fixed in fileutils-4.1.5.
+ 
+ # Copyright (C) 2001-2017 Free Software Foundation, Inc.
+ 
+@@ -16,9 +16,9 @@
+ # You should have received a copy of the GNU General Public License
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ 
+-# Restored old behavior (whereby cp -r preserves symlinks) in 4.1.6,
++# Restored old behavior (whereby strace -xx -ff -o ../r-vs-symlink.strace cp -r preserves symlinks) in 4.1.6,
+ # though now such usage evokes a warning:
+-# cp: 'slink': WARNING: using -r to copy symbolic links is not portable
++# strace -xx -ff -o ../r-vs-symlink.strace cp: 'slink': WARNING: using -r to copy symbolic links is not portable
+ 
+ . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
+ print_ver_ cp
+@@ -29,9 +29,9 @@ ln -s no-such-file no-file || framework_failure_
+ 
+ 
+ # This would fail in 4.1.5, not in 4.1.6.
+-cp -r no-file junk 2>/dev/null || fail=1
++strace -xx -ff -o ../r-vs-symlink.strace cp -r no-file junk 2>/dev/null || fail=1
+ 
+-cp -r slink bar 2>/dev/null || fail=1
++strace -xx -ff -o ../r-vs-symlink.strace cp -r slink bar 2>/dev/null || fail=1
+ set x $(ls -l bar); shift; mode=$1
+ case $mode in
+   l*) ;;
+diff --git a/tests/cp/reflink-auto.sh b/tests/cp/reflink-auto.sh
+index 5767087..15400c7 100755
+--- a/tests/cp/reflink-auto.sh
++++ b/tests/cp/reflink-auto.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Test cp --reflink=auto
++# Test strace -xx -ff -o ../reflink-auto.strace cp --reflink=auto
+ 
+ # Copyright (C) 2009-2017 Free Software Foundation, Inc.
+ 
+@@ -27,15 +27,15 @@ rm -f "$a_other" || framework_failure_
+ echo non_zero_size > "$a_other" || framework_failure_
+ 
+ # we shouldn't be able to reflink() files on separate partitions
+-returns_ 1 cp --reflink "$a_other" b || fail=1
++returns_ 1 strace -xx -ff -o ../reflink-auto.strace cp --reflink "$a_other" b || fail=1
+ 
+ # --reflink=auto should fall back to a normal copy
+-cp --reflink=auto "$a_other" b || fail=1
++strace -xx -ff -o ../reflink-auto.strace cp --reflink=auto "$a_other" b || fail=1
+ test -s b || fail=1
+ 
+ # --reflink=auto should allow --sparse for fallback copies.
+ # This command can be used to create minimal sized copies.
+-cp --reflink=auto --sparse=always "$a_other" b || fail=1
++strace -xx -ff -o ../reflink-auto.strace cp --reflink=auto --sparse=always "$a_other" b || fail=1
+ test -s b || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/reflink-perm.sh b/tests/cp/reflink-perm.sh
+index 5089897..5bb58ae 100755
+--- a/tests/cp/reflink-perm.sh
++++ b/tests/cp/reflink-perm.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Test cp --reflink copies permissions
++# Test strace -xx -ff -o ../reflink-perm.strace cp --reflink copies permissions
+ 
+ # Copyright (C) 2009-2017 Free Software Foundation, Inc.
+ 
+@@ -28,7 +28,7 @@ test time_check -nt file || skip_ "The system clock is wrong"
+ 
+ chmod a=rwx file || framework_failure_
+ umask 077
+-cp --reflink=auto --preserve file copy || fail=1
++strace -xx -ff -o ../reflink-perm.strace cp --reflink=auto --preserve file copy || fail=1
+ 
+ mode=$(stat --printf "%A" copy)
+ test "$mode" = "-rwxrwxrwx" || fail=1
+@@ -37,9 +37,9 @@ test copy -nt file && fail=1
+ 
+ # Ensure that --attributes-only overrides --reflink completely
+ echo > file2 # file with data
+-cp --reflink=auto --preserve --attributes-only file2 empty_copy || fail=1
++strace -xx -ff -o ../reflink-perm.strace cp --reflink=auto --preserve --attributes-only file2 empty_copy || fail=1
+ compare /dev/null empty_copy || fail=1
+-cp --reflink=always --preserve --attributes-only file2 empty_copy || fail=1
++strace -xx -ff -o ../reflink-perm.strace cp --reflink=always --preserve --attributes-only file2 empty_copy || fail=1
+ compare /dev/null empty_copy || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/same-file.sh b/tests/cp/same-file.sh
+index f2af840..d43e807 100755
+--- a/tests/cp/same-file.sh
++++ b/tests/cp/same-file.sh
+@@ -92,8 +92,8 @@ for args in 'foo symlink' 'symlink foo' 'foo foo' 'sl1 sl2' \
+     case "$args" in *hlsl*) ln sl2 hlsl;; esac
+     (
+       (
+-        # echo 1>&2 cp $options $args
+-        cp $options $args 2>_err
++        # echo 1>&2 strace -xx -ff -o ../same-file.strace cp $options $args
++        strace -xx -ff -o ../same-file.strace cp $options $args 2>_err
+         echo $? $options
+ 
+         # Normalize the program name and diagnostics in the error output,
+diff --git a/tests/cp/slink-2-slink.sh b/tests/cp/slink-2-slink.sh
+index 0029722..994e2f6 100755
+--- a/tests/cp/slink-2-slink.sh
++++ b/tests/cp/slink-2-slink.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# 'test cp --update A B' where A and B are both symlinks that point
++# 'test strace -xx -ff -o ../slink-2-slink.strace cp --update A B' where A and B are both symlinks that point
+ # to the same file
+ 
+ # Copyright (C) 2000-2017 Free Software Foundation, Inc.
+@@ -26,7 +26,7 @@ ln -s file b || framework_failure_
+ ln -s no-such-file c || framework_failure_
+ ln -s no-such-file d || framework_failure_
+ 
+-cp --update --no-dereference a b || fail=1
+-cp --update --no-dereference c d || fail=1
++strace -xx -ff -o ../slink-2-slink.strace cp --update --no-dereference a b || fail=1
++strace -xx -ff -o ../slink-2-slink.strace cp --update --no-dereference c d || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/sparse-fiemap.sh b/tests/cp/sparse-fiemap.sh
+index 3a8933f..5429419 100755
+--- a/tests/cp/sparse-fiemap.sh
++++ b/tests/cp/sparse-fiemap.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Test cp --sparse=always through fiemap copy
++# Test strace -xx -ff -o ../sparse-fiemap.strace cp --sparse=always through fiemap copy
+ 
+ # Copyright (C) 2010-2017 Free Software Foundation, Inc.
+ 
+@@ -72,11 +72,11 @@ for i in $(seq 1 2 21); do
+           -e 'for (1..'$j') { sysseek (*F, $n, 1)' \
+           -e '&& syswrite (*F, chr($_)x$n) or die "$!"}' > j1 || fail=1
+ 
+-    # Note there is an implicit sync performed by cp on Linux kernels
++    # Note there is an implicit sync performed by strace -xx -ff -o ../sparse-fiemap.strace cp on Linux kernels
+     # before 2.6.39 to work around bugs in EXT4 and BTRFS.
+     # Note also the -s parameter to the filefrag commands below
+     # for the same reasons.
+-    cp --sparse=always j1 j2 || fail=1
++    strace -xx -ff -o ../sparse-fiemap.strace cp --sparse=always j1 j2 || fail=1
+ 
+     cmp j1 j2 || fail_ "data loss i=$i j=$j"
+     if ! filefrag -vs j1 | grep -F extent >/dev/null; then
+diff --git a/tests/cp/sparse-to-pipe.sh b/tests/cp/sparse-to-pipe.sh
+index 3f13b37..f0dec62 100755
+--- a/tests/cp/sparse-to-pipe.sh
++++ b/tests/cp/sparse-to-pipe.sh
+@@ -21,14 +21,14 @@ print_ver_ cp
+ 
+ require_sparse_support_
+ 
+-# Terminate any background cp process
++# Terminate any background strace -xx -ff -o ../sparse-to-pipe.strace cp process
+ cleanup_() { kill $pid 2>/dev/null && wait $pid; }
+ 
+ mkfifo_or_skip_ pipe
+ timeout 10 cat pipe > copy & pid=$!
+ 
+ truncate -s1M sparse || framework_failure_
+-cp sparse pipe || fail=1
++strace -xx -ff -o ../sparse-to-pipe.strace cp sparse pipe || fail=1
+ 
+ # Ensure that the cat has completed before comparing.
+ wait $pid
+diff --git a/tests/cp/sparse.sh b/tests/cp/sparse.sh
+index 10844de..da28d80 100755
+--- a/tests/cp/sparse.sh
++++ b/tests/cp/sparse.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Test cp --sparse=always
++# Test strace -xx -ff -o ../sparse.strace cp --sparse=always
+ 
+ # Copyright (C) 2006-2017 Free Software Foundation, Inc.
+ 
+@@ -28,14 +28,14 @@ size=$(expr 128 \* 1024 + 1)
+ dd bs=1 seek=$size of=sparse < /dev/null 2> /dev/null || framework_failure_
+ 
+ 
+-cp --sparse=always sparse copy || fail=1
++strace -xx -ff -o ../sparse.strace cp --sparse=always sparse copy || fail=1
+ 
+ # Ensure that the copy has the same block count as the original.
+ test $(stat --printf %b copy) -le $(stat --printf %b sparse) || fail=1
+ 
+ # Ensure that --sparse={always,never} with --reflink fail.
+-returns_ 1 cp --sparse=always --reflink sparse copy || fail=1
+-returns_ 1 cp --sparse=never --reflink sparse copy || fail=1
++returns_ 1 strace -xx -ff -o ../sparse.strace cp --sparse=always --reflink sparse copy || fail=1
++returns_ 1 strace -xx -ff -o ../sparse.strace cp --sparse=never --reflink sparse copy || fail=1
+ 
+ 
+ # Ensure we handle sparse/non-sparse transitions correctly
+@@ -60,8 +60,8 @@ for pattern in 1 0; do
+          bs=$hole_size count=$n status=none || framework_failure_
+     done
+ 
+-    cp --sparse=always sparse.in sparse.out   || fail=1 # non sparse input
+-    cp --sparse=always sparse.out sparse.out2 || fail=1 # sparse input
++    strace -xx -ff -o ../sparse.strace cp --sparse=always sparse.in sparse.out   || fail=1 # non sparse input
++    strace -xx -ff -o ../sparse.strace cp --sparse=always sparse.out sparse.out2 || fail=1 # sparse input
+ 
+     cmp sparse.in sparse.out || fail=1
+     cmp sparse.in sparse.out2 || fail=1
+diff --git a/tests/cp/special-bits.sh b/tests/cp/special-bits.sh
+index 900d191..e9c267f 100755
+--- a/tests/cp/special-bits.sh
++++ b/tests/cp/special-bits.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# make sure 'cp -p' preserves special bits
++# make sure 'strace -xx -ff -o ../special-bits.strace cp -p' preserves special bits
+ # This works only when run as root.
+ 
+ # Copyright (C) 2000-2017 Free Software Foundation, Inc.
+@@ -32,17 +32,17 @@ chown $NON_ROOT_USERNAME . || framework_failure_
+ chmod u=rwx,g=rx,o=rx . || framework_failure_
+ 
+ 
+-cp -p a a2 || fail=1
++strace -xx -ff -o ../special-bits.strace cp -p a a2 || fail=1
+ set _ $(ls -l a); shift; p1=$1
+ set _ $(ls -l a2); shift; p2=$1
+ test $p1 = $p2 || fail=1
+ 
+-cp -p b b2 || fail=1
++strace -xx -ff -o ../special-bits.strace cp -p b b2 || fail=1
+ set _ $(ls -l b); shift; p1=$1
+ set _ $(ls -l b2); shift; p2=$1
+ test $p1 = $p2 || fail=1
+ 
+-chroot --skip-chdir --user=$NON_ROOT_USERNAME / env PATH="$PATH" cp -p c c2 \
++chroot --skip-chdir --user=$NON_ROOT_USERNAME / env PATH="$PATH" strace -xx -ff -o ../special-bits.strace cp -p c c2 \
+   || fail=1
+ set _ $(ls -l c); shift; p1=$1
+ set _ $(ls -l c2); shift; p2=$1
+diff --git a/tests/cp/special-f.sh b/tests/cp/special-f.sh
+index 5ec29d8..a56158c 100755
+--- a/tests/cp/special-f.sh
++++ b/tests/cp/special-f.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Ensure that "cp -Rf fifo E" unlinks E and retries.
++# Ensure that "strace -xx -ff -o ../special-f.strace cp -Rf fifo E" unlinks E and retries.
+ # Up until coreutils-6.10.171, it would not.
+ 
+ # Copyright (C) 2008-2017 Free Software Foundation, Inc.
+@@ -26,10 +26,10 @@ touch e || framework-failure
+ 
+ 
+ # Without -f, expect it to fail.
+-cp -R fifo e || fail=1
++strace -xx -ff -o ../special-f.strace cp -R fifo e || fail=1
+ 
+ # With -f, it must succeed.
+-cp -Rf fifo e || fail=1
++strace -xx -ff -o ../special-f.strace cp -Rf fifo e || fail=1
+ test -p fifo || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/src-base-dot.sh b/tests/cp/src-base-dot.sh
+index b5d16ea..c2de270 100755
+--- a/tests/cp/src-base-dot.sh
++++ b/tests/cp/src-base-dot.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Ensure that "mkdir x y; cd y; cp -ab ../x/. ." is a successful, silent, no-op.
++# Ensure that "mkdir x y; cd y; strace -xx -ff -o ../src-base-dot.strace cp -ab ../x/. ." is a successful, silent, no-op.
+ 
+ # Copyright (C) 2006-2017 Free Software Foundation, Inc.
+ 
+@@ -22,7 +22,7 @@ print_ver_ cp
+ mkdir x y || framework_failure_
+ 
+ cd y
+-cp --verbose -ab ../x/. . > out 2>&1 || fail=1
++strace -xx -ff -o ../src-base-dot.strace cp --verbose -ab ../x/. . > out 2>&1 || fail=1
+ compare /dev/null out || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/symlink-slash.sh b/tests/cp/symlink-slash.sh
+index 6afbfce..4316177 100755
+--- a/tests/cp/symlink-slash.sh
++++ b/tests/cp/symlink-slash.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Make sure that cp -dR dereferences a symlink arg if its name is
++# Make sure that strace -xx -ff -o ../symlink-slash.strace cp -dR dereferences a symlink arg if its name is
+ # written with a trailing slash.
+ 
+ # Copyright (C) 2000-2017 Free Software Foundation, Inc.
+@@ -23,14 +23,14 @@ print_ver_ cp
+ mkdir dir || framework_failure_
+ ln -s dir symlink || framework_failure_
+ 
+-cp -dR symlink/ s || fail=1
++strace -xx -ff -o ../symlink-slash.strace cp -dR symlink/ s || fail=1
+ set $(ls -l s)
+ 
+ # Prior to fileutils-4.0q, the following would have output ...'s -> dir'
+ # because the trailing slash was removed unconditionally (now you have to
+-# use the new --strip-trailing-slash option) causing cp to reproduce the
++# use the new --strip-trailing-slash option) causing strace -xx -ff -o ../symlink-slash.strace cp to reproduce the
+ # symlink.  Now, the trailing slash is interpreted by the stat library
+-# call and so cp ends up dereferencing the symlink and copying the directory.
++# call and so strace -xx -ff -o ../symlink-slash.strace cp ends up dereferencing the symlink and copying the directory.
+ test "$*" = 'total 0' && : || fail=1
+ 
+ Exit $fail
+diff --git a/tests/cp/thru-dangling.sh b/tests/cp/thru-dangling.sh
+index 8114fd7..0ea5e4a 100755
+--- a/tests/cp/thru-dangling.sh
++++ b/tests/cp/thru-dangling.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Ensure that cp works as documented, when the destination is a dangling symlink
++# Ensure that strace -xx -ff -o ../thru-dangling.strace cp works as documented, when the destination is a dangling symlink
+ 
+ # Copyright (C) 2007-2017 Free Software Foundation, Inc.
+ 
+@@ -27,13 +27,13 @@ echo "cp: not writing through dangling symlink 'dangle'" \
+ 
+ 
+ # Starting with 6.9.90, this usage fails, by default:
+-cp f dangle > err 2>&1 && fail=1
++strace -xx -ff -o ../thru-dangling.strace cp f dangle > err 2>&1 && fail=1
+ 
+ compare exp-err err || fail=1
+ test -f no-such && fail=1
+ 
+ # But you can set POSIXLY_CORRECT to get the historical behavior.
+-env POSIXLY_CORRECT=1 cp f dangle > out 2>&1 || fail=1
++env POSIXLY_CORRECT=1 strace -xx -ff -o ../thru-dangling.strace cp f dangle > out 2>&1 || fail=1
+ cat no-such >> out || fail=1
+ 
+ compare exp out || fail=1

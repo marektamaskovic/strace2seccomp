@@ -1,17 +1,0 @@
-fcntl(10OEXEC, 0)           =11
-fcntl(11, FFL) )
-fcntl(11, TFL)  = 0x802 (fCK)
-fcntl(11, 8, F_S, O_|O_NONBLO(11SETFL, O)   = 0
-fcntgs O_RDONLY)
-fcntl(13, F_SETFags
-fcntl(15, F_SETFL,13, FFL, O_RDONLY|O_NONB2OCK) = 0
-fcntl(14, F_GETF 0
-fcntl(11, F_L)      = SE  = 0
-fcntl(13, F_G WR)
-fcntl(15, F_L, O_RDWR|O_NONBL CK= 0
-fcntl(18, F_GETFL)      = 0x2 (fDWR)
-fcntl(18, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
-fcntl(19, F_D_CLOEXEC,0) 
-fcntl(15, F_SETFL,13, F_SED, LOEXEC)          = 0
-fcntl(5, F_GETFL)                       = 0x2 (flaR)
-fcntl(5, FR|O_NONBLOCK) n  = 0x2O_RDWR)

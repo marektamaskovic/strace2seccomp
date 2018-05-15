@@ -1,18 +1,0 @@
-fcntl(10, F_C, 0)       8   = 11
-fcntlsssssssssssssssssssssssss(1   
-fcnml(11, FFL)              = 0x802 (flBGOCK)
-fcntl( 0
-fcntl(11, F_L, O_RDWR|O_NONBLOCK)   = 0
-fcntl(13, F_GETFL)                     = 0 
-fcntl(13, F_SETFD, LOEXEC)          = 0
-fcntl(13, F_SETFL, O_RDONLY|O_NONBLOCK) = 0
-fcntl(14, F_GETFL)                      = 0x2 (fl}g)
-fc~tl(NBLOCK)   = 0
-fcntl(15, F_GETFL)      = 0x2 (flaR)
-fcntl000000000000(15, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
-fcntl(18, FvG (flags O_RDWR)
-fcntl(8SETFLOCK)   = 0
-fcntl(19, F_C, 0)    €      = 20
-fcntl(19, cntl(5, Fgs O_RDWR)
-fcntl(5, F_SETFL, O_RDWR|O_NONBLOCK)    = 0
-ttttttttttttfcntl(7, FFL)                       = 0x2 (flags O_RDWR)

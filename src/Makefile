@@ -1,5 +1,5 @@
-# CXX=g++
-CXX=clang++
+CXX=g++
+# CXX=clang++
 
 OBJ=main.o straceparser.o ids.o argparse.o states.o optimizer.o algorithm.o\
 	algorithm_weak.o algorithm_strict.o algorithm_advanced.o \
@@ -11,17 +11,12 @@ LINK.o = $(LINK.cpp)
 
 DATASET=../testdata/dataset.reduced
 
-ifeq ($(CXX),g++)
-	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
-else
-	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -stdlib=libc++ -Iinclude/ -I/usr/include/c++/7/ $(USER_DEFINES)
-endif
+CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
 
-
-all: CXXFLAGS += -g3 -fsanitize=address -fno-omit-frame-pointer
+all: CXXFLAGS += -g3 -fsanitize=address,undefined -fno-omit-frame-pointer
 all: st2se
 
-release: CXXFLAGS += -O2
+release: CXXFLAGS += -O2 -flto
 release: st2se
 
 coverage: CXXFLAGS += -fprofile-arcs -ftest-coverage

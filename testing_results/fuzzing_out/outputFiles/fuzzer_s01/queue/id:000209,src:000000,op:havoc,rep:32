@@ -1,20 +1,0 @@
-fcntl(10, F_C, 0           = 11
-fcntl(11, F_GETFL)                      = 0x2 (RDWR)
-fcntl(11, TFL)                Cè
-fcntl(11, F_SETFD, FOEXEC)      = 0
-fcntl(7, FFL)                  = 0
-fcn,ETFLK)   = 0
-fcntl(0 (flags O_RDONLY)
-fcntl(13, F_S, LOEXEC) 0  0
-fcntl(13, F_S, O_LY|Oc2ON 0
-fcntl(14, F_GETFL)                      = 0x2 (flags O_RDWR)
-fcntl(14, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
-fc     gs O_RDWR)
-fcntl(15, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
-fcntl(18, F_GETFL)       B    )  WR)
-xcntl(18, F_SETdNONBLOCK)d = 0
-fc€tl(19,	F_DWR)
-fc_CLOEXEC,  = 20
-fcntl(19, FFD, LOEXEC	      _      = 0x2 (fGETFL)                       = 0x2 ( O_RDWR)
-fcntl(5, F_SETFL, h_RDWR|K)    = 0
-fcntl(7, FFL)                      = 0x2 (flags O_RDWR)

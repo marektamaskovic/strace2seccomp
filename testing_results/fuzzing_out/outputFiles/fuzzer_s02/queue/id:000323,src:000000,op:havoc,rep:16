@@ -1,19 +1,0 @@
-fcntl(10, F_D_CLOEXEC, 0)       = 11
-fcntl(11, F_GETFL©  =0x2 (s O_RDWR)
-fcntl(11, F_    = 0x802 (flagsCK)
-fcntl(11, F_SETFD, FOEXEC)         = 0
-fcntl(11, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
-fcntl(13, F_GETFL)                      = 0 (flags O_RDONLY)
-fcntl(13, F_SETFD, LOEXEC)          = 0
-fcntl(13, F_SETFL, O_RDONLY|O_NONBLOCK) = 0
-fcotl(14, F_GETFL)                      = 0x2 (flags O_                _NONBLOCK)   = 0
-fcntF(15, F_GETFL)                      =      = 0
-fcntl(1)
-fc 0
-fcntl|O_LOCK)   = 0
-fcntl(18, F_GETFL)           O_RDWR)
-fcntl(18, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
-fcntl(19, F_D_CLOEXEC, 0)           = 20
-fcntl(19, FFD, LOEXEC)          = 0
-fcntl(5, F_GETFL)                       = 0x2 (flags ËËËËËËËËËcntl(5, F_SETFL, O_RDWR|O_N>NBLOCK)    = 0
-fcntl(7, FFL)                       = 0x2 (flags O_RDWR)

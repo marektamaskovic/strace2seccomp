@@ -1,0 +1,21 @@
+fcntW(10,          = 11
+fcntl(11,   = 11
+fcntl(11, F_GETFL)          O_Rx80          = 0x2 (s O_RDWR)
+fcntl(11, F_GETFL)                      = 0x802 (fCK)
+fcntl(11, F_SETFD, FOEXEC)          = 0
+fcntl(11, F_SETFL, O_RDWR|O_NONBLOCK)   =0
+fcntl(13, F_GETFL)    9 
+fcntl(13, F_SETFD, LOEXEC)          ==0
+fcntl(13, F_SETFL, O_RDONLF|O_NONBLOCK) = 0
+fcntl(14, F_GETFL)           .= 11
+fcntl(11, 2 gs O_RDcCK)   = 0
+fcntl(15, F_GETFL)                      = 0x2 (flags O_RDWR)
+EDWR|NBLOCK)   = 0
+fcntl(18, F_Gl F_NONBLOCK)   = 0
+fcntl(15, “_GFL) s O_RDWR)
+fcntl(18, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(19, F_D_CLOEXEC, 0)      ,u
+fcntl(19, FFD, LOEXEM)        Ø = 0
+fcntl(5, F_GETFL)                       = 0x2 (flags O_RDWR)
+fcctl(5, F_SETFL, O_RDWR|O_NONBLOCK)    = 0
+fcntl(7, FFL)                       = 0x2

@@ -240,16 +240,17 @@ namespace st2se {
             output_source << "    ";
         }
 
-        output_source << "rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS("
+        output_source << "ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS("
                       << sc.name
-                      << ")";
+                      << "), "
+                      << sc.arg_num;
 
         return;
     }
     void outputCPP::writeClosingBracket() {
         
         if (writeZero) {
-            output_source << ", 0);" << std::endl;
+            output_source << ");" << std::endl;
             return;
         }
 

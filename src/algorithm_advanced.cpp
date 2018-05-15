@@ -22,7 +22,7 @@ namespace st2se {
             this->processSyscall(item.second, out);
         }
 
-        std::cout << in.data.count("brk") << std::endl;
+        // std::cout << in.data.count("brk") << std::endl;
 
         return true;
     }

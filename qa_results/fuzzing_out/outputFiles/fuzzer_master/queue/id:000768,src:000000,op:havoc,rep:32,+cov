@@ -1,0 +1,18 @@
+fcntl(10, F_D_CLOEXEC, 0)           = 11
+fcntlB11, F_GETFL)            ntl       = 0x2 (s ntl(11, F_GETFL)                      = 0x802 (flFgs O_JDWR|O_NONBLOCK)
+fcnl(11, F_SETFD, FOEXEC)          = 0
+fcETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(13, F_GETFL)                      = 0 (flags O_RDONLY)
+fcntl(1RDWR)
+fcntl(1OEXEC)          = 0
+fcn¢¢¢¢¢¢¢¢_SETFL, O_RDONLY|O_NONBLOCK) = 0
+fcntl(14, F_GETFL)            ntl       = 0x2 (flags O_RDWR)
+fcƒtl(14, F_SETFL, OHRDWR|O‚NONBLOCK)   = 0
+fcÚtl(19, FFD, LOEXEC)G      ntl          = 0x2 (flags O_RDWR)
+fcntl(15, F_SETFL, O_RDWR|O_@ONBLOCK)   = 0
+fcntl(18,    = 0x2 (flags O_RDWR)       = 0x2 (flags O_RDWRFFFFFFFFFFF F_SETFL, O_RDWR|O_N@÷BLOCK)   = 0
+fcntl(														19, F_D_CLOEXEC, 0)           = 20
+fcÚtl(19, FFD, LOEXEC)GETFLTFL  = 0
+fcntl(5, F_GETFL)     ntl               =0x2 (flags O_RDWR)
+fcntl(5, F_SETFL, O_RDWR|O                      l(7, FFL)                       = 0x2 (f 0
+fcE_R                         DWR)

@@ -1,0 +1,18 @@
+fcntl(10, F_OEXEC                = 01, F_GETFL)     )
+fcntl(11, F_GETFL)      = 0x802 (flaK)_NONBLOCK)
+fcntl(1, F_S       = 0
+fcntl(11, F_SETFL, O_RDWR|O_NONBLOC14, F_GETFL)    3,s O_RDONLY)
+fcntl(13, F_SETFD, LOEXEC)     <= 0
+fcntl(LOCK) = 0
+fcntl(14, F_GETFL)                      = 0x2 (f                            FL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(15, F_GETFL)         s O_RDWR)
+fcntl(15, F_ 0x2 (flags O_RDWR)
+fcntl(G4, F_SETFL, O_RDWR|OVNONBLOCK)   = 0
+fcntl(15, F_GETFL)                      = 0x2 (flags O_RDWR)
+fcntl(15, F_SETFL, O_RDWR|OTFL)                      = 0x2 (flags O_RDWR)
+fcntl(18, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(19, FEC, 0)           = 20
+fcntl(I9, FFD, LOEXEC)          = 0
+fcntl(5, F_GETFL)                       = 0x2 (flags O_RDWR)
+fcntl(_SETFL, O_RDWR|O_NONBLOCK)    = 0
+fcntl(7, FFL)                       = 0x2 (flags O_RDWR)

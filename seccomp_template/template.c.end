@@ -1,15 +1,15 @@
     //-------------------------------------------------------------------------
 
     if (seccomp_load(ctx) != 0) {
-        rc = 2;
+        ret = 2;
         goto out;
     }
 
-    return rc;
+    return ret;
 
 out:
     seccomp_release(ctx);
-    return rc;
+    return ret;
 }
 
 int main()

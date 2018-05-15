@@ -1,17 +1,0 @@
-fcntl(10, F_OEXEC, 0)          = 11
-fcntl(11, F_GETFL)        B)   = 0
-fcni\2 (s O_RDWR)
-fcntl(11, F_GETFL)      = 0x802 (flagsO_NONBLOCK
-fcntl(11, F_SETFD, FOEXEC)          = 0
-fcntl(11, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
-fcntl(13, L)             _GETFL)         +         b  = 0x2 (flags O_RDWR)
-fÿtl(NBLOCKD   = 0
-ÿÿÿÿl(15, F_GETFL)
-fdntl(15, F_SETFL, )
-Rcntl(18, F_SETFL, O_RDWR|O_NOO_RDWR|O_NONLOC
-fcntl(18, F_GETFL)         s O_RDWR)
-Õcntl(NBLOCK)0  = 0
-fcntl(19, F_D_CLOEXEC, 0)   = 20
-fcntl(19MEXEC)          = 0
-fcntl(5, F_GETFL)    LOCK)    = 0
-fcntl(7,       = 0Z2 (flags O_R
