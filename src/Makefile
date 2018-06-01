@@ -1,3 +1,15 @@
+# Makefile for st2se
+# ------------------
+#  Author: Marek Tamaskovic
+#  - xtamas01.stud.fit.vutbr.cz
+#  - mtamasko.redhat.cz
+#  Project: strace2seccomp - st2se
+#  Compiled:  insert uname -a
+#  Note: 
+
+# Variables
+# ---------
+
 CXX=g++
 # CXX=clang++
 
@@ -8,10 +20,12 @@ OBJ=main.o straceparser.o ids.o argparse.o states.o optimizer.o algorithm.o\
 BIN=st2se
 LDFLAGS=-Iinclude/
 LINK.o = $(LINK.cpp)
-
 DATASET=../testdata/dataset.reduced
-
 CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
+
+
+# Recipes
+# -------
 
 all: CXXFLAGS += -g3 -fsanitize=address,undefined -fno-omit-frame-pointer
 all: st2se
@@ -29,6 +43,7 @@ tracing: all
 
 st2se: $(OBJ)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $(BIN)
+
 
 # static analysis
 clangTidy:
@@ -60,6 +75,7 @@ run:
 astyle: astylerc
 	./astyle_script.sh
 
+# Clean project folder
 clean:
 	-rm -f *.o
 	-rm -f *.orig
@@ -69,6 +85,8 @@ clean:
 	-rm -f *.gcda *.gcno coverage.info
 
 # DEPS: generated with 'dep' recipe
+# ---------------------------------
+
 algorithm_advanced.o: algorithm_advanced.cpp algorithm_advanced.hpp \
  ids.hpp algorithm.hpp
 algorithm.o: algorithm.cpp algorithm.hpp ids.hpp

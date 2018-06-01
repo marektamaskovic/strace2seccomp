@@ -28,7 +28,7 @@ nproc=8
 
 printHelp(){
 	echo -e "Usage:"
-	echo -e "\tAvailible commands: prep applyPolicy make"
+	echo -e "\tAvailable commands: prep applyPolicy make"
 	echo -e ""
 	echo -e "\thelp\t\t- print this help"
 	echo -e "\tprep\t\t- download, extract, configure packages"
@@ -37,8 +37,8 @@ printHelp(){
 	echo -e "\ttests\t\t- run tests"
 	echo -e "\tclean\t\t- reset testsfolder"
 	echo -e "\trevertPatches\t- revert previously applied patches"
-	echo -e "\tstraceON\t\t- turn on strace logging"
-	echo -e "\tstraceOFF\t\t- revert strace logging"
+	echo -e "\tstraceON\t- turn on strace logging"
+	echo -e "\tstraceOFF\t- revert strace logging"
 }
 
 download(){
