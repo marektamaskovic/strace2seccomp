@@ -10,7 +10,7 @@ index 6743f10..908ecc2 100644
  
  #include "system.h"
  #include "argmatch.h"
-@@ -148,6 +149,132 @@ static struct option const long_opts[] =
+@@ -148,6 +149,212 @@ static struct option const long_opts[] =
    {NULL, 0, NULL, 0}
  };
  
@@ -25,106 +25,185 @@ index 6743f10..908ecc2 100644
 +
 +  int rc = 0;
 +
-+	 rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(access), 0,
-+        SCMP_A1(SCMP_CMP_EQ, R_OK)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(arch_prctl), 0,
-+        SCMP_A0(SCMP_CMP_EQ, ARCH_SET_FS)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(brk), 0);
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(chdir), 0);
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(close), 0,
-+        SCMP_A0(SCMP_CMP_GE, 1), SCMP_A0(SCMP_CMP_LE, 5),
-+        SCMP_A0(SCMP_CMP_GE, 4), SCMP_A0(SCMP_CMP_LE, 7)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(execve), 0);
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit_group), 0,
-+        SCMP_A0(SCMP_CMP_EQ, 0)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fcntl), 0,
-+        SCMP_A0(SCMP_CMP_EQ, 7),
-+        SCMP_A0(SCMP_CMP_GE, 1), SCMP_A0(SCMP_CMP_LE, 6),
-+        SCMP_A1(SCMP_CMP_EQ, F_GETFL),
-+        SCMP_A1(SCMP_CMP_GE, F_GETFD), SCMP_A1(SCMP_CMP_LE, F_SETFL)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fstat), 0,
-+        SCMP_A0(SCMP_CMP_EQ, 5),
-+        SCMP_A0(SCMP_CMP_GE, 1), SCMP_A0(SCMP_CMP_LE, 6)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(futex), 0,
-+        SCMP_A1(SCMP_CMP_EQ, FUTEX_WAKE_PRIVATE),
-+        SCMP_A2(SCMP_CMP_EQ, 2147483647)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(getcwd), 0,
-+        SCMP_A1(SCMP_CMP_EQ, 4096)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(getdents), 0,
-+        SCMP_A0(SCMP_CMP_GE, 4), SCMP_A0(SCMP_CMP_LE, 6),
-+        SCMP_A1(SCMP_CMP_GE, 4), SCMP_A1(SCMP_CMP_LE, 6),
-+        SCMP_A2(SCMP_CMP_EQ, 32768)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(ioctl), 0,
-+        SCMP_A0(SCMP_CMP_GE, 1), SCMP_A0(SCMP_CMP_LE, 2),
-+        SCMP_A1(SCMP_CMP_EQ, TCGETS)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 0,
-+        SCMP_A1(SCMP_CMP_GE, 8192), SCMP_A1(SCMP_CMP_LE, 3914128),
-+        SCMP_A1(SCMP_CMP_EQ, 12288),
-+        SCMP_A4(SCMP_CMP_GE, -1), SCMP_A4(SCMP_CMP_LE, 4)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mprotect), 0,
-+        SCMP_A1(SCMP_CMP_GE, 4096), SCMP_A1(SCMP_CMP_LE, 2097152),
-+        SCMP_A1(SCMP_CMP_EQ, 2093056),
-+        SCMP_A2(SCMP_CMP_GE, PROT_NONE), SCMP_A2(SCMP_CMP_LE, PROT_READ)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(munmap), 0,
-+        SCMP_A1(SCMP_CMP_EQ, 135168),
-+        SCMP_A1(SCMP_CMP_GE, 220291), SCMP_A1(SCMP_CMP_LE, 266240)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(openat), 0,
-+        SCMP_A0(SCMP_CMP_EQ, AT_FDCWD)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(pipe), 0);
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(prlimit64), 0,
-+        SCMP_A0(SCMP_CMP_EQ, 0),
-+        SCMP_A1(SCMP_CMP_EQ, RLIMIT_STACK)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(read), 0,
-+        SCMP_A0(SCMP_CMP_EQ, 5),
-+        SCMP_A0(SCMP_CMP_GE, 4), SCMP_A0(SCMP_CMP_LE, 6),
-+        SCMP_A2(SCMP_CMP_GE, 1), SCMP_A2(SCMP_CMP_LE, 4096),
-+        SCMP_A2(SCMP_CMP_GE, 195), SCMP_A2(SCMP_CMP_LE, 198)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(readlink), 0,
-+        SCMP_A2(SCMP_CMP_EQ, 4095)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(rt_sigaction), 0,
-+        SCMP_A0(SCMP_CMP_GE, 1), SCMP_A0(SCMP_CMP_LE, ),
-+        SCMP_A3(SCMP_CMP_EQ, 8)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(rt_sigprocmask), 0,
-+        SCMP_A0(SCMP_CMP_EQ, SIG_SETMASK),
-+        SCMP_A0(SCMP_CMP_GE, SIG_BLOCK), SCMP_A0(SCMP_CMP_LE, SIG_UNBLOCK),
-+        SCMP_A3(SCMP_CMP_EQ, 8)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(rt_sigreturn), 0);
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(set_robust_list), 0,
-+        SCMP_A1(SCMP_CMP_EQ, 24)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(set_tid_address), 0);
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(stat), 0);
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(sysinfo), 0);
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(vfork), 0,
-+        SCMP_A0(SCMP_CMP_EQ, )
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(wait4), 0,
-+        SCMP_A0(SCMP_CMP_EQ, -1),
-+        SCMP_A2(SCMP_CMP_EQ, 0)
-+    );
-+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 0,
-+        SCMP_A0(SCMP_CMP_GE, 1), SCMP_A0(SCMP_CMP_LE, 5),
-+        SCMP_A2(SCMP_CMP_GE, 1), SCMP_A2(SCMP_CMP_LE, 22)
-+    );
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(access), 0,
++	    SCMP_A1(SCMP_CMP_GE, R_OK), SCMP_A1(SCMP_CMP_LE, W_OK)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(arch_prctl), 0,
++	    SCMP_A0(SCMP_CMP_EQ, ARCH_SET_FS)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(brk), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(chmod), 0,
++	    SCMP_A1(SCMP_CMP_GE, 40700), SCMP_A1(SCMP_CMP_LE, 42775)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(close), 0,
++	    SCMP_A0(SCMP_CMP_EQ, 5),
++	    SCMP_A0(SCMP_CMP_GE, 0), SCMP_A0(SCMP_CMP_LE, 4)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(execve), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit_group), 0,
++	    SCMP_A0(SCMP_CMP_GE, 0), SCMP_A0(SCMP_CMP_LE, 1)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fadvise64), 0,
++	    SCMP_A0(SCMP_CMP_EQ, 4),
++	    SCMP_A1(SCMP_CMP_EQ, 0),
++	    SCMP_A2(SCMP_CMP_EQ, 0),
++	    SCMP_A3(SCMP_CMP_EQ, POSIX_FADV_SEQUENTIAL)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fallocate), 0,
++	    SCMP_A0(SCMP_CMP_EQ, 5),
++	    SCMP_A2(SCMP_CMP_GE, 573440), SCMP_A2(SCMP_CMP_LE, 4259840),
++	    SCMP_A2(SCMP_CMP_GE, 0), SCMP_A2(SCMP_CMP_LE, 565248),
++	    SCMP_A3(SCMP_CMP_GE, 4096), SCMP_A3(SCMP_CMP_LE, 2088960),
++	    SCMP_A3(SCMP_CMP_EQ, 131072)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fchmod), 0,
++	    SCMP_A0(SCMP_CMP_EQ, 5),
++	    SCMP_A1(SCMP_CMP_EQ, 664)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fchown), 0,
++	    SCMP_A0(SCMP_CMP_EQ, 5),
++	    SCMP_A1(SCMP_CMP_EQ, 1000),
++	    SCMP_A2(SCMP_CMP_EQ, 1000)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fgetxattr), 0,
++	    SCMP_A0(SCMP_CMP_EQ, 4),
++	    SCMP_A3(SCMP_CMP_EQ, 132)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(flistxattr), 0,
++	    SCMP_A0(SCMP_CMP_EQ, 4),
++	    SCMP_A2(SCMP_CMP_EQ, 0)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fsetxattr), 0,
++	    SCMP_A0(SCMP_CMP_EQ, 5),
++	    SCMP_A3(SCMP_CMP_GE, 28), SCMP_A3(SCMP_CMP_LE, 44),
++	    SCMP_A4(SCMP_CMP_EQ, 0)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fstat), 0,
++	    SCMP_A0(SCMP_CMP_GE, 1), SCMP_A0(SCMP_CMP_LE, 5),
++	    SCMP_A0(SCMP_CMP_EQ, 0)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(ftruncate), 0,
++	    SCMP_A0(SCMP_CMP_EQ, 5),
++	    SCMP_A1(SCMP_CMP_GE, 131073), SCMP_A1(SCMP_CMP_LE, 1099511627776),
++	    SCMP_A1(SCMP_CMP_EQ, 131072)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(getcwd), 0,
++	    SCMP_A1(SCMP_CMP_EQ, 128)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(getdents), 0,
++	    SCMP_A0(SCMP_CMP_EQ, 4),
++	    SCMP_A1(SCMP_CMP_EQ, 4),
++	    SCMP_A2(SCMP_CMP_EQ, 32768)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(getegid), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(geteuid), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(getgid), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(getpid), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(getppid), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(getuid), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(getxattr), 0,
++	    SCMP_A3(SCMP_CMP_EQ, 132)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(ioctl), 0,
++	    SCMP_A0(SCMP_CMP_GE, 0), SCMP_A0(SCMP_CMP_LE, 1),
++	    SCMP_A1(SCMP_CMP_EQ, TCGETS)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(lchown), 0,
++	    SCMP_A1(SCMP_CMP_EQ, 1000),
++	    SCMP_A2(SCMP_CMP_EQ, 1000)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(linkat), 0,
++	    SCMP_A0(SCMP_CMP_EQ, AT_FDCWD),
++	    SCMP_A2(SCMP_CMP_EQ, AT_FDCWD),
++	    SCMP_A4(SCMP_CMP_GE, 0), SCMP_A4(SCMP_CMP_LE, AT_SYMLINK_FOLLOW)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(llistxattr), 0,
++	    SCMP_A2(SCMP_CMP_EQ, 0)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(lseek), 0,
++	    SCMP_A0(SCMP_CMP_GE, 0), SCMP_A0(SCMP_CMP_LE, 5),
++	    SCMP_A0(SCMP_CMP_EQ, 4),
++	    SCMP_A1(SCMP_CMP_GE, 577536), SCMP_A1(SCMP_CMP_LE, 4276224),
++	    SCMP_A1(SCMP_CMP_GE, 0), SCMP_A1(SCMP_CMP_LE, 573440),
++	    SCMP_A2(SCMP_CMP_GE, SEEK_CUR), SCMP_A2(SCMP_CMP_LE, SEEK_SET)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(lstat), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mkdir), 0,
++	    SCMP_A1(SCMP_CMP_GE, 500), SCMP_A1(SCMP_CMP_LE, 777),
++	    SCMP_A1(SCMP_CMP_EQ, 700)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 0,
++	    SCMP_A1(SCMP_CMP_GE, 8192), SCMP_A1(SCMP_CMP_LE, 3914128),
++	    SCMP_A1(SCMP_CMP_GE, 12288), SCMP_A1(SCMP_CMP_LE, 14736),
++	    SCMP_A4(SCMP_CMP_GE, -1), SCMP_A4(SCMP_CMP_LE, 4)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mprotect), 0,
++	    SCMP_A1(SCMP_CMP_GE, 4096), SCMP_A1(SCMP_CMP_LE, 2097152),
++	    SCMP_A1(SCMP_CMP_EQ, 2093056),
++	    SCMP_A2(SCMP_CMP_GE, PROT_NONE), SCMP_A2(SCMP_CMP_LE, PROT_READ)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mremap), 0,
++	    SCMP_A1(SCMP_CMP_GE, 151552), SCMP_A1(SCMP_CMP_LE, 225280),
++	    SCMP_A2(SCMP_CMP_GE, 225280), SCMP_A2(SCMP_CMP_LE, 339968),
++	    SCMP_A3(SCMP_CMP_EQ, MREMAP_MAYMOVE)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(munmap), 0,
++	    SCMP_A1(SCMP_CMP_GE, 139264), SCMP_A1(SCMP_CMP_LE, 643072),
++	    SCMP_A1(SCMP_CMP_EQ, 323584)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(openat), 0,
++	    SCMP_A0(SCMP_CMP_EQ, AT_FDCWD),
++	    SCMP_A3(SCMP_CMP_GE, 444), SCMP_A3(SCMP_CMP_LE, 775),
++	    SCMP_A3(SCMP_CMP_EQ, 664)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(read), 0,
++	    SCMP_A0(SCMP_CMP_GE, 0), SCMP_A0(SCMP_CMP_LE, 4),
++	    SCMP_A2(SCMP_CMP_GE, 6), SCMP_A2(SCMP_CMP_LE, 131072),
++	    SCMP_A2(SCMP_CMP_EQ, 1)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(readlink), 0,
++	    SCMP_A2(SCMP_CMP_GE, 5), SCMP_A2(SCMP_CMP_LE, 13),
++	    SCMP_A2(SCMP_CMP_EQ, 4)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(removexattr), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(rename), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(renameat), 0,
++	    SCMP_A0(SCMP_CMP_EQ, AT_FDCWD),
++	    SCMP_A2(SCMP_CMP_EQ, AT_FDCWD)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(renameat2), 0,
++	    SCMP_A0(SCMP_CMP_EQ, AT_FDCWD),
++	    SCMP_A2(SCMP_CMP_GE, 4), SCMP_A2(SCMP_CMP_LE, AT_FDCWD),
++	    SCMP_A4(SCMP_CMP_GE, 0), SCMP_A4(SCMP_CMP_LE, RENAME_NOREPLACE)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(setxattr), 0,
++	    SCMP_A3(SCMP_CMP_EQ, 28),
++	    SCMP_A4(SCMP_CMP_EQ, 0)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(stat), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(symlinkat), 0,
++	    SCMP_A1(SCMP_CMP_EQ, AT_FDCWD)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(sysinfo), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(umask), 0,
++	    SCMP_A0(SCMP_CMP_GE, 2), SCMP_A0(SCMP_CMP_LE, 77),
++	    SCMP_A0(SCMP_CMP_EQ, 0)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(unlink), 0);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(unlinkat), 0,
++	    SCMP_A0(SCMP_CMP_EQ, AT_FDCWD),
++	    SCMP_A2(SCMP_CMP_EQ, 0)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(utimensat), 0,
++	    SCMP_A0(SCMP_CMP_GE, 5), SCMP_A0(SCMP_CMP_LE, AT_FDCWD),
++	    SCMP_A3(SCMP_CMP_GE, 0), SCMP_A3(SCMP_CMP_LE, AT_SYMLINK_NOFOLLOW)
++	);
++	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 0,
++	    SCMP_A0(SCMP_CMP_GE, 2), SCMP_A0(SCMP_CMP_LE, 5),
++	    SCMP_A0(SCMP_CMP_EQ, 1),
++	    SCMP_A2(SCMP_CMP_GE, 5), SCMP_A2(SCMP_CMP_LE, 131072),
++	    SCMP_A2(SCMP_CMP_GE, 1), SCMP_A2(SCMP_CMP_LE, 4)
++	);
 +
 +  if (rc != 0) {
 +    goto out;

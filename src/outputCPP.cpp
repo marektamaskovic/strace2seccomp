@@ -74,14 +74,18 @@ namespace st2se {
         if (sc.second.clustered == true) {
             std::cout << "clustered branch" << std::endl;
 
-            for (auto &pos : sc.second.next) {
-                // TODO Find why this works ?
-                generateRules(pos, pos_num++, true);
+            if (!sc.second.next.empty()) {
+                for (auto &pos : sc.second.next) {
+                    // TODO Find why this works ?
+                    generateRules(pos, pos_num++, true);
+                }
             }
         }
         else {
-            for (auto &argument : sc.second.next) {
-                generateRules(argument, pos_num, /*clustered =*/ false);
+            if (!sc.second.next.empty()) {
+                for (auto &argument : sc.second.next) {
+                    generateRules(argument, pos_num, /*clustered =*/ false);
+                }
             }
         }
 
@@ -105,6 +109,7 @@ namespace st2se {
 
             // get minmax
             auto minmax = getMinMax(cluster);
+
             // std::cout << "\n\n\n\n" << arg2str(cluster) << " ." << cluster.next.size() << std::endl;
             if (minmax.empty()) {
                 return;
@@ -115,9 +120,10 @@ namespace st2se {
             std::cout << "minmax.size():" << minmax.size() << std::endl;
 
             // TODO add here param switch when program is running without ASLR
-            if(isPointer(minmax)){
+            if (isPointer(minmax)) {
                 return;
             }
+
             if (minmax.size() == 1) {
                 writeValue(minmax.front(), pos);
             }
@@ -159,9 +165,10 @@ namespace st2se {
 
         std::vector<argument_t> vec;
 
-        if(!arg.next.empty()){
-            for(auto item : arg.next)
+        if (!arg.next.empty()) {
+            for (auto item : arg.next) {
                 vec.push_back(item);
+            }
         }
 
         // vec.push_back(arg);
@@ -189,13 +196,13 @@ namespace st2se {
         //     output_source << std::endl;
         // }
 
-        std::cout << range.back().value_type <<std::endl;
+        std::cout << range.back().value_type << std::endl;
 
-        if(range.back().value_type == val_type_t::BITFIELD){
+        if (range.back().value_type == val_type_t::BITFIELD) {
             std::cout << "skiping bitfield" << std::endl;
             return;
         }
-        
+
         writeZero = false;
 
         // std::cout << "TODO: print as rule: range:\t" << arg2str(range.front()) << " " << arg2str(range.back()) << std::endl;
@@ -209,14 +216,17 @@ namespace st2se {
         return;
     }
     void outputCPP::writeValue(argument_t &arg, unsigned pos) {
-        
+
         // if(writeZero){
         //     output_source << std::endl;
         // }
+        if (arg2str(arg).length() == 0) {
+            return;
+        }
 
-        std::cout << arg.value_type <<std::endl;
+        std::cout << arg.value_type << std::endl;
 
-        if(arg.value_type == val_type_t::BITFIELD){
+        if (arg.value_type == val_type_t::BITFIELD) {
             std::cout << "skiping bitfield" << std::endl;
             return;
         }
@@ -236,19 +246,19 @@ namespace st2se {
 
     void outputCPP::writeSC(Syscall_t &sc, unsigned tab_len) {
 
-        for(unsigned i = 0; i < tab_len; ++i){
+        for (unsigned i = 0; i < tab_len; ++i) {
             output_source << "    ";
         }
 
         output_source << "ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS("
-                      << sc.name
-                      << "), "
-                      << sc.arg_num;
+            << sc.name
+            << "), "
+            << sc.arg_num;
 
         return;
     }
     void outputCPP::writeClosingBracket() {
-        
+
         if (writeZero) {
             output_source << ");" << std::endl;
             return;
@@ -262,13 +272,12 @@ namespace st2se {
 
     bool outputCPP::isPointer(minmax_t minmax) {
 
-        if(minmax.size() == 1){
+        if (minmax.size() == 1) {
             return minmax.front().value_type == val_type_t::POINTER ? true : false;
         }
         else {
             if (minmax.front().value_type == val_type_t::POINTER ||
-                minmax.back().value_type == val_type_t::POINTER)
-            {
+                minmax.back().value_type == val_type_t::POINTER) {
                 return true;
             }
 

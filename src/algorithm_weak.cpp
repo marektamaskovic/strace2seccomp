@@ -33,13 +33,18 @@ namespace st2se {
 
         std::cout << " " << depth << std::endl;
 
+        out.data[sc.name].name = sc.name;
+        out.data[sc.name].return_code = sc.return_code;
+        out.data[sc.name].arg_num = sc.arg_num;
+
         for (unsigned arg_pos = 0; arg_pos < depth; arg_pos++) {
             std::vector<argument_t> v;
             v = getArguemntsFromPos(sc.next, arg_pos);
-            
+
             if (v.empty()) {
                 continue;
             }
+
             /*INDENT-OFF*/
             std::sort(v.begin(), v.end(),
                 [](argument_t a, argument_t b)
@@ -55,6 +60,7 @@ namespace st2se {
             v.erase(end, v.end());
 
             std::cout << "\targ no." << arg_pos << " is " << v.size() << " items long" << std::endl;
+
             std::vector<argument_t> clustered_v {};
 
             if (v.size() != 1) {

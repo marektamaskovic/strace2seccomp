@@ -15,7 +15,13 @@ namespace st2se {
             throw std::runtime_error("Algorithm is not provided.");
         }
 
-        return opt_adapter->optimize(in, out);
+        auto ret_val = opt_adapter->optimize(in, out);
+
+        for (auto item : in.data) {
+            out.data[item.first].arg_num = item.second.next.size();
+        }
+
+        return ret_val;
     }
 
     void Optimizer::useAlgorithm(Algorithm *_opt_adapter) {

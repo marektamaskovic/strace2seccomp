@@ -91,12 +91,12 @@ namespace st2se {
         Syscall_t s;
 
         if (parsed_val.empty()) {
-            std::cerr << "Error: Parsed val is empty." << std::endl;
+            std::cerr << "Error: " << this->get_name() << ": Parsed val is empty." << std::endl;
 
             argument_t a;
 
             s.next.emplace_back(a);
-            s.arg_num = 0;
+            s.arg_num = this->arg_num;
             s.return_code = this->return_val;
             s.name = this->get_name();
 

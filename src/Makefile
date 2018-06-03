@@ -30,7 +30,7 @@ CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
 all: CXXFLAGS += -g3 -fsanitize=address,undefined -fno-omit-frame-pointer
 all: st2se
 
-release: CXXFLAGS += -O2 -flto
+release: CXXFLAGS += -O2
 release: st2se
 
 coverage: CXXFLAGS += -fprofile-arcs -ftest-coverage
