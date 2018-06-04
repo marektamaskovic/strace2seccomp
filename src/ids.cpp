@@ -165,6 +165,7 @@ namespace st2se {
             root_sc.name = sc.name;
             root_sc.return_code = sc.return_code;
             root_sc.other = sc.other;
+            root_sc.arg_num = sc.arg_num;
             std::copy(sc.next.begin(), sc.next.end(), std::back_inserter(root_sc.next));
 
             // std::cout << __func__ << "\tinserting new arg" << std::endl;

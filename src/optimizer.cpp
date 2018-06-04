@@ -17,9 +17,9 @@ namespace st2se {
 
         auto ret_val = opt_adapter->optimize(in, out);
 
-        for (auto item : in.data) {
-            out.data[item.first].arg_num = item.second.next.size();
-        }
+        // for (auto item : in.data) {
+        //     out.data[item.first].arg_num = item.second.next.size();
+        // }
 
         return ret_val;
     }
