@@ -138,11 +138,11 @@ main(){
 	    echo -e "$BWhite" "Patch sources" "$Color_Off"
 	    patch `echo $findutils`/find/ftsfind.c find.ftsfind.c.patch
 
-	    patch `echo $coreutils`/src/strace -ff -o ../setEnv.strace cp.c coreutils.strace -ff -o ../setEnv.strace cp.c.patch
+	    patch `echo $coreutils`/src/cp.c coreutils.cp.c.patch
 	    patch `echo $coreutils`/src/rm.c coreutils.src_rm.c.patch
 
 	elif [ "$1" = "revertPatches" ]; then
-	    
+
 	    echo -e "$BWhite" "Revert previously applied patches" "$Color_Off"
 
 	    patch --reverse `echo $findutils`/find/ftsfind.c find.ftsfind.c.patch
@@ -151,11 +151,11 @@ main(){
 	    patch --reverse `echo $coreutils`/src/rm.c coreutils.src_rm.c.patch
 
 	elif [ "$1" = "straceON" ]; then
-		
+
             applyStracePatch
 
 	elif [ "$1" = "straceOFF" ]; then
-	    
+
 	    revertStracePatch
 
 	elif [ "$1" = "make" ]; then
