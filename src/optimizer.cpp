@@ -11,20 +11,18 @@ namespace st2se {
 
 
     bool Optimizer::optimize(Ids &in, Ids &out) {
+
         if (!isInitialized()) {
             throw std::runtime_error("Algorithm is not provided.");
         }
 
         auto ret_val = opt_adapter->optimize(in, out);
 
-        // for (auto item : in.data) {
-        //     out.data[item.first].arg_num = item.second.next.size();
-        // }
-
         return ret_val;
     }
 
     void Optimizer::useAlgorithm(Algorithm *_opt_adapter) {
+
         if (_opt_adapter == nullptr) {
             std::cout << "Warning: Optimizer: setting algorithm to nullptr." << std::endl;
         }
@@ -33,7 +31,9 @@ namespace st2se {
     }
 
     bool Optimizer::isInitialized() {
+
         return opt_adapter != nullptr;
+        
     }
 
 } // namespace st2se

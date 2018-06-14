@@ -14,7 +14,7 @@
 
 int setup_seccomp_whitelist(){
 
-    scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_KILL);
+    scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_ALLOW);
     
     int ret = 0;
 
