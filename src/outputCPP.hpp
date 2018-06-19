@@ -17,15 +17,19 @@ namespace st2se {
 
         std::ifstream template_file_begin;
         std::ifstream template_file_end;
+        std::ifstream template_file_thread;
         std::ofstream output_source;
 
         std::string template_file_b_path = "../seccomp_template/template.c.begin";
         std::string template_file_e_path = "../seccomp_template/template.c.end";
+        std::string template_file_t_path = "../seccomp_template/template.c.thread";
         std::string output_source_path = "./source.cpp";
 
         void openFiles();
         void writeFirstPart();
         void writeLastPart();
+        void writeThreadPart();
+        void closeFiles();
 
         bool writeZero = true;
 

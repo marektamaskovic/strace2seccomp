@@ -6,6 +6,7 @@ namespace st2se {
         // FIXME use only onde dot
         template_file_begin.open(template_file_b_path, std::ios::in);
         template_file_end.open(template_file_e_path, std::ios::in);
+        template_file_thread.open(template_file_t_path, std::ios::in);
         output_source.open(output_source_path, std::ios_base::out | std::ios_base::trunc);
 
         if (!template_file_begin.is_open()) {
@@ -13,12 +14,23 @@ namespace st2se {
         }
 
         if (!template_file_end.is_open()) {
-            throw (std::runtime_error("template_file_begin is not open"));
+            throw (std::runtime_error("template_file_end is not open"));
+        }
+
+        if (!template_file_thread.is_open()) {
+            throw (std::runtime_error("template_file_thread is not open"));
         }
 
         if (!output_source.is_open()) {
             throw (std::runtime_error("output_source is not open"));
         }
+    }
+
+    void outputCPP::closeFiles() {
+        template_file_begin.close();
+        template_file_end.close();
+        template_file_thread.close();
+        output_source.close();
     }
 
 
@@ -39,23 +51,41 @@ namespace st2se {
         }
     }
 
+    void outputCPP::writeThreadPart() {
+        std::string line;
+
+        while (getline(template_file_thread, line)) {
+            output_source << line << std::endl;
+        }
+    }
+
+
     void outputCPP::generate(Ids &ids) {
 
         openFiles();
 
-        writeFirstPart();
+        //writeFirstPart();
         std::cout << "First part" << std::endl;
+
+        // FIXME add switch for thread
+        if(0)
+            writeThreadPart();
 
         std::cout << "Generator print" << std::endl;
 
         ids.print();
 
+        // output_source << "\t// seccomp rules" << std::endl;
+        // output_source << "\t//---------------" << std::endl;
+
         for (const auto &item : ids.data) {
             generateScRules(item);
         }
 
-        writeLastPart();
+        //writeLastPart();
         std::cout << "last part" << std::endl;
+
+        closeFiles();
 
     }
 
@@ -76,8 +106,8 @@ namespace st2se {
 
             if (!sc.second.next.empty()) {
                 for (auto &pos : sc.second.next) {
-                    // TODO Find why this works ?
-                    generateRules(pos, pos_num++, true);
+                    // TODO Find out  why this works ?
+                    generateRules(pos, pos_num++, /*clustered =*/ true);
                 }
             }
         }
@@ -90,15 +120,6 @@ namespace st2se {
         }
 
         writeClosingBracket();
-    }
-
-    void outputCPP::generateClusterRules(argument_t pos, const unsigned pos_num) {
-
-        // iterate over clusters
-        for (auto cluster : pos.next) {
-            generateRules(cluster, pos_num, /*clustered =*/ true);
-        }
-
     }
 
     void outputCPP::generateRules(argument_t arg, const unsigned pos, const bool clustered) {
@@ -209,8 +230,14 @@ namespace st2se {
 
         output_source << "," << std::endl;
         output_source << "        ";  // indentation 8 spaces
-        output_source << "SCMP_A" << pos << "(SCMP_CMP_GE, " << arg2str(range.front()) << "), ";
-        output_source << "SCMP_A" << pos << "(SCMP_CMP_LE, " << arg2str(range.back()) << ")";
+        output_source << "SCMP_A";
+        output_source << pos;
+        output_source << "(SCMP_CMP_IN_RANGE, ";
+        output_source << arg2str(range.front());
+        output_source << ", ";
+        output_source << arg2str(range.back());
+        output_source << ")";
+
         // output_source << std::endl;
 
         return;
