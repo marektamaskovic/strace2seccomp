@@ -1,0 +1,27 @@
+start_time        : 1519738526
+last_update       : 1521639912
+fuzzer_pid        : 2191
+cycles_done       : 2037
+execs_done        : 1125500374
+execs_per_sec     : 1964.59
+paths_total       : 3866
+paths_favored     : 187
+paths_found       : 1693
+paths_imported    : 2172
+max_depth         : 8
+cur_path          : 852
+pending_favs      : 0
+pending_total     : 0
+variable_paths    : 0
+stability         : 100.00%
+bitmap_cvg        : 4.38%
+unique_crashes    : 0
+unique_hangs      : 1
+last_path         : 1521517590
+last_crash        : 0
+last_hang         : 1521196298
+execs_since_crash : 1125500374
+exec_timeout      : 20
+afl_banner        : fuzzer_s03
+afl_version       : 2.49b
+command_line      : afl-fuzz -i inputFiles -o outputFiles -S fuzzer_s03 -- ./st2se @@

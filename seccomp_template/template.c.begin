@@ -1,0 +1,26 @@
+/*
+ * Generated seccomp template with initialized filter using st2se.
+ * link with -lseccomp
+ */
+
+#ifdef __cplusplus
+    #define NULL nullptr
+    #include <cstdio>
+#else
+    #include <stdio.h>
+#endif
+
+#include <seccomp.h>
+
+int setup_seccomp_whitelist(){
+
+<<<<<<< HEAD
+    scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_ALLOW);
+    
+=======
+    scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_KILL);
+
+>>>>>>> testbranch
+    int ret = 0;
+
+

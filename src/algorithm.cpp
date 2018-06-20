@@ -16,8 +16,9 @@ namespace st2se {
                 if (item.value_type == val_type_t::STRUCTURE ||
                     item.value_type == val_type_t::ARRAY ||
                     item.value_type == val_type_t::STRING
-                )
+                ) {
                     continue;
+                }
 
                 argument_t tmp;
                 tmp.value_type = item.value_type;

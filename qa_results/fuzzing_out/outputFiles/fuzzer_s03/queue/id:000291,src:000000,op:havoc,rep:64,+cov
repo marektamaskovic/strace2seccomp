@@ -1,0 +1,14 @@
+fcntl(10, F_D_CLOEXEC, 0)   = 11
+fcntl(11, F_GETFL) 0x2 (s _RDWR)
+fcntl(11,2 (flagsWR|O_NONBLOCK)
+fcntl(11, F_SETFD 0
+C 0
+fcntl(11, F_SETFL, O_RDW  ŽŽNONBLOCK)   = 0
+fcntl(D3, F_GETFL)       ŽŽŽ) = 0
+fcntl(14, f_GETiL)OCK)   £ 0
+fcn      [_RDER)
+fcntl(15, F_SETFL, d_RD 
+fcnÍÍÍÍÍ    = 20
+fcntl(19, FFD, LOEXEC)          = 0
+fcntl(5, F_GETFL)              F_SETFL, O_RDWR*O_NONBLOCK)   0= 
+fcntl(7,FFL)    O_RDWR)

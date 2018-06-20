@@ -10,6 +10,7 @@
 #include "algorithm_weak.hpp"
 #include "algorithm_strict.hpp"
 #include "algorithm_advanced.hpp"
+#include "generator.hpp"
 
 int main(int argc, char *argv[]) {
     int ret_val {0};
@@ -72,6 +73,14 @@ int main(int argc, char *argv[]) {
 
     out.print();
 
+    st2se::Generator gen;
+
+    st2se::Output *cpp = new st2se::outputCPP();
+
+    gen.initialize(cpp);
+    gen.generate(out);
+
+
     // out.data["close"].print();
 
     std::cout << "Exiting ..." << std::endl;
@@ -80,6 +89,12 @@ int main(int argc, char *argv[]) {
     opti.useAlgorithm(nullptr);
     delete algo;
 
+
+    // remove and dealloc output generator
+    gen.removeOutput();
+    delete cpp;
+
+    // delete params object
     delete params;
 
     return ret_val;

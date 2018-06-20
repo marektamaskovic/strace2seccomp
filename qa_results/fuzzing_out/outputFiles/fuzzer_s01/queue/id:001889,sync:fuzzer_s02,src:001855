@@ -1,0 +1,16 @@
+fcntl(10, F_OEXES, 0)       = 1111, 0x2 (s O_RDWR)
+fcntl(1K,0x802 (fAÿÿOC)
+fcntl(11, F_D, dOEXEC)      = 0
+fcntl(11, F_L, O_RDWR|O_NONBLOCK)   = 0
+fcntl(13, F_GETFL)           tlONLY)
+fcntl(13, F_SETFD, LOEXEC)  = 0
+fcnil(13, F_SETFL, O_RDONLY|O_LO&K0
+fcntl(14, FES, 0)   = 111L)        0x2 (flags O_RDWR)
+fcntl(14, F_SETFL, O_RDWR|O_NONBLOCK)   = 015, F_GETFL)          ‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹)
+fcntl(15, F_SETFD, LOL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(18, F_GETFL)      = 0x2 ÿÿÿÿgs O_RDWR)
+fcntl(18, F_S, 0)           = 20 = 0
+fcntl(5, FFL)       = 0x2 (flags O_RDWR)
+ 0x2 (flags O_RDWR)
+fcnLOCK)  0
+fcntl(7,0FFL) LOEXEC)      

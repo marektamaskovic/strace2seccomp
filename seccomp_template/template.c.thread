@@ -1,0 +1,6 @@
+
+    // Turn on filter synchronization among threads
+    ret = seccomp_attr_set(ctx, SCMP_FLTATR_CTL_TSYNC, 1);
+    if (ret < 0)
+        goto out;
+

@@ -1,0 +1,69 @@
+diff --git a/src/cp.c b/src/cp.c
+index 6743f10..908ecc2 100644
+--- a/src/cp.c
++++ b/src/cp.c
+@@ -21,6 +21,7 @@
+ #include <sys/types.h>
+ #include <getopt.h>
+ #include <selinux/selinux.h>
++#include <seccomp.h>
+ 
+ #include "system.h"
+ #include "argmatch.h"
+@@ -148,6 +149,48 @@ static struct option const long_opts[] =
+   {NULL, 0, NULL, 0}
+ };
+ 
++bool
++setupSeccompWhitelist(void)
++{
++  scmp_filter_ctx ctx = seccomp_init(/*SCMP_ACT_ERRNO(EACCES)*/SCMP_ACT_KILL);
++
++  if (!ctx) {
++    return false;
++  }
++
++  int ret = 0;
++
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(access), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(arch_prctl), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(brk), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(close), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(execve), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit_group), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fstat), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(geteuid), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(ioctl), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(lseek), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mprotect), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(munmap), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(openat), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(read), 0);
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 0);
++
++  if (ret != 0) {
++    goto out;
++  }
++
++  if (seccomp_load(ctx) != 0) {
++    ret = -1;
++    goto out;
++  }
++
++out:
++  seccomp_release(ctx);
++  return (ret == 0);
++}
++
+ void
+ usage (int status)
+ {
+@@ -927,6 +970,7 @@ decode_preserve_arg (char const *arg, struct cp_options *x, bool on_off)
+ int
+ main (int argc, char **argv)
+ {
++  setupSeccompWhitelist();
+   int c;
+   bool ok;
+   bool make_backups = false;

@@ -1,0 +1,44 @@
+fcntl(10, F_OEXDC, 0)      = 11
+fcntl(11, F_GETFL)                      = 0x2 (s
+fcntl(11, F_GETFL)                      = 0x802 (flWR|O_NONBLOCK)
+fcntl(I1, F_S, FOEXEC)          = 0
+fcntl(11, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(13, F_GETFL)                      = 0 (LY)
+f
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  = 0
+fcntl(13,3F_SENONBLOCK) = 0
+fcntl(14, F_GETFL)                      = 0x2 (f
+fcntl(14, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(15, F_GETFL)                      = 0x2 ()
+fcntl(15, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(18, F_GETFL)               aR)
+fcntl(18, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(19, F_D_CLOEXEC, 0)           = 20
+fcntl(19, FFD, LOEXEC)          = 0
+fcntl(5, F_GETFL)                       = 0x2 (f
+fcntl(5, F_SETFL, O_RDWR|O_NONBLOCK)    = 0
+fcntl(7, FFL)                       = 0x2 (RDWR)

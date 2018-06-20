@@ -14,7 +14,7 @@
 
 namespace st2se {
 
-	class Algo_strict : public Algorithm {
+    class Algo_strict : public Algorithm {
         bool optimize(Ids &in, Ids &out) override;
     };
 

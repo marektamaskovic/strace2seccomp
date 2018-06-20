@@ -91,36 +91,37 @@ namespace st2se {
         Syscall_t s;
 
         if (parsed_val.empty()) {
-            std::cerr << "Error: Parsed val is empty." << std::endl;
+            std::cerr << "Error: " << this->get_name() << ": Parsed val is empty." << std::endl;
 
             argument_t a;
 
             s.next.emplace_back(a);
-            s.arg_num = 0;
+            s.arg_num = this->arg_num;
             s.return_code = this->return_val;
             s.name = this->get_name();
 
-            return s;
         }
+        else {
+            argument_t a, b;
 
-        argument_t a, b;
-
-        a = parsed_val.back();
-        parsed_val.pop_back();
-
-        while (!parsed_val.empty()) {
-            //check if empty
-            b = parsed_val.back();
-            b.next.push_back(a);
-            a = b;
+            a = parsed_val.back();
             parsed_val.pop_back();
+
+            while (!parsed_val.empty()) {
+                //check if empty
+                b = parsed_val.back();
+                b.next.push_back(a);
+                a = b;
+                parsed_val.pop_back();
+            }
+
+            s.next.emplace_back(a);
+
+            s.arg_num = this->arg_num;
+            s.return_code = this->return_val;
+            s.name = this->get_name();
         }
 
-        s.next.emplace_back(a);
-
-        s.arg_num = this->arg_num;
-        s.return_code = this->return_val;
-        s.name = this->get_name();
 
         return s;
 

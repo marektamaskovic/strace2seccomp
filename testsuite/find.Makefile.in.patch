@@ -1,0 +1,12 @@
+--- a/findutils-4.6.0/find/Makefile.in
++++ b/findutils-4.6.0/find/Makefile.in
+@@ -1248,7 +1248,7 @@
+ LIBOBJS = @LIBOBJS@
+ LIBPTH = @LIBPTH@
+ LIBPTH_PREFIX = @LIBPTH_PREFIX@
+-LIBS = @LIBS@
++LIBS = @LIBS@ -lseccomp
+ LIBSOCKET = @LIBSOCKET@
+ LIBTESTS_LIBDEPS = @LIBTESTS_LIBDEPS@
+ LIBTHREAD = @LIBTHREAD@
+

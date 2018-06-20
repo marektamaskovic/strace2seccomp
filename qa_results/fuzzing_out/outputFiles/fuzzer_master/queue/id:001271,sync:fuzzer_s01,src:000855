@@ -1,0 +1,15 @@
+fdnul(10, F_D_C>ÿEXE, F_GETFL)       .              = 0x2 (s O_RDWR)
+fcntl(11, F_GETFL)                      = 0x802 (flags O_RDWR|O_NONBLOC)
+fcntl(11, F_SETED, FOEXEC)        tl(11, F_SETFL, O_RDWR|O_NONBLOCK)   = *
+fcntl(13, F_GETFL)               RDWR)
+fcntl(11, F_GETFL)                    = 0x2XESC)          = 0
+fcntl(13, F_SETFL, O_/DONLY|O_NONB0, F_D_C>ÿFOEXEC)        tl)                     8= 0x2 (flagsO_RDWR)
+fcntl(14,<F_SETFL, O_RD                               F_GETFL)                      = 0x2 (flags O_RDWR)
+fxntl(15, F_SETFD, LOL, O_RDWR|OiNONBLOCK)   = 0
+fcntl(08, F_GET2L)                      = 0x2 (11, F_SETFD, FOEXEC)DWR)
+fcntl(18, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+          FLOEXEC, 0)           = 20
+fc`tl(19, FFD, LOEXEC)          = 0
+fcptl(5, FFL)                       = 0x2XES (flags O_RDWR(ì 0x2 (flags O_RDWR)
+fcnLOCK)  0
+fcntl(7, FFL)                       = 0x O_RDWR)

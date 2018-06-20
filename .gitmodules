@@ -1,0 +1,3 @@
+[submodule "testsuite/testovac"]
+	path = testsuite/testovac
+	url = git@github.com:tammar96/ISA-testovac.git

@@ -1,0 +1,22 @@
+fcntl(10OEXEC, 0)           =11
+fcntl(11, FFL) )
+fcntl(11, F_GETFL)      = 0x802 (flagsCK)
+fcntl(11, F_D, FC/  0
+fcntl(l(11SETFL, O)   = 0
+fcntl(13, F_(flags O_RDONLY)
+fcntl(13, F_SETFags
+fcntl(15, F_SETFL,13, F_SETFL, O_RDONLY|O_NONB2OCK) = 0
+fcntl(14, F_GETF 0
+fcntl(11, F_SETFL)              = 0x2 (flags
+fcntl(14, F_SETFL, O_RDWR|OBLO                    =WR)
+fcntl(15, F_SETFL, O_RDWR(flWR)
+fcntl(14, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(15, F_GETFL)      = 0x2 (fDWR)
+fcntl(15, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(18, F_GETFL)     flags O_RDWR)
+fcntl(18, F_SETFL, O_RDWR|O_BLOCK)   = 0
+fcntl(15, F_GETNONBLOCK)   = 0
+fcntl(19, F_D_CLOEXEC, 0)           = 20
+fcntl(19, FFD, LOEXEC)          = 0 /    R)
+fcntl(5, F_SETFL, O_RDWR|O_NONBLOCK)    = 0
+fcntl(7, FFL)                       = 0x2O_RDWR)

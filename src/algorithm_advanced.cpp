@@ -1,11 +1,9 @@
 #include "algorithm_advanced.hpp"
 
 namespace st2se {
-	bool Algo_advanced::optimize(Ids &in, Ids &out) {
+    bool Algo_advanced::optimize(Ids &in, Ids &out) {
         std::cout << "Algo_advanced optimize emitted." << std::endl;
-        int(no) {
-            0
-        };
+        int no {0};
 
         for (const auto &item : in.data) {
             no++;
@@ -22,7 +20,7 @@ namespace st2se {
             this->processSyscall(item.second, out);
         }
 
-        std::cout << in.data.count("brk") << std::endl;
+        // std::cout << in.data.count("brk") << std::endl;
 
         return true;
     }
@@ -272,7 +270,7 @@ namespace st2se {
         from.erase(from.begin());
 
         return true;
-    };
+    }
 
 
     // asdf func()
@@ -389,12 +387,31 @@ namespace st2se {
     double Algo_advanced::distance(argument_t &left, argument_t &right) {
         double ret_val {-1.0};
 
-        // std::cout << "\n\n\n";
+        std::cout << "\n\n\n";
         // DEBUGprint("value_type:" << left.value_type << std::endl);
+        // DEBUGprint("value_type:" << right.value_type << std::endl);
         // DEBUGprint("left:" << arg2str(left) << "\n");
         // DEBUGprint("right:" << arg2str(right) << "\n");
 
+        // constant is the same as bitfield but constant has no `|` operator
         if (
+            (
+                (left.value_type == val_type_t::BITFIELD) ||
+                (left.value_type == val_type_t::CONSTANT)
+            )
+            ||
+            (
+                (right.value_type == val_type_t::BITFIELD) ||
+                (right.value_type == val_type_t::CONSTANT)
+            )
+        ) {
+            // compute distance between bitfields
+            // DEBUGprint("computing bitfield distance\n");
+            auto a = convert2bitfield(left);
+            auto b = convert2bitfield(right);
+            ret_val = bitfieldDistance(a, b);
+        }
+        else if (
             left.value_type == val_type_t::POINTER ||
             left.value_type == val_type_t::INTEGER
         ) {
@@ -413,15 +430,6 @@ namespace st2se {
 
         }
 
-        // constant is the same as bitfield but constant has no `|` operator
-        if ((left.value_type == val_type_t::BITFIELD) ||
-            (left.value_type == val_type_t::CONSTANT)) {
-            // compute distance between bitfields
-            // DEBUGprint("computing bitfield distance\n");
-            auto a = convert2bitfield(left);
-            auto b = convert2bitfield(right);
-            ret_val = bitfieldDistance(a, b);
-        }
 
         // DEBUGprint("ret_val:" << ret_val << std::endl);
         // std::cout << "\n\n\n";

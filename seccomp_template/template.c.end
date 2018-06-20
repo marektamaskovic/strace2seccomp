@@ -1,0 +1,22 @@
+    //-------------------------------------------------------------------------
+
+    if (seccomp_load(ctx) != 0) {
+        ret = 2;
+        goto out;
+    }
+
+    return ret;
+
+out:
+    seccomp_release(ctx);
+    return ret;
+}
+
+int main()
+{
+    setup_seccomp_whitelist();
+
+    // Put your code below
+    return 0;
+
+}

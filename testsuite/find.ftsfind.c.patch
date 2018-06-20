@@ -1,0 +1,52 @@
+--- a/findutils-4.6.0/find/ftsfind.c
++++ b/findutils-4.6.0/find/ftsfind.c
+@@ -38,6 +38,7 @@
+ #include <locale.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
++#include <seccomp.h>
+ 
+ /* gnulib headers. */
+ #include "cloexec.h"
+@@ -88,7 +89,31 @@
+ static bool find (char *arg) __attribute_warn_unused_result__;
+ static bool process_all_startpoints (int argc, char *argv[]) __attribute_warn_unused_result__;
+ 
+-
++bool setupSeccompWhitelist(void)
++{
++  scmp_filter_ctx ctx = seccomp_init(/*SCMP_ACT_ERRNO(EACCES)*/SCMP_ACT_KILL);
++
++  if (!ctx) {
++    return false;
++  }
++
++  int ret = 0;
++  
++  ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 0);
++
++  if (ret != 0) {
++    goto out;
++  }
++
++  if (seccomp_load(ctx) != 0) {
++    ret = -1;
++    goto out;
++  }
++
++out:
++  seccomp_release(ctx);
++  return (ret == 0);
++}
+ 
+ static void
+ left_dir (void)
+@@ -650,6 +675,7 @@
+ int
+ main (int argc, char **argv)
+ {
++  setupSeccompWhitelist();
+   int end_of_leading_options = 0; /* First arg after any -H/-L etc. */
+   struct predicate *eval_tree;
+ 
+

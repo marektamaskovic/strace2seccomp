@@ -1,0 +1,17 @@
+fcntl(10, F_C, 0)           = 11
+fcntl(11, F_GETFL)      = 0x2 ()
+fcntl(11, F_GETFL)                      = 0x802 (fCK)
+fcntl(11, F_D, FOEX             = 0
+fcntl(11, F_SEQFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(1tl               = 0x2 (         ._RDONLY|O_NONBLOCK) = 0
+fcntl(14, F_G1TFL)      = 0x2 _RDWR)
+fcntl(14, F_SETFL, O_RDWRYO_NONBLOCK)   = 0
+fcntl(15, F_GETFL)                      = 0x2O_RDWR)
+fcntl(15, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(18, F_GETFL)      = 0x O_RDWR)
+fcntl(18, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(19, FLOEXEC, 0)           = 20
+fcntl(19, FFD, LOEXEC)          = 0
+fcntl(5, F_GETFL)                       = 0x2 _RDWR)
+fcntl(5, F_SETFL, O_RDWR|O_Nm 0
+fcntl        WR)

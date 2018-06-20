@@ -12,6 +12,79 @@
 
 extern int syscalls;
 
+const std::map<std::string, int> signal_map {
+    // System Signals
+    {"SIGHUP", 1},
+    {"SIGINT", 2},
+    {"SIGQUIT", 3},
+    {"SIGILL", 4},
+    {"SIGTRAP", 5},
+    {"SIGABRT", 6},
+    {"SIGBUS", 7},
+    {"SIGFPE", 8},
+    {"SIGKILL", 9},
+    {"SIGUSR1", 10},
+    {"SIGSEGV", 11},
+    {"SIGUSR2", 12},
+    {"SIGPIPE", 13},
+    {"SIGALRM", 14},
+    {"SIGTERM", 15},
+    {"SIGSTKFLT", 16},
+    {"SIGCHLD", 17},
+    {"SIGCONT", 18},
+    {"SIGSTOP", 19},
+    {"SIGTSTP", 20},
+    {"SIGTTIN", 21},
+    {"SIGTTOU", 22},
+    {"SIGURG", 23},
+    {"SIGXCPU", 24},
+    {"SIGXFSZ", 25},
+    {"SIGVTALRM", 26},
+    {"SIGPROF", 27},
+    {"SIGWINCH", 28},
+    {"SIGIO", 29},
+    {"SIGPWR", 30},
+    {"SIGSYS", 31},
+    {"SIGEMT", 32},
+
+    // SIGRT SIGNALS
+    {"SIGRTMIN", 32},
+    {"SIGRTMAX", 64},
+
+    {"SIGRT_1", 32},
+    {"SIGRT_2", 33},
+    {"SIGRT_3", 34},
+    {"SIGRT_4", 35},
+    {"SIGRT_5", 36},
+    {"SIGRT_6", 37},
+    {"SIGRT_7", 38},
+    {"SIGRT_8", 39},
+    {"SIGRT_9", 40},
+    {"SIGRT_10", 41},
+    {"SIGRT_11", 42},
+    {"SIGRT_12", 43},
+    {"SIGRT_13", 44},
+    {"SIGRT_14", 45},
+    {"SIGRT_15", 46},
+    {"SIGRT_16", 47},
+    {"SIGRT_17", 48},
+    {"SIGRT_18", 49},
+    {"SIGRT_19", 50},
+    {"SIGRT_20", 51},
+    {"SIGRT_21", 52},
+    {"SIGRT_22", 53},
+    {"SIGRT_23", 54},
+    {"SIGRT_24", 55},
+    {"SIGRT_25", 56},
+    {"SIGRT_26", 57},
+    {"SIGRT_27", 58},
+    {"SIGRT_28", 59},
+    {"SIGRT_29", 60},
+    {"SIGRT_30", 61},
+    {"SIGRT_31", 62},
+    {"SIGRT_32", 63},
+    {"SIGRT_33", 64},
+};
 
 // *INDENT-OFF*
 #define divideKV(InputStr,Key,Val)                                  \
@@ -216,6 +289,18 @@ namespace st2se::grammar {
             else {
                 if (!states.get_bitfields()) {
                     states.value = in.string();
+                }
+                else {
+                    // std::cout << "It's maybe a bitfield" << std::endl;
+                    auto search = signal_map.find(in.string());
+
+                    if (search != signal_map.end()) {
+                        std::cout << "Found " << search->first << " " << search->second << '\n';
+                        states.value = search->second;
+                    }
+                    else {
+                        states.value = in.string();
+                    }
                 }
             }
 

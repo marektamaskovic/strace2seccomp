@@ -14,7 +14,7 @@
 
 namespace st2se {
 
-	class Algo_weak : public Algorithm {
+    class Algo_weak : public Algorithm {
         bool optimize(Ids &in, Ids &out) override;
         void processSyscall(const Syscall_t &sc, Ids &out);
         void findMinMax(Syscall_t &sc, Ids &out);

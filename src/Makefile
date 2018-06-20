@@ -1,20 +1,33 @@
-# CXX=g++
-CXX=clang++
+# Makefile for st2se
+# ------------------
+#  Author: Marek Tamaskovic
+#  - xtamas01.stud.fit.vutbr.cz
+#  - mtamasko.redhat.cz
+#  Project: strace2seccomp - st2se
+#  Compiled:  insert uname -a
+#  Note: 
+
+# Variables
+# ---------
+
+CXX=g++
+# CXX=clang++
 
 OBJ=main.o straceparser.o ids.o argparse.o states.o optimizer.o algorithm.o\
-	algorithm_weak.o algorithm_strict.o algorithm_advanced.o
+	algorithm_weak.o algorithm_strict.o algorithm_advanced.o \
+	generator.o output.o outputCPP.o
+
 BIN=st2se
 LDFLAGS=-Iinclude/
 LINK.o = $(LINK.cpp)
-
-ifeq ($(CXX),g++)
-	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
-else
-	CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -stdlib=libc++ -Iinclude/ -I/usr/include/c++/7/ $(USER_DEFINES)
-endif
+DATASET=../testdata/dataset.reduced
+CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
 
 
-all: CXXFLAGS += -g3 -fsanitize=address -fno-omit-frame-pointer
+# Recipes
+# -------
+
+all: CXXFLAGS += -g3 -fsanitize=address,undefined -fno-omit-frame-pointer
 all: st2se
 
 release: CXXFLAGS += -O2
@@ -31,6 +44,8 @@ tracing: all
 st2se: $(OBJ)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $(BIN)
 
+
+# static analysis
 clangTidy:
 	clang-tidy *.[ch]pp -checks=* -- -std=c++17 -stdlib=libc++ -I/usr/include/c++/7/ > lint.out
 
@@ -38,19 +53,21 @@ clangTidy:
 dep:
 	g++ *.cpp -Iinclude -MM >> Makefile
 
+# TODO
+# Paramatrize dataset file
 run:
 	@echo "========= TEST 1 ========" >out
 	@echo "========= TEST 1 ========" >err
-	./st2se dataset -w -d -v >>out 2>>err
+	./st2se $(DATASET) -w -d -v >>out 2>>err
 	@echo "========= TEST 2 ========" >>out
 	@echo "========= TEST 2 ========" >>err
-	./st2se dataset -s -d -v >>out 2>>err
+	./st2se $(DATASET) -s -d -v >>out 2>>err
 	@echo "========= TEST 3 ========" >>out
 	@echo "========= TEST 3 ========" >>err
-	./st2se dataset -a -d -v >>out 2>>err
+	./st2se $(DATASET) -a -d -v >>out 2>>err
 	@echo "========= TEST 4 ========" >>out
 	@echo "========= TEST 4 ========" >>err
-	./st2se dataset -a -t -d -v >>out 2>>err
+	./st2se $(DATASET) -a -t -d -v >>out 2>>err
 	@echo "========= TEST 4 ========" >>out
 	@echo "========= TEST 4 ========" >>err
 	./st2se -A >>out 2>>err
@@ -58,19 +75,27 @@ run:
 astyle: astylerc
 	./astyle_script.sh
 
+# Clean project folder
 clean:
 	-rm -f *.o
 	-rm -f *.orig
 	-rm -f $(BIN)
-	-rm -f vgcore.* core.*
+	-rm -f vgcore.* core.* lint.out
 	-rm -rf ./html
 	-rm -f *.gcda *.gcno coverage.info
 
 # DEPS: generated with 'dep' recipe
+# ---------------------------------
+
+algorithm_advanced.o: algorithm_advanced.cpp algorithm_advanced.hpp \
+ ids.hpp algorithm.hpp
 algorithm.o: algorithm.cpp algorithm.hpp ids.hpp
+algorithm_strict.o: algorithm_strict.cpp algorithm_strict.hpp ids.hpp \
+ algorithm.hpp
 algorithm_weak.o: algorithm_weak.cpp algorithm_weak.hpp ids.hpp \
  algorithm.hpp
 argparse.o: argparse.cpp argparse.hpp
+generator.o: generator.cpp generator.hpp ids.hpp outputCPP.hpp output.hpp
 ids.o: ids.cpp ids.hpp
 main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
  include/tao/pegtl/version.hpp include/tao/pegtl/ascii.hpp \
@@ -209,8 +234,10 @@ main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
  include/tao/pegtl/analysis/grammar_info.hpp \
  include/tao/pegtl/analysis/insert_guard.hpp straceparser_actions.hpp \
  straceparser_grammar.hpp algorithm_weak.hpp algorithm_strict.hpp \
- algorithm_advanced.hpp
+ algorithm_advanced.hpp generator.hpp outputCPP.hpp output.hpp
 optimizer.o: optimizer.cpp optimizer.hpp algorithm.hpp ids.hpp
+output.o: output.cpp output.hpp ids.hpp
+outputCPP.o: outputCPP.cpp outputCPP.hpp output.hpp ids.hpp
 states.o: states.cpp states.hpp ids.hpp
 straceparser.o: straceparser.cpp straceparser.hpp include/tao/pegtl.hpp \
  include/tao/pegtl/config.hpp include/tao/pegtl/version.hpp \

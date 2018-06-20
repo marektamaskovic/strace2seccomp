@@ -16,6 +16,16 @@ namespace st2se {
         return os << std::endl << std::endl;
     }
 
+    bool operator<(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
+
+        if (lhs.value < rhs.value) {
+            return true;
+        }
+
+        return false;
+    }
+
+
     bool operator==(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
         // std::cout << POSITION_MACRO << "comapring:" << std::endl;
         // std::cout << "\t" << lhs.value_type << "\t" << rhs.value_type << std::endl;
@@ -155,6 +165,7 @@ namespace st2se {
             root_sc.name = sc.name;
             root_sc.return_code = sc.return_code;
             root_sc.other = sc.other;
+            root_sc.arg_num = sc.arg_num;
             std::copy(sc.next.begin(), sc.next.end(), std::back_inserter(root_sc.next));
 
             // std::cout << __func__ << "\tinserting new arg" << std::endl;
@@ -263,14 +274,17 @@ namespace st2se {
             std::cout << "No args" << std::endl;
         }
         else {
+            // iterate through positions
             for (auto &pos : next) {
                 std::cout << "Clusters for arg:" << std::endl;
 
-                for (auto item1 : pos.next) {
-                    std::cout << "\t" << arg2str(item1) << ", ";
+                // iterate through clusters
+                for (auto cluster : pos.next) {
+                    std::cout << "\t" << arg2str(cluster) << ", ";
 
-                    for (auto item2 : item1.next) {
-                        std::cout << arg2str(item2) << ", ";
+                    // iterate in cluster
+                    for (auto item : cluster.next) {
+                        std::cout << arg2str(item) << ", ";
                     }
 
                     std::cout << std::endl;
