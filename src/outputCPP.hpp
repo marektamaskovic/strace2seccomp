@@ -29,6 +29,10 @@ namespace st2se {
         void writeFirstPart();
         void writeThreadPart();
         void writeLastPart();
+<<<<<<< HEAD
+=======
+        void writeThreadPart();
+>>>>>>> testbranch
         void closeFiles();
 
         bool writeZero = true;

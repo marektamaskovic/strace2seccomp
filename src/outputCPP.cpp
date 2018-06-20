@@ -7,7 +7,10 @@ namespace st2se {
         template_file_begin.open(template_file_b_path, std::ios::in);
         template_file_end.open(template_file_e_path, std::ios::in);
         template_file_thread.open(template_file_t_path, std::ios::in);
+<<<<<<< HEAD
 
+=======
+>>>>>>> testbranch
         output_source.open(output_source_path, std::ios_base::out | std::ios_base::trunc);
 
         if (!template_file_begin.is_open()) {
@@ -60,13 +63,28 @@ namespace st2se {
         }
     }
 
+    void outputCPP::writeThreadPart() {
+        std::string line;
+
+        while (getline(template_file_thread, line)) {
+            output_source << line << std::endl;
+        }
+    }
+
+
     void outputCPP::generate(Ids &ids) {
 
         openFiles();
 
-        writeFirstPart();
+        //writeFirstPart();
         std::cout << "First part" << std::endl;
 
+<<<<<<< HEAD
+=======
+        // FIXME add switch for thread
+        if(0)
+            writeThreadPart();
+>>>>>>> testbranch
 
         std::cout << "Generator print" << std::endl;
         // FIXME add switch for thread
@@ -75,11 +93,14 @@ namespace st2se {
 
         ids.print();
 
+        // output_source << "\t// seccomp rules" << std::endl;
+        // output_source << "\t//---------------" << std::endl;
+
         for (const auto &item : ids.data) {
             generateScRules(item);
         }
 
-        writeLastPart();
+        //writeLastPart();
         std::cout << "last part" << std::endl;
 
         closeFiles();
@@ -98,8 +119,13 @@ namespace st2se {
 
             if (!sc.second.next.empty()) {
                 for (auto &pos : sc.second.next) {
+<<<<<<< HEAD
                     // TODO Find out why this works ?
                     generateRules(sc.second, pos, pos_num++, /*clustered =*/ true);
+=======
+                    // TODO Find out  why this works ?
+                    generateRules(pos, pos_num++, /*clustered =*/ true);
+>>>>>>> testbranch
                 }
             }
         }
@@ -113,7 +139,11 @@ namespace st2se {
 
     }
 
+<<<<<<< HEAD
     void outputCPP::generateRules(Syscall_t &sc, argument_t arg, const unsigned pos, const bool clustered) {
+=======
+    void outputCPP::generateRules(argument_t arg, const unsigned pos, const bool clustered) {
+>>>>>>> testbranch
 
         argument_t &cluster = arg;
 
@@ -232,8 +262,19 @@ namespace st2se {
 
         output_source << "," << std::endl;
         output_source << "        ";  // indentation 8 spaces
+<<<<<<< HEAD
         output_source << "SCMP_A" << pos << "(SCMP_CMP_LT, " << arg2str(range.front()) << "), ";
         output_source << "SCMP_A" << pos << "(SCMP_CMP_GT, " << arg2str(range.back()) << ")";
+=======
+        output_source << "SCMP_A";
+        output_source << pos;
+        output_source << "(SCMP_CMP_IN_RANGE, ";
+        output_source << arg2str(range.front());
+        output_source << ", ";
+        output_source << arg2str(range.back());
+        output_source << ")";
+
+>>>>>>> testbranch
         // output_source << std::endl;
 
         return;
