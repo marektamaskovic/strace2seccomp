@@ -294,7 +294,6 @@ and in 4.1 for performance monitors. The eBPF brought the performance
 improvements and new capabilities.
 
 The eBPF virtual machine is widely used in the kernel for various filtering:
-\todo{describe items}
 \begin{itemize}
 	\item eXpress Data Path (XDP) \textit{is a high performance, programmable network data path in the Linux Kernel}
     \item Traffic control,
@@ -724,7 +723,7 @@ Value description:
 
 \paragraph{String represented in memory}
 The strings are represented in memory as an offset where the string
-begins and ends with null termination. \cite{ISO9899} \todo{TODO cite}
+begins and ends with null termination. \cite{ISO9899}
 For this reason seccomp can not operate with strings and we will skip string arguments as well.
 
 \section{Parsing Expression Grammar}
@@ -831,7 +830,7 @@ saved in class variables. By this variables the whole tool is instrumented.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\linewidth]{obrazky-figures/class/arg_sc.pdf}
+	\includegraphics[width=\linewidth]{obrazky-figures/class/arg_sc.pdf}
 	\caption{IDS representation in class diagram}
 	\label{fig:class:ids}
 \end{figure}
@@ -862,7 +861,7 @@ implemented method for inserting new Syscall object into the map.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/class/algo.pdf}
+	\includegraphics[width=0.95\linewidth]{obrazky-figures/class/algo.pdf}
 	\caption{Class hierarchy that demostrate relationship among algorithms and optimizer}
 	\label{fig:class:algo}
 \end{figure}
@@ -885,7 +884,7 @@ Every algorithm includes supportive methods for the optimization, e.g.,
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.5\linewidth]{obrazky-figures/class/output.pdf}
+	\includegraphics[width=0.65\linewidth]{obrazky-figures/class/output.pdf}
 	\caption{output}
 	\label{fig:class:output}
 \end{figure}
@@ -923,8 +922,6 @@ The compiler collection is released under the GPL license, other components, e.g
 The goal of Clang\footnote{\url{https://clang.llvm.org/}} project is to provide a new C based language front-end (C, C++, Objective-C,) for the LLVM\footnote{\url{http://www.llvm.org/}} compiler.
 It is released under NCSA Open Source Licence. Clang is designed to be highly compatible with GCC.
 It supports most of the GCC compilation flags and unofficial language extensions\footnote{\url{https://clang.llvm.org/docs/LanguageExtensions.html}}.
-\todo{maybe mention error logs}
-
 
 \subsection{Dynamic and Static Code Analysis}
 For correct development is necessary to find as many bugs as possible during the this phase.
@@ -1312,6 +1309,15 @@ The script has multiple subcommands:
 	\item \texttt{straceON} will turn on strace output while runing testsuite
 	\item \texttt{straceOFF} will turn off strace output while runing testsuite
 \end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \resizebox {0.8\textwidth} {!} {
+    \input{obrazky-figures/test_script_architecture}
+  }
+  \caption{Steps to set environment, gather strace logs, make binaries, run tests}
+  \label{fig:tikz:setenv_architecture}
+\end{figure}
 
 \subsection{Test Requirements}
 Requirements for the testing are:

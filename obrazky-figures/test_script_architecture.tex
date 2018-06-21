@@ -1,0 +1,122 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [] (0) at (-9, 4) {};
+		\node [] (1) at (-9, 3) {};
+		\node [] (2) at (-7, 3) {};
+		\node [] (3) at (-7, 4) {};
+		\node [] (4) at (-7, 3.5) {};
+		\node [] (5) at (-6, 3.5) {};
+		\node [] (6) at (-6, 4) {};
+		\node [] (7) at (-6, 3) {};
+		\node [] (8) at (-4, 3) {};
+		\node [] (9) at (-4, 4) {};
+		\node [] (10) at (-4, 3.5) {};
+		\node [] (11) at (-3, 3.5) {};
+		\node [] (12) at (-3, 4) {};
+		\node [] (13) at (-3, 3) {};
+		\node [] (14) at (-1, 4) {};
+		\node [] (15) at (-1, 3) {};
+		\node [] (16) at (-1, 3.5) {};
+		\node [] (17) at (0, 3.5) {};
+		\node [] (18) at (0, 4) {};
+		\node [] (19) at (0, 3) {};
+		\node [] (20) at (1, 3) {};
+		\node [] (21) at (2, 4) {};
+		\node [] (22) at (2, 3) {};
+		\node [] (23) at (-8, 3.5) {prep};
+		\node [] (24) at (-5, 3.5) {straceON};
+		\node [] (25) at (-2, 3.5) {make};
+		\node [] (26) at (1, 3.5) {tests};
+		\node [] (27) at (1, 2) {};
+		\node [] (28) at (0, 2) {};
+		\node [] (29) at (0, 1) {};
+		\node [] (30) at (2, 1) {};
+		\node [] (31) at (2, 2) {};
+		\node [] (32) at (0, 1.5) {};
+		\node [] (33) at (-0.75, 1) {};
+		\node [] (34) at (-0.75, 2) {};
+		\node [] (35) at (-3.25, 2) {};
+		\node [] (36) at (-3.25, 1) {};
+		\node [] (37) at (-4, 1) {};
+		\node [] (38) at (-4, 2) {};
+		\node [] (39) at (-6, 2) {};
+		\node [] (40) at (-6, 1) {};
+		\node [] (41) at (-7, 1) {};
+		\node [] (42) at (-7, 2) {};
+		\node [] (43) at (-9, 2) {};
+		\node [] (44) at (-9, 1) {};
+		\node [] (45) at (-0.75, 1.5) {};
+		\node [] (46) at (-3.25, 1.5) {};
+		\node [] (47) at (-4, 1.5) {};
+		\node [] (48) at (-6, 1.5) {};
+		\node [] (49) at (-7, 1.5) {};
+		\node [] (50) at (-9, 1.5) {};
+		\node [] (51) at (1, 1.5) {straceOFF};
+		\node [] (52) at (-2, 1.5) {applyPolicy};
+		\node [] (53) at (-5, 1.5) {make};
+		\node [] (54) at (-8, 1.5) {tests};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw (0.center) to (3.center);
+		\draw (3.center) to (4.center);
+		\draw (4.center) to (2.center);
+		\draw (2.center) to (1.center);
+		\draw (1.center) to (0.center);
+		\draw [decoration={markings,mark=at position 1 with {\arrow[scale=2]{>}}},
+    postaction={decorate}] (4.center) to (5.center);
+		\draw (5.center) to (6.center);
+		\draw (6.center) to (9.center);
+		\draw (9.center) to (10.center);
+		\draw (10.center) to (8.center);
+		\draw (8.center) to (7.center);
+		\draw (7.center) to (5.center);
+		\draw [decoration={markings,mark=at position 1 with {\arrow[scale=2]{>}}},
+    postaction={decorate}] (10.center) to (11.center);
+		\draw (11.center) to (12.center);
+		\draw (13.center) to (11.center);
+		\draw (13.center) to (15.center);
+		\draw (14.center) to (12.center);
+		\draw (14.center) to (16.center);
+		\draw (16.center) to (15.center);
+		\draw [decoration={markings,mark=at position 1 with {\arrow[scale=2]{>}}},
+    postaction={decorate}] (16.center) to (17.center);
+		\draw (17.center) to (18.center);
+		\draw (18.center) to (21.center);
+		\draw (21.center) to (22.center);
+		\draw (22.center) to (20.center);
+		\draw (20.center) to (19.center);
+		\draw (19.center) to (17.center);
+		\draw (28.center) to (32.center);
+		\draw (32.center) to (29.center);
+		\draw (29.center) to (30.center);
+		\draw (30.center) to (31.center);
+		\draw (31.center) to (27.center);
+		\draw (27.center) to (28.center);
+		\draw [decoration={markings,mark=at position 1 with {\arrow[scale=2]{>}}},
+    postaction={decorate}] (20.center) to (27.center);
+		\draw (43.center) to (42.center);
+		\draw (44.center) to (41.center);
+		\draw (37.center) to (40.center);
+		\draw (39.center) to (38.center);
+		\draw (35.center) to (34.center);
+		\draw (33.center) to (36.center);
+		\draw (43.center) to (50.center);
+		\draw (50.center) to (44.center);
+		\draw (41.center) to (49.center);
+		\draw (49.center) to (42.center);
+		\draw (39.center) to (48.center);
+		\draw (48.center) to (40.center);
+		\draw (38.center) to (47.center);
+		\draw (47.center) to (37.center);
+		\draw (35.center) to (46.center);
+		\draw (46.center) to (36.center);
+		\draw (34.center) to (45.center);
+		\draw (45.center) to (33.center);
+		\draw [decoration={markings,mark=at position 1 with {\arrow[scale=2]{>}}},
+    postaction={decorate}] (32.center) to (45.center);
+		\draw [decoration={markings,mark=at position 1 with {\arrow[scale=2]{>}}},
+    postaction={decorate}] (46.center) to (47.center);
+		\draw [decoration={markings,mark=at position 1 with {\arrow[scale=2]{>}}},
+    postaction={decorate}] (48.center) to (49.center);
+	\end{pgfonlayer}
+\end{tikzpicture}
