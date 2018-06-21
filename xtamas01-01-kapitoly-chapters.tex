@@ -1240,60 +1240,60 @@ configuration. The test results are audited by functional configuration audit to
 certify that the software product satisfies its specification etc.''}
 \cite{Schmidt2013335}
 
-In this case the acceptance testing is used even on policy generator testing
-which means generate policies, i.e, whitelist of syscalls from strace of given
-program and applying the whitelist into carefully picked programs. Afterwards we
-run the testsuite provided for that program and by this way we can immediately
-see if the generated whitelist works correctly.
+In this case, the acceptance testing is combined with module testing. This
+combination means that it will be tested together. Testing will consist of
+multiple steps as generate policies, i.e., a whitelist of system calls from
+strace of given program and applying the whitelist into carefully picked
+programs. Afterwards, we run the testsuite provided for that program and by this
+way we can immediately see if the generated whitelist works correctly.
 
 \subsection{Testing on real programs}
-I decided for four programs which will appear in acceptance testing. One is
-demanded by RedHat Inc. and that is
+For this testing was picked four programs. RedHat Inc. demands one, and that is
 USBGuard\footnote{\url{https://usbguard.github.io/}}. USBGuard is open source
-project developed under GNU GPL v2.0 licence. It is implementinf USB device
-authorization which can be set up localy or over centralised management.
-\cite{usbguardCentralized} Analyzing a gathered system calls, from USBGuard we
-can say that it is a complex program. And this is really needed for quality
-acceptance testing. Another advantage of USBGuard is that it has a good
-testsuite which will be helpfull in evaluation of generated policies by
-\texttt{strace2seccomp}. We will focus only on \texttt{usbguard-daemon} which is
-the main program of whole project.
+project developed under GNU GPL v2.0 licence. It is implementing USB device
+authorization which can be set up locally or with centralised
+management\cite{usbguardCentralized}. USBGuard has a sophisticated architecture
+which is complicated enough for use in this testing. Another advantage of
+USBGuard is that it has large enough testsuite which will be helpful in the
+evaluation of generated policies by \texttt{strace2seccomp}. In this project, we
+will focus only on daemon because it is most involved in the whole project.
 
 Next program is called \emph{cp} which is part of a GNU project called
-\emph{coreutils}\footnote{\url{https://www.gnu.org/software/coreutils/coreutils.html}}.
-The \emph{cp} is a program used for copying files acros filesystem on GNU Linux
-operating systems.One of the benefits of GNU projects is that they have a
-relatively big testsuite. The drawbacks of this program is that it is part of a
+\emph{coreutils}\footnote{\url{https://www.gnu.org/software/coreutils/coreutils.html}} .
+The \emph{cp} is a program used for copying files across filesystem typicaly on
+POSIX operating systems. One of the advantages of this project is that it has a
+relatively big testsuite. The drawback of this program is that it is part of a
 big project and is though to acquire strace logs from testsuite. This problem I
-solved by manualy patching the Makefile which was responsible for runing tests.
-The patch added before \texttt{cp} command the strace command with appropriate
-flags mentioned above in Section \ref{strace_params}.
+solved by manually patching the Makefile which was responsible for running
+tests. The patch will add strace command with appropriate flags before the
+invocation of \emph{cp}.
 
 Another program is \emph{find} from GNU project called
-\emph{findutils}\footnote{\url{https://www.gnu.org/software/findutils/}}. The
-\emph{find} is a program used to find files or directories in filesystem. It is
-specific for GNU Linux as well as \emph{cp}. This program has really good
-testsuite like \emph{coreutils} project. The drawback of complexity is simmilar
-\emph{coreutils} as well. Find was chosen for high number of syscalls which are
-different only in a provided arguments. This will test the robustness of
-clustering in \texttt{strace2seccomp} tool.
+\emph{findutils}\footnote{\url{https://www.gnu.org/software/findutils/}} . The
+\emph{find} is a program used to locate files or directories in filesystem. It
+is specific for GNU Linux as well as cp. This program has good testsuite as
+\emph{coreutils} project does. The drawback of project complexity is similar to
+\emph{coreutils}. In \emph{find} is a high number of system calls that differ
+only in provided arguments a thus it will test the robustness of clustering in
+\texttt{strace2seccomp} tool.
 
-The last program is my school project from \textit{Network Applications} class
-called \emph{testovac}\footnote{\url{https://github.com/tammar96/ISA-testovac}}.
-This project was chosen for its architecture. The testovac is multithreaded
-application and here we can test if the filter is successfuly distributed on
-other threads. The testovac doesn't have a good testsuite, we only run it in one
-scenario. However the point of this test is to see if the provided seccomp
+The last program is school project from \emph{Network Applications} class called
+\emph{testovac}\footnote{\url{https://github.com/tammar96/ISA-testovac}} . This
+project was chosen for its multithreaded architecture. With this program, we can
+test if the filter is successfully distributed on other threads. The
+\emph{testovac} does not have a good testsuite thus we only run it in one
+scenario. However, the point of this test is to see if the provided seccomp
 filter works on multithreaded applications.
 
 \subsection{Test Preparation}
-For the testing we need to setup an environment. For this purpose I made a
-script which will download software on which will be stare2seccomp tested. The
-script is is named \texttt{./setEnv} and is located in testsuite folder. The
-script has multiple commands:
+For the testing, we need to set up an environment. For this purpose, we have
+a~script which will download software on which will be stare2seccomp tested. The
+script is named \texttt{./setEnv} and is located in testsuite folder.
+The script has multiple subcommands:
 \begin{itemize}
 	\item \texttt{prep} will download, extract and configure tested programs
-	\item \texttt{applyPolicy} will patch sourcecodes with generated straces
+		(\emph{coreutils}, \emph{findutils}, USBGuard, \emph{testovac})
+	\item \texttt{applyPolicy} will patch sourcecodes with generated policies
 	\item \texttt{make} will run make for all tested programs
 	\item \texttt{tests} will run testsuits
 	\item \texttt{clean} will clean the testing folder
@@ -1307,17 +1307,16 @@ Requirements for the testing are:
 \begin{enumerate}
 	\item Internet connection - used for download tested software.
 	\item Computer with x86 architecture - For testing purpose was chosen
-	computer with x86 architecture.
+	machine with x86 architecture.
 \end{enumerate}
 
-\subsection{Results}
-During testing phase was discovered two big issues both of them during late
-development phase. The first issue is caused by libseccomp library which is not
-supporting intervals in any way. The libseccomp architecture is specified that
-in one fuction \texttt{seccomp\_rule\_add} is logical and among partial
-expressions. Among the funstions \texttt{seccomp\_rule\_add} is logical or. In
-one function \texttt{seccomp\_rule\_add} can be mentioned only once one argument
-position. This means that it is not possible to write something like in Figure
+\subsection{Results} During testing phase was discovered two significant issues.
+The first issue is caused by the libseccomp library which is not supporting
+intervals (ranges) in any way. The libseccomp architecture specifies that in one
+function \texttt{seccomp\_rule\_add} is logical and among partial expressions.
+Among the functions \texttt{seccomp\_rule\_add} is logical or. Moreover, in one
+function \texttt{seccomp\_rule\_add} can be mentioned argument position only
+once which means that it is not possible to write intervals as shown in Figure
 \ref{libseccomp_native}.
 
 \begin{figure}[h]
@@ -1335,12 +1334,12 @@ position. This means that it is not possible to write something like in Figure
 	\caption{Possible interval expression}
 \end{figure}
 
-This issue was partialy solved in this pull
-request\footnote{\url{https://github.com/seccomp/libseccomp/issues/94}}. Problem
-in this pull request is that it is not confirmed if it will be in libseccomp.
-Because of that in my project is used downstream version of libseccomp which has
-to be manualy installed on the system. In the downstreamed version can be
-interval expressed in Figure \ref{libseccomp_in_range}.
+This issue was partially solved in this pull
+request\footnote{\url{https://github.com/seccomp/libseccomp/issues/94}}. The
+problem with this pull request is that it is not confirmed if it will be merged
+into libseccomp. Because of that in this thesis is used a downstream version of
+libseccomp which has to be manually installed on the system. In the downstream
+version can be interval expressed as shown in Figure \ref{libseccomp_in_range}.
 
 \begin{figure}[h]
 	\label{libseccomp_in_range}
@@ -1358,23 +1357,24 @@ interval expressed in Figure \ref{libseccomp_in_range}.
 \end{figure}
 
 Another issue is that the libseccomp operators as
-\texttt{SCMP\_CMP\_GT/GE/LT/LE} are not working correctly when negative system
+\texttt{SCMP\_CMP\_GT/GE/LT/LE} are not work\-ing correctly when negative system
 call arguments are provided. This issue is as well reported to the libseccomp
 project\footnote{\url{https://github.com/seccomp/libseccomp/issues/69}}. Luckily
-this problem is planed to be fixed in next libseccomp release. However in time
-of writing this thesis the fix still doesn't exist.
+this problem is planned to be fixed in the next libseccomp release. However, in
+the time of writing this thesis, the fix still doesn’t exist.
 
-The problem of negative values provided into system call is triaged as important
-to fix beacuse in any complex piece of software is used at least one system call
-with negative number provided in arguments. Very often it is a \texttt{mmap} or
-\texttt{llseek}. The main problem is on the x86\_64 / amd64 architectures. As
-you can see the system call numbers are 64bit long numbers and BPF used in
-kernel is only 32bits. Libseccomp is comparing 64bit as a two 32bits unsigned
-numbers. And this is the problem. This we can proof by libseccomp code or by
+The problem of negative values provided into system call is triaged as critical
+because in any software is used at least one system call with negative number
+provided in arguments. Very often it is a \texttt{mmap} or \texttt{llseek}. The
+problem is nicely visible on the x86\_64 / amd64 architecture. The system call
+numbers are 64bits wide numbers, and BPF used in the kernel uses only 32bits
+wide registers. Libseccomp is generating a comparison of 64-bit number as a two
+32-bits unsigned numbers. We can prove this with libseccomp code or by
 disassembling BPF instructions generated by libseccomp.
 
-In Figure \ref{libseccomp_rule} is only rule we are adding into a filter. It
-means that fifth arguemnt must be in range $[-2, 3]$ including border values.
+Imagine that we have a clear filter so every system call would be killed. We add
+only one rule which is shown In Figure \ref{libseccomp_rule}. This rule means
+that fifth argument must be in the range $[-2, 3]$ including border values.
 
 \begin{figure}[h]
 	\label{libseccomp_rule}
@@ -1388,10 +1388,10 @@ means that fifth arguemnt must be in range $[-2, 3]$ including border values.
 \end{figure}
 
 In Figure \ref{BPF_rule} we can see the generated BPF code. The interesting part
-begins on line~5. Here we can see that begins the rule which we specified in
-C/C++ code. On line~6 we store upper 32~bits of a number in accumulator. On
-line~7 we are comparing accumulator with value \texttt{0xffffffff} and then on
-line~8 with zero. This behaviour is invalid and should be fixed.
+begins on~line~5. Here we can see that begins the rule which we specified in
+C/C++ code. On~line~6 we store upper 32 bits of a number in accumulator.
+On~line~7 we are comparing accumulator with value \texttt{0xffffffff} and then
+on~line~8 with zero. This behavior is invalid and should be fixed.
 
 \begin{figure}[h]
 	\label{BPF_rule}
@@ -1417,10 +1417,10 @@ line~8 with zero. This behaviour is invalid and should be fixed.
 	\caption{Disassembled BPF filter}
 \end{figure}
 
-These two problems are critical for correct working of strace2seccomp tool.
-Because of this it is not possible to test or run the output of strace2seccomp
-on amd64 architecture. Only metric for correctness of output on the amd64
-architecture is manualy review output.
+These two problems are critical for the correct functionality of libseccomp, and
+as a result we can not test it. This leads us to the conclusion of our test. Only
+metric for the correctness of output on the is manually review output.
+
 
 \section{Static analysis}
 
