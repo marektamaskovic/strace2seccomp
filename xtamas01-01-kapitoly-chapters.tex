@@ -79,7 +79,7 @@ Tracing involves a specialized logging to record information, useful for debuggi
 This can be done in multiple layers, from tracing which lines in the program was executed to individual instructions run on a CPU.
 Collecting this information can be done with various tools, e.g., strace, ftrace etc.
 
-\subsection{Strace}
+\paragraph{Strace}
 \label{sec:strace}
 
 Strace \cite{strace_man} is a easy to use diagnostic, instructional and debugging tool.
@@ -138,7 +138,7 @@ The argument can occur in a sequence and it is considered of atomic types
 The string is represented in a program as a place in memory but strace can dereference this address
 and show it in analysis.
 
-\subsection{Ptrace}
+\paragraph{Ptrace}
 Strace is using ptrace \cite{ptrace_man} system call.
 Ptrace is used to  implement debuggers and other tools for process monitoring.
 Basically, the strace call ptrace and attach to a tracee (monitored process).
@@ -147,7 +147,7 @@ Now the tracer (strace) can observe and control the execution as well as inspect
 With this information, strace can determine which syscall was called.
 During the second halt after syscall, the strace can get information of return value from syscall.
 
-\subsection{Ftrace}
+\paragraph{Ftrace}
 Ftrace \cite{ftrace_man} is an internal tracer which traces events in the kernel.
 It is designed for developers to examine kernel events.
 The main feature of this tool is to measure latencies and find issues that take place outside of the user-space.
@@ -158,7 +158,7 @@ Another frequent use of ftrace is event tracing.
 In the kernel, there is a massive amount of static event points that can be enabled with a tracefs file system.
 The event points provide an interface to observe what is going on in the various parts of the kernel.
 
-\subsection{Dtrace}
+\paragraph{Dtrace}
 DTrace \cite{dtrace_man, dtrace_about} (shortcut for Dynamic Tracing) is a performance analysis and a troubleshooting tool.
 It is included in various operating systems, such as FreeBSD, Mac OS, Solaris and Linux.
 This tool instruments all software, not just user-level software but also operating system kernel and device drivers.
@@ -172,7 +172,7 @@ This design can decrease the overhead in performance of  sensitive systems.
 For our purposes, DTrace is too complicated to setup or gather the information about syscalls.
 You need to write some scripts to define which syscalls you want to be informed with and in our use case, we need every system call.
 
-\subsection{SystemTap}
+\paragraph{SystemTap}
 SystemTap \cite{systemtap} is a tracing and probing tool that allows to gather information from probes injected into the kernel.
 It is similar to Dtrace.
 It started as a clone of Dtrace because it has uncompatible licence for using in GNU Linux.
@@ -193,7 +193,7 @@ Similar as Dtrace the SystemTap is too complicated to work as system call monito
 The Systemtap can not dereference the pointer address in the system call but the strace tool can.
 
 
-\subsection{Autrace}
+\paragraph{Autrace}
 The Linux Auditing System helps system administrators to create an audit trail.
 Every action on workstation or server is logged into a log file.
 This tool can track security-relevant events, record the events and detect misuses or unauthorised activities by inspecting the audit log.
@@ -348,16 +348,17 @@ The libseccomp API is designed to abstract an user from underlying BPF based sys
 The interface should be more familiar to and quickly adopted by application developers.
 The comparison of libseccomp and raw BPF filter is shown in Appendix \ref{lst:raw_bpf} and \ref{lst:libseccomp}.
 
-The library accept on input a set of rules which are later transformed into a eBPF format used in seccomp.
+The library accept on input a set of rules which are later transformed into a BPF format used in seccomp.
 One of the advantages of a libseccomp is that you can write a function call based filter.
-This filter is then translated to eBPF and after that it is loaded into seccomp as filter.
-This method is not transitive from function call filter to eBPF.
+This filter is then translated to BPF and after that it is loaded into seccomp as filter.
+This method is not transitive from function call filter to BPF.
 There are some differences but they are on so small-scale that they can be ignored.
 
 Another advantages of seccomp is that it has a permissive mode in which every syscall violation is reported to the user.
 This feature can be helpful if you want to obtain information which syscalls was called.
 This use case is really similar to the syscall monitoring.
-But it is really tough to depend on this output because it is in development.
+But it is really tough to depend on this output because it is in development and
+is dependent on autrace.
 
 
 \chapter{Solution Design}
@@ -818,7 +819,7 @@ readability.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.35\linewidth]{obrazky-figures/class/params.pdf}
+	\includegraphics[width=0.5\linewidth]{obrazky-figures/class/params.pdf}
 	\caption{Class diagram that shows representation of runtime arguments}
 	\label{fig:class:params}
 \end{figure}
@@ -834,6 +835,7 @@ saved in class variables. By this variables the whole tool is instrumented.
 	\caption{IDS representation in class diagram}
 	\label{fig:class:ids}
 \end{figure}
+\pagebreak
 
 The next class diagram in Figure \ref{fig:class:ids} show us an Intermediate
 Data Structure (IDS). The IDS is handled with multiple components in this
@@ -864,6 +866,7 @@ implemented method for inserting new Syscall object into the map.
 	\caption{Class hierarchy that demostrate relationship among algorithms and optimizer}
 	\label{fig:class:algo}
 \end{figure}
+\pagebreak
 
 The Figure \ref{fig:class:algo} ilustrate dependency and generalization in class
 hierarchy in optimizer. As you can see the \texttt{Optimizer} is dependant on
@@ -886,6 +889,7 @@ Every algorithm includes supportive methods for the optimization, e.g.,
 	\caption{output}
 	\label{fig:class:output}
 \end{figure}
+\pagebreak
 
 In Policy generator is used the same approach as in the optimizer. The hierarchy
 among classes in policy generator shows the Figure \ref{fig:class:output}.
@@ -993,15 +997,18 @@ The usage of the tool is straightforward.
 
 
 \chapter{Software Verification}
-This chapter will describe activities used to assure quality control of the developed tool.
-First, I want to introduce on which aspects we will focus.
-One of the aspects is \textit{module testing}.
-The main purpose of module testing is to detect errors in submodules, in communication among them, in passing data through data structures.
-Another aspect of verification is \textit{system testing} merged with \textit{acceptance testing}.
-In this type of testing we will check if the strace2seccomp tool has a valid architectural design.
-Next aspect which will be checked is \textit{static analysis}.
-Static analysis is type of testing which does not require to run the program but requires a source code of the tool.
-The static analyzer will analyse the source codes with different heuristics and produces an analysis of detected errors. % cite ITS lectures.
+This chapter will describe activities used to assure quality control of the
+developed tool. First, I want to introduce on which aspects we will focus. One
+of the aspects is \textit{module testing}. The main purpose of module testing is
+to detect errors in submodules, in communication among them, in passing data
+through data structures. Another aspect of verification is \textit{system
+testing} merged with \textit{acceptance testing}. In this type of testing we
+will check if the strace2seccomp tool has a valid architectural design. Next we
+will check code with \textit{static analysis} tool and get information about
+errors in code. Static analysis is type of testing which does not require to run
+the program but requires a source code of the tool. The static analyzer will
+analyse the source codes with different heuristics and produces an list of
+detected errors.
 
 
 \section{Module Testing}
@@ -1015,8 +1022,7 @@ Table \ref{table:moduletesting} shows us the description of module's test suits.
 		\hline
 		\textbf{Module / Component}	&	\textbf{Test descriptiom} \\ \hline \hline
 		Params 						& Validity of recognized runtime arguments \\ \hline
-		StraceParser				& Syntax testing, validity of parsed data, correct error handling \\ \hline
-		% Algorithm 					& Testing correctness of algorithms \\ \hline
+		StraceParser				& Syntax testing, correct error handling \\ \hline
 		Output                      & Check the validity of generated policy \\ \hline
 	\end{tabular}
 	\caption{Test plan}
@@ -1029,20 +1035,25 @@ or some invalid ones and providing them as runtime arguments for strace2seccomp 
 It was automated with handmande script.
 
 \subsection{StraceParser Testing}
-StraceParser module is responsible for parsing the strace output and translates it to intermediate data structure.
-Testing of this module can be done with various techniques.
-First one which is used is fuzzy testing or fuzzing described in section below \ref{fuzzing}.
+StraceParser module is responsible for parsing the strace output and translates
+it to intermediate data structure. Testing of this module can be done with
+various techniques. First one which is used is fuzzy testing or fuzzing
+described in section below \ref{fuzzing}.
 
 \subsubsection{Fuzzing}
 \label{fuzzing}
-The term fuzzing was first used by professor Barton Miller who used fuzzing to test robustness of UNIX applications in 1989 \cite{Takanen:2008:FSS:1404500, Marhefka2013}.
-Fuzzing is a testing method which generates an unexpected input on tested software and then is observing if the software crashes. The whole process is
-typicaly automated or semiautomated that involves repeatedly manipulating and supplying input data to targeted program.
-Some modern fuzzers (programs that generates a stochastic input), record every crash or halt of a tested program.
-The stochastic data are in most cases invalid to observer how application handles invalid
-states and boundary conditions.
-"The name comes from modern applications tendency to fail due to random input caused by line noise on 'fuzzy' telephon lines."\cite{Takanen:2008:FSS:1404500, N2LYDLnqzEFYp0wM, takanen2009fuzzing}
-In other literature fuzzing can be named by these terms:
+The term fuzzing was first used by professor Barton Miller who used fuzzing to
+test robustness of UNIX applications in 1989 \cite{Takanen:2008:FSS:1404500,
+Marhefka2013}. Fuzzing is a testing method which generates an unexpected input
+on tested software and then is observing if the software crashes. The whole
+process is typicaly automated or semiautomated that involves repeatedly
+manipulating and supplying input data to targeted program. Some modern fuzzers
+(programs that generates a stochastic input), record every crash or halt of a
+tested program. The stochastic data are in most cases invalid to observer how
+application handles invalid states and boundary conditions. "The name comes from
+modern applications tendency to fail due to random input caused by line noise on
+'fuzzy' telephon lines."\cite{Takanen:2008:FSS:1404500, N2LYDLnqzEFYp0wM,
+takanen2009fuzzing} In other literature fuzzing can be named by these terms:
 \begin{itemize}
 	\item Negative testing
 	\item Syntax testing
@@ -1323,13 +1334,13 @@ once which means that it is not possible to write intervals as shown in Figure
 	\label{libseccomp_native}
 	\lstset{style=c++}
 	\begin{lstlisting}
-	seccomp_rule_add(
-		ctx,
-		SCMP_ACT_ALLOW,
-		SCMP_SYS(write),
-		2,
-		SCMP_A0(SCMP_CMP_GE, 1), SCMP_A0(SCMP_CMP_LE, 5) // interval
-	);
+seccomp_rule_add(
+	ctx,
+	SCMP_ACT_ALLOW,
+	SCMP_SYS(write),
+	2,
+	SCMP_A0(SCMP_CMP_GE, 1), SCMP_A0(SCMP_CMP_LE, 5) // interval
+);
 	\end{lstlisting}
 	\caption{Possible interval expression}
 \end{figure}
@@ -1345,13 +1356,13 @@ version can be interval expressed as shown in Figure \ref{libseccomp_in_range}.
 	\label{libseccomp_in_range}
 	\lstset{style=c++}
 	\begin{lstlisting}
-	seccomp_rule_add(
-		ctx,
-		SCMP_ACT_ALLOW,
-		SCMP_SYS(write),
-		1,
-		SCMP_A0(SCMP_CMP_IN_RANGE, 1, 5) // interval
-	);
+seccomp_rule_add(
+	ctx,
+	SCMP_ACT_ALLOW,
+	SCMP_SYS(write),
+	1,
+	SCMP_A0(SCMP_CMP_IN_RANGE, 1, 5) // interval
+);
 	\end{lstlisting}
 	\caption{Proposed operator \texttt{SCMP\_CMP\_IN\_RANGE}}
 \end{figure}
@@ -1380,9 +1391,9 @@ that fifth argument must be in the range $[-2, 3]$ including border values.
 	\label{libseccomp_rule}
 	\lstset{style=c++}
 	\begin{lstlisting}
-	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 1,
-		SCMP_A4(SCMP_CMP_IN_RANGE, -2, 3)
-	);
+ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 1,
+	SCMP_A4(SCMP_CMP_IN_RANGE, -2, 3)
+);
 	\end{lstlisting}
 	\caption{Only rule we are adding into a libseccomp filter}
 \end{figure}
@@ -1397,32 +1408,29 @@ on~line~8 with zero. This behavior is invalid and should be fixed.
 	\label{BPF_rule}
 	\lstset{style=npl}
 	\begin{lstlisting}
-	line | CODE | JT | JF | K
-	=================================
-	0000: 0x20 0x00 0x00 0x00000004  A = arch
-	0001: 0x15 0x00 0x0b 0xc000003e  if (A != ARCH_X86_64) goto 0013
-	0002: 0x20 0x00 0x00 0x00000000  A = sys_number
-	0003: 0x35 0x00 0x01 0x40000000  if (A < 0x40000000) goto 0005
-	0004: 0x15 0x00 0x08 0xffffffff  if (A != 0xffffffff) goto 0013
-	0005: 0x15 0x00 0x07 0x00000009  if (A != mmap) goto 0013
-	0006: 0x20 0x00 0x00 0x00000034  A = args[4] >> 32   <--- storing upper 32bits.
-	0007: 0x35 0x00 0x05 0xffffffff  if (A < 0xffffffff) goto 0013
-	0008: 0x25 0x04 0x00 0x00000000  if (A > 0x0) goto 0013
-	0009: 0x20 0x00 0x00 0x00000030  A = args[4] <---- storing lower 32bits.
-	0010: 0x35 0x00 0x02 0xfffffffe  if (A < 0xfffffffe) goto 0013
-	0011: 0x25 0x01 0x00 0x00000003  if (A > 0x3) goto 0013
-	0012: 0x06 0x00 0x00 0x7fff0000  return ALLOW
-	0013: 0x06 0x00 0x00 0x00000000  return KILL
+line | CODE | JT | JF | K
+=================================
+0000: 0x20 0x00 0x00 0x00000004  A = arch
+0001: 0x15 0x00 0x0b 0xc000003e  if (A != ARCH_X86_64) goto 0013
+0002: 0x20 0x00 0x00 0x00000000  A = sys_number
+0003: 0x35 0x00 0x01 0x40000000  if (A < 0x40000000) goto 0005
+0004: 0x15 0x00 0x08 0xffffffff  if (A != 0xffffffff) goto 0013
+0005: 0x15 0x00 0x07 0x00000009  if (A != mmap) goto 0013
+0006: 0x20 0x00 0x00 0x00000034  A = args[4] >> 32 <--- storing upper 32bits
+0007: 0x35 0x00 0x05 0xffffffff  if (A < 0xffffffff) goto 0013
+0008: 0x25 0x04 0x00 0x00000000  if (A > 0x0) goto 0013
+0009: 0x20 0x00 0x00 0x00000030  A = args[4] <--------- storing lower 32bits
+0010: 0x35 0x00 0x02 0xfffffffe  if (A < 0xfffffffe) goto 0013
+0011: 0x25 0x01 0x00 0x00000003  if (A > 0x3) goto 0013
+0012: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+0013: 0x06 0x00 0x00 0x00000000  return KILL
 	\end{lstlisting}
-	\caption{Disassembled BPF filter}
+	\caption{Disassembled BPF filter on amd64 machine}
 \end{figure}
 
 These two problems are critical for the correct functionality of libseccomp, and
 as a result we can not test it. This leads us to the conclusion of our test. Only
 metric for the correctness of output on the is manually review output.
-
-
-\section{Static analysis}
 
 \chapter{Conclusion}
 
