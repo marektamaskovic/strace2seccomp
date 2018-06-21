@@ -19,45 +19,52 @@ int setup_seccomp_whitelist(){
 
     // seccomp rules
     //-------------------------------------------------------------------------
-    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(access),
+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(access), 2,
         SCMP_A0(SCMP_CMP_EQ, 0),
-        SCMP_A1(SCMP_CMP_GE, 0), SCMP_A1(SCMP_CMP_LE, R_OK)
+        SCMP_A1(SCMP_CMP_IN_RANGE, 0, R_OK)
     );
-    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(arch_prctl),
-        SCMP_A0(SCMP_CMP_GE, 0), SCMP_A0(SCMP_CMP_LE, ARCH_SET_FS)
+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(arch_prctl), 1,
+        SCMP_A0(SCMP_CMP_IN_RANGE, 0, ARCH_SET_FS)
     );
-    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(brk), 0);    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(execve),
+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(brk), 0);
+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(execve), 2,
         SCMP_A0(SCMP_CMP_EQ, 0),
         SCMP_A1(SCMP_CMP_EQ, 0)
     );
-    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit_group),
+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit_group), 1,
         SCMP_A0(SCMP_CMP_GE, 0), SCMP_A0(SCMP_CMP_LE, 0)
     );
-    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap),
-        SCMP_A1(SCMP_CMP_GE, 0), SCMP_A1(SCMP_CMP_LE, 14576),
-        SCMP_A2(SCMP_CMP_GE, 0), SCMP_A2(SCMP_CMP_LE, PROT_READ|PROT_WRITE),
-        SCMP_A3(SCMP_CMP_GE, 0), SCMP_A3(SCMP_CMP_LE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS),
-        SCMP_A4(SCMP_CMP_GE, -1), SCMP_A4(SCMP_CMP_LE, 0),
-        SCMP_A5(SCMP_CMP_GE, 0), SCMP_A5(SCMP_CMP_LE, 0)
+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 5,
+        SCMP_A1(SCMP_CMP_IN_RANGE, 0, 14576),
+        SCMP_A2(SCMP_CMP_IN_RANGE, 0, PROT_READ|PROT_WRITE),
+        SCMP_A3(SCMP_CMP_IN_RANGE, 0, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS),
+        SCMP_A4(SCMP_CMP_IN_RANGE, -1, 0),
+        SCMP_A5(SCMP_CMP_IN_RANGE, 0, 0)
     );
-    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mprotect),
-        SCMP_A1(SCMP_CMP_GE, 0), SCMP_A1(SCMP_CMP_LE, 2093056),
-        SCMP_A1(SCMP_CMP_GE, 4096), SCMP_A1(SCMP_CMP_LE, 16384),
-        SCMP_A2(SCMP_CMP_GE, 0), SCMP_A2(SCMP_CMP_LE, PROT_READ)
+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mprotect), 2
+        SCMP_A1(SCMP_CMP_IN_RANGE, 0, 4096),
+        SCMP_A2(SCMP_CMP_IN_RANGE, 0, PROT_READ)
     );
-    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(munmap),
-        SCMP_A1(SCMP_CMP_GE, 0), SCMP_A1(SCMP_CMP_LE, 213488)
+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mprotect), 2
+        SCMP_A1(SCMP_CMP_IN_RANGE, 16384, 2093056),
+        SCMP_A2(SCMP_CMP_IN_RANGE, 0, PROT_READ)
     );
-    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(openat),
-        SCMP_A0(SCMP_CMP_GE, 0), SCMP_A0(SCMP_CMP_LE, AT_FDCWD),
+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(munmap), 1
+        SCMP_A1(SCMP_CMP_IN_RANGE, 0, 213488)
+    );
+    rc |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(openat), 3
+        SCMP_A0(SCMP_CMP_IN_RANGE, 0, AT_FDCWD),
         SCMP_A1(SCMP_CMP_EQ, 0),
-        SCMP_A2(SCMP_CMP_GE, 0), SCMP_A2(SCMP_CMP_LE, O_RDONLY|O_CLOEXEC)
+        SCMP_A2(SCMP_CMP_IN_RANGE, 0, O_RDONLY|O_CLOEXEC)
     );
     //-------------------------------------------------------------------------
 
-    if (seccomp_load(ctx) != 0) {
-        rc = 2;
+    if (rc != 0) {
         goto out;
+    }
+
+    if (seccomp_load(ctx) != 0) {
+        rc = 2, goto out;
     }
     return rc;
 out:
@@ -67,8 +74,10 @@ out:
 
 int main()
 {
-    // setup_seccomp_whitelist(&ctx);
-    setup_seccomp_whitelist();
+    // setup and load seccomp whitelist
+    if (setup_seccomp_whitelist() != 0) {
+        return 1;
+    }
     // Put your code below
     return 0;
 }

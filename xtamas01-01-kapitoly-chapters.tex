@@ -772,6 +772,7 @@ It computes results only when they are needed, in the same order as the original
 %test it with some fuzzer
 
 \section{Input}
+\label{strace_params}
 As I mentioned earlier strace tool was chosen because it is easy to use system
 call monitoring tool. It can monitor what observed program demanded from kernel.
 With strace tool it is possible to trace child processes. The main advantage of
@@ -1013,9 +1014,9 @@ Table \ref{table:moduletesting} shows us the description of module's test suits.
 	\begin{tabular}{|l|p{10cm}|}
 		\hline
 		\textbf{Module / Component}	&	\textbf{Test descriptiom} \\ \hline \hline
-		Params 											& Validity of recognized runtime arguments \\ \hline
-		StraceParser								& Syntax testing, validity of parsed data, correct error handling \\ \hline
-		Algorithm 									& Testing correctness of algorithms \\ \hline
+		Params 						& Validity of recognized runtime arguments \\ \hline
+		StraceParser				& Syntax testing, validity of parsed data, correct error handling \\ \hline
+		% Algorithm 					& Testing correctness of algorithms \\ \hline
 		Output                      & Check the validity of generated policy \\ \hline
 	\end{tabular}
 	\caption{Test plan}
@@ -1023,7 +1024,9 @@ Table \ref{table:moduletesting} shows us the description of module's test suits.
 \end{table}
 
 \subsection{Params Testing}
-about using params class in custom test set and manualy check if the correct flags was ommited.
+Params testing was done manualy which is ment by systematicaly picking border values
+or some invalid ones and providing them as runtime arguments for strace2seccomp tool.
+It was automated with handmande script.
 
 \subsection{StraceParser Testing}
 StraceParser module is responsible for parsing the strace output and translates it to intermediate data structure.
@@ -1128,127 +1131,298 @@ and \ref{fuz:result4a}.
 
 \todo{check the fuzzer output}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/master/exec_speed.pdf}
-	\caption{master/exec\_speed}
-	\label{fuz:result1a}
-\end{figure}
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/master/exec_speed.pdf}
+% 	\caption{master/exec\_speed}
+% 	\label{fuz:result1a}
+% \end{figure}
+%
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/exec_speed.pdf}
+% 	\caption{thread\_1/exec\_speed}
+% 	\label{fuz:result2a}
+% \end{figure}
+%
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/exec_speed.pdf}
+% 	\caption{thread\_2/exec\_speed}
+% 	\label{fuz:result3a}
+% \end{figure}
+%
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/exec_speed.pdf}
+% 	\caption{thread\_3/exec\_speed}
+% 	\label{fuz:result4a}
+% \end{figure}
+%
+% asdfasdfasf
+% asdfasdfasf
+% asdfasdfasf
+%
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/master/high_freq.pdf}
+% 	\caption{master/high\_freq}
+% 	\label{fuz:result1b}
+% \end{figure}
+%
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/high_freq.pdf}
+% 	\caption{thread\_1/high\_freq}
+% 	\label{fuz:result2b}
+% \end{figure}
+%
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/high_freq.pdf}
+% 	\caption{thread\_2/high\_freq}
+% 	\label{fuz:result3b}
+% \end{figure}
+%
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/high_freq.pdf}
+% 	\caption{thread\_3/high\_freq}
+% 	\label{fuz:result4b}
+% \end{figure}
+%
+% asdfasdfasfasdfasdfasfasdfasdfasfasdfasdfasf
+%
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/master/low_freq.pdf}
+% 	\caption{master/low\_freq}
+% 	\label{fuz:result1c}
+% \end{figure}
+%
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/low_freq.pdf}
+% 	\caption{thread\_1/low\_freq}
+% 	\label{fuz:result2c}
+% \end{figure}
+%
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/low_freq.pdf}
+% 	\caption{thread\_2/low\_freq}
+% 	\label{fuz:result3c}
+% \end{figure}
+%
+% \begin{figure}[H]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/low_freq.pdf}
+% 	\caption{thread\_3/low\_freq}
+% 	\label{fuz:result4c}
+% \end{figure}
+%
+% asdfasdfasfasdfasdfasfasdfasdfasfasdfasdfasfasdfasdfasf
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/exec_speed.pdf}
-	\caption{thread\_1/exec\_speed}
-	\label{fuz:result2a}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/exec_speed.pdf}
-	\caption{thread\_2/exec\_speed}
-	\label{fuz:result3a}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/exec_speed.pdf}
-	\caption{thread\_3/exec\_speed}
-	\label{fuz:result4a}
-\end{figure}
-
-asdfasdfasf
-asdfasdfasf
-asdfasdfasf
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/master/high_freq.pdf}
-	\caption{master/high\_freq}
-	\label{fuz:result1b}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/high_freq.pdf}
-	\caption{thread\_1/high\_freq}
-	\label{fuz:result2b}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/high_freq.pdf}
-	\caption{thread\_2/high\_freq}
-	\label{fuz:result3b}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/high_freq.pdf}
-	\caption{thread\_3/high\_freq}
-	\label{fuz:result4b}
-\end{figure}
-
-asdfasdfasfasdfasdfasfasdfasdfasfasdfasdfasf
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/master/low_freq.pdf}
-	\caption{master/low\_freq}
-	\label{fuz:result1c}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/low_freq.pdf}
-	\caption{thread\_1/low\_freq}
-	\label{fuz:result2c}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/low_freq.pdf}
-	\caption{thread\_2/low\_freq}
-	\label{fuz:result3c}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/low_freq.pdf}
-	\caption{thread\_3/low\_freq}
-	\label{fuz:result4c}
-\end{figure}
-
-asdfasdfasfasdfasdfasfasdfasdfasfasdfasdfasfasdfasdfasf
-
-\subsection{Algorithms}
-How should we test the algorithms?
-
-\subsection{Policy generator}
-how should we test this adapter?
+% \subsection{Algorithms}
+% How should we test the algorithms?
 
 \section{System and Acceptance Testing}
+\label{acceptance_testing}
 In the book of ''Software Acceptance Testing'' is acceptance testing defined as:
-\emph{''Acceptance testing is the formal testing activity that presents the product to the
-customer by enterprise (many times it includes stakeholders as well).
-This activity represents demonstration of a software product and shows to the customer
-that the requirements fulfilled its obligations. By this activity you can decide if
-the product is ready for deployment. The software items must be examined
-to ensure that the provided product is complete i.e. the architecture must be audited to check if
-it accurate reflects the software configuration. The test results are audited by functional
-configuration audit to certify that the software product satisfies its specification etc.''} \cite{Schmidt2013335}
+\emph{''Acceptance testing is the formal testing activity that presents the
+product to the customer by enterprise (many times it includes stakeholders as
+well). This activity represents demonstration of a software product and shows to
+the customer that the requirements fulfilled its obligations. By this activity
+you can decide if the product is ready for deployment. The software items must
+be examined to ensure that the provided product is complete i.e. the
+architecture must be audited to check if it accurate reflects the software
+configuration. The test results are audited by functional configuration audit to
+certify that the software product satisfies its specification etc.''}
+\cite{Schmidt2013335}
 
-In this case the acceptance testing means \todo{todo}
+In this case the acceptance testing is used even on policy generator testing
+which means generate policies, i.e, whitelist of syscalls from strace of given
+program and applying the whitelist into carefully picked programs. Afterwards we
+run the testsuite provided for that program and by this way we can immediately
+see if the generated whitelist works correctly.
 
-\subsection{Testing on real app}
-\subsection{USBGuard}
+\subsection{Testing on real programs}
+I decided for four programs which will appear in acceptance testing. One is
+demanded by RedHat Inc. and that is
+USBGuard\footnote{\url{https://usbguard.github.io/}}. USBGuard is open source
+project developed under GNU GPL v2.0 licence. It is implementinf USB device
+authorization which can be set up localy or over centralised management.
+\cite{usbguardCentralized} Analyzing a gathered system calls, from USBGuard we
+can say that it is a complex program. And this is really needed for quality
+acceptance testing. Another advantage of USBGuard is that it has a good
+testsuite which will be helpfull in evaluation of generated policies by
+\texttt{strace2seccomp}. We will focus only on \texttt{usbguard-daemon} which is
+the main program of whole project.
+
+Next program is called \emph{cp} which is part of a GNU project called
+\emph{coreutils}\footnote{\url{https://www.gnu.org/software/coreutils/coreutils.html}}.
+The \emph{cp} is a program used for copying files acros filesystem on GNU Linux
+operating systems.One of the benefits of GNU projects is that they have a
+relatively big testsuite. The drawbacks of this program is that it is part of a
+big project and is though to acquire strace logs from testsuite. This problem I
+solved by manualy patching the Makefile which was responsible for runing tests.
+The patch added before \texttt{cp} command the strace command with appropriate
+flags mentioned above in Section \ref{strace_params}.
+
+Another program is \emph{find} from GNU project called
+\emph{findutils}\footnote{\url{https://www.gnu.org/software/findutils/}}. The
+\emph{find} is a program used to find files or directories in filesystem. It is
+specific for GNU Linux as well as \emph{cp}. This program has really good
+testsuite like \emph{coreutils} project. The drawback of complexity is simmilar
+\emph{coreutils} as well. Find was chosen for high number of syscalls which are
+different only in a provided arguments. This will test the robustness of
+clustering in \texttt{strace2seccomp} tool.
+
+The last program is my school project from \textit{Network Applications} class
+called \emph{testovac}\footnote{\url{https://github.com/tammar96/ISA-testovac}}.
+This project was chosen for its architecture. The testovac is multithreaded
+application and here we can test if the filter is successfuly distributed on
+other threads. The testovac doesn't have a good testsuite, we only run it in one
+scenario. However the point of this test is to see if the provided seccomp
+filter works on multithreaded applications.
+
+\subsection{Test Preparation}
+For the testing we need to setup an environment. For this purpose I made a
+script which will download software on which will be stare2seccomp tested. The
+script is is named \texttt{./setEnv} and is located in testsuite folder. The
+script has multiple commands:
+\begin{itemize}
+	\item \texttt{prep} will download, extract and configure tested programs
+	\item \texttt{applyPolicy} will patch sourcecodes with generated straces
+	\item \texttt{make} will run make for all tested programs
+	\item \texttt{tests} will run testsuits
+	\item \texttt{clean} will clean the testing folder
+	\item \texttt{revertPatches} will revertPatches
+	\item \texttt{straceON} will turn on strace output while runing testsuite
+	\item \texttt{straceOFF} will turn off strace output while runing testsuite
+\end{itemize}
+
+\subsection{Test Requirements}
+Requirements for the testing are:
+\begin{enumerate}
+	\item Internet connection - used for download tested software.
+	\item Computer with x86 architecture - For testing purpose was chosen
+	computer with x86 architecture.
+\end{enumerate}
+
+\subsection{Results}
+During testing phase was discovered two big issues both of them during late
+development phase. The first issue is caused by libseccomp library which is not
+supporting intervals in any way. The libseccomp architecture is specified that
+in one fuction \texttt{seccomp\_rule\_add} is logical and among partial
+expressions. Among the funstions \texttt{seccomp\_rule\_add} is logical or. In
+one function \texttt{seccomp\_rule\_add} can be mentioned only once one argument
+position. This means that it is not possible to write something like in Figure
+\ref{libseccomp_native}.
+
+\begin{figure}[h]
+	\label{libseccomp_native}
+	\lstset{style=c++}
+	\begin{lstlisting}
+	seccomp_rule_add(
+		ctx,
+		SCMP_ACT_ALLOW,
+		SCMP_SYS(write),
+		2,
+		SCMP_A0(SCMP_CMP_GE, 1), SCMP_A0(SCMP_CMP_LE, 5) // interval
+	);
+	\end{lstlisting}
+	\caption{Possible interval expression}
+\end{figure}
+
+This issue was partialy solved in this pull
+request\footnote{\url{https://github.com/seccomp/libseccomp/issues/94}}. Problem
+in this pull request is that it is not confirmed if it will be in libseccomp.
+Because of that in my project is used downstream version of libseccomp which has
+to be manualy installed on the system. In the downstreamed version can be
+interval expressed in Figure \ref{libseccomp_in_range}.
+
+\begin{figure}[h]
+	\label{libseccomp_in_range}
+	\lstset{style=c++}
+	\begin{lstlisting}
+	seccomp_rule_add(
+		ctx,
+		SCMP_ACT_ALLOW,
+		SCMP_SYS(write),
+		1,
+		SCMP_A0(SCMP_CMP_IN_RANGE, 1, 5) // interval
+	);
+	\end{lstlisting}
+	\caption{Proposed operator \texttt{SCMP\_CMP\_IN\_RANGE}}
+\end{figure}
+
+Another issue is that the libseccomp operators as
+\texttt{SCMP\_CMP\_GT/GE/LT/LE} are not working correctly when negative system
+call arguments are provided. This issue is as well reported to the libseccomp
+project\footnote{\url{https://github.com/seccomp/libseccomp/issues/69}}. Luckily
+this problem is planed to be fixed in next libseccomp release. However in time
+of writing this thesis the fix still doesn't exist.
+
+The problem of negative values provided into system call is triaged as important
+to fix beacuse in any complex piece of software is used at least one system call
+with negative number provided in arguments. Very often it is a \texttt{mmap} or
+\texttt{llseek}. The main problem is on the x86\_64 / amd64 architectures. As
+you can see the system call numbers are 64bit long numbers and BPF used in
+kernel is only 32bits. Libseccomp is comparing 64bit as a two 32bits unsigned
+numbers. And this is the problem. This we can proof by libseccomp code or by
+disassembling BPF instructions generated by libseccomp.
+
+In Figure \ref{libseccomp_rule} is only rule we are adding into a filter. It
+means that fifth arguemnt must be in range $[-2, 3]$ including border values.
+
+\begin{figure}[h]
+	\label{libseccomp_rule}
+	\lstset{style=c++}
+	\begin{lstlisting}
+	ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 1,
+		SCMP_A4(SCMP_CMP_IN_RANGE, -2, 3)
+	);
+	\end{lstlisting}
+	\caption{Only rule we are adding into a libseccomp filter}
+\end{figure}
+
+In Figure \ref{BPF_rule} we can see the generated BPF code. The interesting part
+begins on line~5. Here we can see that begins the rule which we specified in
+C/C++ code. On line~6 we store upper 32~bits of a number in accumulator. On
+line~7 we are comparing accumulator with value \texttt{0xffffffff} and then on
+line~8 with zero. This behaviour is invalid and should be fixed.
+
+\begin{figure}[h]
+	\label{BPF_rule}
+	\lstset{style=npl}
+	\begin{lstlisting}
+	line | CODE | JT | JF | K
+	=================================
+	0000: 0x20 0x00 0x00 0x00000004  A = arch
+	0001: 0x15 0x00 0x0b 0xc000003e  if (A != ARCH_X86_64) goto 0013
+	0002: 0x20 0x00 0x00 0x00000000  A = sys_number
+	0003: 0x35 0x00 0x01 0x40000000  if (A < 0x40000000) goto 0005
+	0004: 0x15 0x00 0x08 0xffffffff  if (A != 0xffffffff) goto 0013
+	0005: 0x15 0x00 0x07 0x00000009  if (A != mmap) goto 0013
+	0006: 0x20 0x00 0x00 0x00000034  A = args[4] >> 32   <--- storing upper 32bits.
+	0007: 0x35 0x00 0x05 0xffffffff  if (A < 0xffffffff) goto 0013
+	0008: 0x25 0x04 0x00 0x00000000  if (A > 0x0) goto 0013
+	0009: 0x20 0x00 0x00 0x00000030  A = args[4] <---- storing lower 32bits.
+	0010: 0x35 0x00 0x02 0xfffffffe  if (A < 0xfffffffe) goto 0013
+	0011: 0x25 0x01 0x00 0x00000003  if (A > 0x3) goto 0013
+	0012: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+	0013: 0x06 0x00 0x00 0x00000000  return KILL
+	\end{lstlisting}
+	\caption{Disassembled BPF filter}
+\end{figure}
+
+These two problems are critical for correct working of strace2seccomp tool.
+Because of this it is not possible to test or run the output of strace2seccomp
+on amd64 architecture. Only metric for correctness of output on the amd64
+architecture is manualy review output.
 
 \section{Static analysis}
-Any bugs?
-
-\section{Test Requirements}
-
-\section{Results}
-Which bugs have you found.
 
 \chapter{Conclusion}
 

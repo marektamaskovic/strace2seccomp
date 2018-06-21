@@ -17,7 +17,11 @@ int myapp_libseccomp_start(void)
 	if (rc < 0)
 		goto out;
 
-	rc = seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(read), 3, SCMP_A0(SCMP_CMP_EQ, STDIN_FILENO), SCMP_A1(SCMP_CMP_NE, 0x0),SCMP_A2(SCMP_CMP_LT, SSIZE_MAX));
+	rc = seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(read), 3,
+		SCMP_A0(SCMP_CMP_EQ, STDIN_FILENO),
+		SCMP_A1(SCMP_CMP_NE, 0x0),
+		SCMP_A2(SCMP_CMP_LT, SSIZE_MAX)
+	);
 
 	if (rc < 0)
 		goto out;
