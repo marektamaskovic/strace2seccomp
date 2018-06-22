@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <optional>
+#include <string>
 
 #include "output.hpp"
 #include "ids.hpp"
@@ -38,6 +39,7 @@ namespace st2se {
 
 
         virtual void generate(Ids &ids);
+        virtual void setOutput(std::string o);
         void generateScRules(std::pair<std::string, Syscall_t> sc);
         void generateClusterRules(argument_t pos, const unsigned pos_num);
         void generateRules(argument_t arg, const unsigned pos, const bool clustered);

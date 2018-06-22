@@ -13,11 +13,13 @@
 #include "generator.hpp"
 
 int main(int argc, char *argv[]) {
+    std::ios::sync_with_stdio(false);
+
     int ret_val {0};
 
     auto *params = new Params(argc, argv);
 
-    // std::cout << *params << std::endl;
+    std::cout << *params << std::endl;
 
     st2se::Ids in {};
     st2se::Ids out {};
@@ -78,10 +80,18 @@ int main(int argc, char *argv[]) {
     st2se::Output *cpp = new st2se::outputCPP();
 
     gen.initialize(cpp);
+
+    if(params->thread)
+        gen.threadSupport(/*turn on =*/true);
+
+    if(params->prolog)
+        gen.genFuncProlog(/*turn on =*/true);
+
+    if(!params->output.empty())
+        gen.setOutput(params->output);
+
     gen.generate(out);
 
-
-    // out.data["close"].print();
 
     std::cout << "Exiting ..." << std::endl;
 

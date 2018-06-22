@@ -18,6 +18,17 @@ namespace st2se {
         return true;
     }
 
+    void Generator::threadSupport(bool b){
+        gnrt->threadSupport(b);
+    }
+
+    void Generator::genFuncProlog(bool b){
+        gnrt->genFuncProlog(b);
+    }
+
+    void Generator::setOutput(std::string o){
+        gnrt->setOutput(o);
+    }
 
     bool Generator::isInitialized() {
         return gnrt == nullptr ? false : true;

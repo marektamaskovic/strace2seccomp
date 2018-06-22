@@ -20,6 +20,11 @@ namespace st2se {
         bool generate(Ids &ids);
         bool isInitialized();
         void removeOutput();
+        void threadSupport(bool b);
+        void genFuncProlog(bool b);
+        void setOutput(std::string o);
+
+
     };
 } // namespace st2se
 

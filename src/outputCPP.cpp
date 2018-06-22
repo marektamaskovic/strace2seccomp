@@ -3,7 +3,6 @@
 namespace st2se {
 
     void outputCPP::openFiles() {
-        // FIXME use only onde dot
         template_file_begin.open(template_file_b_path, std::ios::in);
         template_file_end.open(template_file_e_path, std::ios::in);
         template_file_thread.open(template_file_t_path, std::ios::in);
@@ -33,7 +32,6 @@ namespace st2se {
         output_source.close();
     }
 
-
     void outputCPP::writeFirstPart() {
         std::string line;
 
@@ -59,31 +57,29 @@ namespace st2se {
         }
     }
 
+    void outputCPP::setOutput(std::string o){
+        output_source_path = o;
+    }
+
 
     void outputCPP::generate(Ids &ids) {
 
         openFiles();
 
-        //writeFirstPart();
-        std::cout << "First part" << std::endl;
+        if(genProlog)
+            writeFirstPart();
 
-        // FIXME add switch for thread
-        if(0)
+        if(genThreading)
             writeThreadPart();
 
-        std::cout << "Generator print" << std::endl;
-
         ids.print();
-
-        // output_source << "\t// seccomp rules" << std::endl;
-        // output_source << "\t//---------------" << std::endl;
 
         for (const auto &item : ids.data) {
             generateScRules(item);
         }
 
-        //writeLastPart();
-        std::cout << "last part" << std::endl;
+        if(genProlog)
+            writeLastPart();
 
         closeFiles();
 
