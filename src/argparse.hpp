@@ -25,6 +25,7 @@ class Params {
     std::vector<std::string> file_names {};
 
     Params(int argc, char *argv[]);
+    void printHelp();
     // ~Params();
 
 

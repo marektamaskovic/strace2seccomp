@@ -26,8 +26,35 @@ std::ostream &operator<< (std::ostream &os, const Params &a) {
         << acc;
 }
 
+void Params::printHelp() {
+
+    std::string s4 {"    "};
+
+    std::cout << "Usage:" << std::endl;
+    std::cout << "\tst2se [OPTION] filename ..." << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Generic options:" << std::endl;
+    std::cout << s4 << "-h [--help]\t\t\t: print this message" << std::endl;
+    std::cout << s4 << "-v [--verbose]\t\t: turn on verbose mode" << std::endl;
+    std::cout << s4 << "-d [--debug]\t\t: turn on debug mode" << std::endl;
+    std::cout << s4 << "-t [--tracing]\t\t: turn on tracing mode" << std::endl;
+    std::cout << s4 << "-A [--analyze-grammar] \t: analyze grammar" << std::endl;
+    std::cout << s4 << "-o FILE [--output=FILE]\t: set output file" << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Configuration options:" << std::endl;
+    std::cout << s4 << "-w [--weak]\t\t\t: use weak algotirthm" << std::endl;
+    std::cout << s4 << "-s [--strict]\t\t: use strict algotirthm" << std::endl;
+    std::cout << s4 << "-a [--advanaced]\t\t: use advanced algotirthm" << std::endl;
+    std::cout << s4 << "--prolog\t\t\t: generate function prolog" << std::endl;
+    std::cout << s4 << "--thread\t\t\t: add filter synchronization among threads/processes" << std::endl;
+    std::cout << std::endl;
+
+}
+
 Params::Params(int argc, char *argv[]) {
-    std::string help_str{"-h"};
+    std::string help_str{"-h asd"};
     // std::shared_ptr<char*> _argv {argv};
 
     int c;
@@ -38,8 +65,8 @@ Params::Params(int argc, char *argv[]) {
             {"weak",             no_argument, &this->weak,     1},
             {"strict",           no_argument, &this->strict,   1},
             {"advanced",         no_argument, &this->advanced, 1},
-            {"verbose",          no_argument, &this->verbose,  1},
-            {"debug",            no_argument, &this->debug,    1},
+            {"verbose",          no_argument, nullptr,       'v'},
+            {"debug",            no_argument, nullptr,       'd'},
             {"tracing",          no_argument, &this->tracing,  1},
             {"analyze-grammar",  no_argument, &this->analysis, 1},
             {"thread",           no_argument, &this->thread,   1},
@@ -51,7 +78,7 @@ Params::Params(int argc, char *argv[]) {
         /* getopt_long stores the option index here. */
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "wsavdtAo:p",
+        c = getopt_long(argc, argv, "wsavdtAo:ph",
                 long_options, &option_index);
 
         /* Detect the end of the options. */
@@ -75,6 +102,10 @@ Params::Params(int argc, char *argv[]) {
 
             std::cout << std::endl;
             break;
+
+        case 'h':
+            printHelp();
+            exit(0);
 
         case 'w':
             this->weak = 1;
@@ -126,6 +157,10 @@ Params::Params(int argc, char *argv[]) {
         while (optind < argc) {
             this->file_names.emplace_back(argv[optind++]);
         }
+    }
+
+    if (help){
+        exit(0);
     }
 
 }
