@@ -18,19 +18,19 @@ algorithm for clustering. The thesis can be found in another
 		st2se [OPTION] filename ...
 
 	Generic options:
-	    -h [--help]				: print this message
-	    -v [--verbose]     		: turn on verbose mode
-	    -d [--debug]       		: turn on debug mode
-	    -t [--tracing]     		: turn on debug mode
-	    -A [--analyze-grammar] 	: analyze grammar
+	    -h [--help]								: print this message
+	    -v [--verbose]						: turn on verbose mode
+	    -d [--debug]							: turn on debug mode
+	    -t [--tracing]						: turn on debug mode
+	    -A [--analyze-grammar]		: analyze grammar
 	    -o FILE [--output=FILE]	: set output file
 
 	Configuration options:
-	    -w [--weak] 		: use weak algotirthm
-	    -s [--strict]		: use strict algotirthm
-	    -a [--advanaced]	: use advanced algotirthm
-	    --prolog			: generate function prolog
-	    --thread			: add filter synchronization among threads/processes
+	    -w [--weak]								: use weak algotirthm
+	    -s [--strict]							: use strict algotirthm
+	    -a [--advanaced]					: use advanced algotirthm
+	    --prolog										: generate function prolog
+	    --thread										: add filter synchronization among threads/processes
 
 ## Examples
 
