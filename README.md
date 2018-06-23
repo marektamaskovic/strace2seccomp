@@ -10,7 +10,7 @@ with three optimization algorithms. One is called strict, and it will produce
 algorithm will provide on the output only extremes as border values for
 allowance interval.  The last one is called advanced which implements DBSCAN
 algorithm for clustering. The thesis can be found in another
-[branch](./blob/thesis/testsuite/)
+[branch](https://github.com/tammar96/IBP/tree/thesis)
 
 ## Usage
 
@@ -55,7 +55,7 @@ switch `-A`. On standard output will be printed number of found issues.
 
 ## Testing
 Information about testsuite and how to run tests is located
-[here](./blob/source/testsuite/README.md)
+[here](./testsuite/README.md)
 
 ## Possible extensions
 - Go language support
