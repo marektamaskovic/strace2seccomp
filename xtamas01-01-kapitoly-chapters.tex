@@ -388,6 +388,7 @@ We will require from the application to fulfill the following requirements:
 	\end{enumerate}
 \item Policy will be generated with libseccomp \cite{libseccomp_git} syntax as C language \cite{ISO9899} code.
 \end{enumerate}
+\pagebreak
 
 \section{Architecture}
 The architecture of this application is based on architectural patterns.
@@ -811,6 +812,14 @@ The strace2seccomp tool is generating a source code for C/C++.
 In the source code is used seccomp library to provide system call blocking.
 The example of a generated source code is in Appendix \ref{lst:example1}
 
+The source code can be generated in multiple ways. The basic settings are that
+it will create only function calls with arguments. The extension to this it can
+add a function prolog and a function epilog. This option is useful when you want
+to copy and paste the output of strace2seccomp into your source code. The last
+thing which can be added into output is multithread or multiprocess support.
+When this option is set up, in the output code will be located part which turns
+on filter synchronization among threads or processes.
+
 \section{Class Hierarchy}
 This section provides information about class hierarchy in this project. The
 color of classes in figures does not mean anything it is there only for better
@@ -828,14 +837,6 @@ At the beginning is the \texttt{Params} class as we can see in Figure
 getopt library to acquire a runtime arguments. The omitted arguments are then
 saved in class variables. By this variables the whole tool is instrumented.
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/class/arg_sc.pdf}
-	\caption{IDS representation in class diagram}
-	\label{fig:class:ids}
-\end{figure}
-\pagebreak
-
 The next class diagram in Figure \ref{fig:class:ids} show us an Intermediate
 Data Structure (IDS). The IDS is handled with multiple components in this
 project, i.e., parser saves information there, etc., description is in Section
@@ -846,6 +847,15 @@ two different cases of creating an object so it was not needed. The
 format value says if the argument is in 'key=value' or 'value' form. The actual
 value is stored in container \texttt{std::variant}. This is the C++17 equivalent
 of enumeration in C language.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/class/arg_sc.pdf}
+	\caption{IDS representation in class diagram}
+	\label{fig:class:ids}
+\end{figure}
+\pagebreak
+
 
 \texttt{Syscall\_t} class in Figure \ref{fig:class:ids} is dependant  on the
 \texttt{\_argument\_t}. This class contains information about syscall, e.g.,
@@ -861,7 +871,7 @@ implemented method for inserting new Syscall object into the map.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.95\linewidth]{obrazky-figures/class/algo.pdf}
+	\includegraphics[width=\textwidth]{obrazky-figures/class/algo.pdf}
 	\caption{Class hierarchy that demostrate relationship among algorithms and optimizer}
 	\label{fig:class:algo}
 \end{figure}
@@ -910,6 +920,8 @@ used. The reason for using implementation from LLVM project was that in the GNU
 implementation, there was a bug which affected a C++17
 functionality\footnote{\url{https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=877838}}
 \footnote{\url{https://gcc.gnu.org/viewcvs/gcc?view=revision&revision=258854}}.
+However, during the later development phase was the bug fixed and both implementation
+of the library can be used.
 
 \paragraph{GNU Compiler Collection.}GNU Compiler Collection is a part of the GNU project.
 It aims to improve compiler used in the GNU ecosystem.
@@ -989,9 +1001,87 @@ This tool uses line coverage technique and it is the poorest coverage from the c
 
 
 \section{Usage}
-The usage of the tool is straightforward.
+
+% Usage:
+% 	st2se [OPTION] filename ...
+%
+
+\begin{table}[h]
+\centering
+	\begin{tabular}{||l|l|p{6cm}||}
+	\hline
+	\multicolumn{3}{||l||}{\textbf{General options}}              \\ \hline\hline
+	short format & long format         & description \\ \hline
+	\texttt{-h}           & \texttt{----help}              & print this message \\
+	\texttt{-v}           & \texttt{----verbose}           & turn on verbose mode \\
+	\texttt{-d}           & \texttt{----debug}             & turn on debug mode \\
+	\texttt{-t}           & \texttt{----tracing}           & turn on tracing mode \\
+	\texttt{-A}           & \texttt{----analyze-grammar} & analyze grammar \\
+	\texttt{-o=FILE}      & \texttt{----output=FILE}       &  set output file \\ \hline
+	\end{tabular}
+	\caption{My caption}
+	\label{my-label}
+\end{table}
+
+\begin{table}[h]
+\centering
+	\begin{tabular}{||l|l|p{6cm}||}
+	\hline
+	\multicolumn{3}{||l||}{\textbf{Configuration options}}              \\ \hline\hline
+	short format & long format         & description \\ \hline
+	\texttt{-w}           & \texttt{----weak}         & use weak algotirthm \\
+	\texttt{-s}           & \texttt{----strict}       & use strict algotirthm \\
+	\texttt{-a}           & \texttt{----advanced}     & use advanced algotirthm \\
+	                      & \texttt{----thread}       & generate function prolog \\
+	                      & \texttt{----prolog}       & add filter synchronization among threads/processes \\ \hline
+	\end{tabular}
+	\caption{My caption}
+	\label{my-label}
+\end{table}
 
 
+\paragraph{Examples} \hspace{0pt} \\
+
+In Figure \ref{exec/run1}, we can see that verbose mode is turned on and minimax
+algorithm was chosen for the optimizer. The output of the program will be stored
+in source.cpp. Files filename1 and filename2 will be used as input.
+
+\begin{figure}[h]
+	\lstset{style=npl}
+\begin{lstlisting}
+> ./st2se -v -w --output=source.cpp filename1 filename2
+\end{lstlisting}
+	\caption{asd}
+	\label{exec/run1}
+\end{figure}
+
+The command in Figure \ref{exec/run2} diverges only in the output format. The
+\texttt{--thread} will generate support for multithread or multiprocess applications and
+\texttt{--prolog} switch ensures that the filter will be located in function. This
+behavior is helpful for copy \& paste output into an existing program.
+
+\begin{figure}[h]
+	\lstset{style=npl}
+\begin{lstlisting}
+> ./st2se -w --output=source.cpp filename --thread --prolog
+\end{lstlisting}
+	\caption{asd}
+	\label{exec/run2}
+\end{figure}
+
+When we want to check if the grammar in the parser is correct, we can use a
+built-in tool in parser library. This tool of the parser can be turned on with
+switch \texttt{-A}. Afterwards on standard output will be printed number of
+found issues. This behaviour we can see in Figure \ref{exec/run3}
+
+\begin{figure}[h]
+	\lstset{style=npl}
+\begin{lstlisting}
+> ./st2se -A
+\end{lstlisting}
+	\caption{asd}
+	\label{exec/run3}
+\end{figure}
 
 \chapter{Software Verification}
 This chapter will describe activities used to assure quality control of the
