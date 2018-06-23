@@ -85,31 +85,33 @@ namespace st2se {
 
     }
 
-    void outputCPP::generateScRules(std::pair<std::string, Syscall_t> sc) {
+    void outputCPP::generateScRules(std::pair<std::string, Syscall_t> sc_pair) {
+
         unsigned pos_num = 0;
+        Syscall_t &sc = sc_pair.second;
 
         // Write zero when no arguments provided.
         writeZero = true;
 
         // it's writen this way for better readabilty
 
-        writeSC(sc.second, 1);
+        writeSC(sc, 1);
 
         // TODO add param for syscall without args
 
-        if (sc.second.clustered == true) {
+        if (sc.clustered) {
             std::cout << "clustered branch" << std::endl;
 
-            if (!sc.second.next.empty()) {
-                for (auto &pos : sc.second.next) {
+            if (!sc.next.empty()) {
+                for (auto &pos : sc.next) {
                     // TODO Find out  why this works ?
                     generateRules(pos, pos_num++, /*clustered =*/ true);
                 }
             }
         }
         else {
-            if (!sc.second.next.empty()) {
-                for (auto &argument : sc.second.next) {
+            if (!sc.next.empty()) {
+                for (auto &argument : sc.next) {
                     generateRules(argument, pos_num, /*clustered =*/ false);
                 }
             }
@@ -128,6 +130,7 @@ namespace st2se {
             auto minmax = getMinMax(cluster);
 
             // std::cout << "\n\n\n\n" << arg2str(cluster) << " ." << cluster.next.size() << std::endl;
+            // FIXME
             if (minmax.empty()) {
                 return;
             }
@@ -136,7 +139,7 @@ namespace st2se {
             // print minmax
             std::cout << "minmax.size():" << minmax.size() << std::endl;
 
-            // TODO add here param switch when program is running without ASLR
+            // ENHANCEMENT add here param switch when program is running without ASLR
             if (isPointer(minmax)) {
                 return;
             }
@@ -164,8 +167,6 @@ namespace st2se {
             }
         }
         else {
-            // TODO maybe smarter way with backtracking?
-
             // print arg as rule
             writeValue(arg, pos);
 
@@ -260,7 +261,11 @@ namespace st2se {
 
         output_source << "," << std::endl;
         output_source << "        ";  // indentation 8 spaces
-        output_source << "SCMP_A" << pos << "(SCMP_CMP_EQ, " << arg2str(arg) << ")";
+        output_source << "SCMP_A";
+        output_source << pos;
+        output_source << "(SCMP_CMP_EQ, ";
+        output_source << arg2str(arg);
+        output_source << ")";
         // output_source << std::endl;
 
 
@@ -273,10 +278,10 @@ namespace st2se {
             output_source << "    ";
         }
 
-        output_source << "ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS("
-            << sc.name
-            << "), "
-            << sc.arg_num;
+        output_source << "ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(";
+        output_source << sc.name;
+        output_source << "), ";
+        output_source << sc.arg_num;
 
         return;
     }

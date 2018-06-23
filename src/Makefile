@@ -5,7 +5,7 @@
 #  - mtamasko.redhat.cz
 #  Project: strace2seccomp - st2se
 #  Compiled:  insert uname -a
-#  Note: 
+#  Note:
 
 # Variables
 # ---------
@@ -54,6 +54,7 @@ dep:
 	g++ *.cpp -Iinclude -MM >> Makefile
 
 # TODO
+# move to tests
 # Paramatrize dataset file
 run:
 	@echo "========= TEST 1 ========" >out
@@ -86,7 +87,6 @@ clean:
 
 # DEPS: generated with 'dep' recipe
 # ---------------------------------
-
 algorithm_advanced.o: algorithm_advanced.cpp algorithm_advanced.hpp \
  ids.hpp algorithm.hpp
 algorithm.o: algorithm.cpp algorithm.hpp ids.hpp
@@ -95,7 +95,8 @@ algorithm_strict.o: algorithm_strict.cpp algorithm_strict.hpp ids.hpp \
 algorithm_weak.o: algorithm_weak.cpp algorithm_weak.hpp ids.hpp \
  algorithm.hpp
 argparse.o: argparse.cpp argparse.hpp
-generator.o: generator.cpp generator.hpp ids.hpp outputCPP.hpp output.hpp
+generator.o: generator.cpp generator.hpp ids.hpp outputCPP.hpp output.hpp \
+ argparse.hpp
 ids.o: ids.cpp ids.hpp
 main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
  include/tao/pegtl/version.hpp include/tao/pegtl/ascii.hpp \
@@ -238,6 +239,7 @@ main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
 optimizer.o: optimizer.cpp optimizer.hpp algorithm.hpp ids.hpp
 output.o: output.cpp output.hpp ids.hpp
 outputCPP.o: outputCPP.cpp outputCPP.hpp output.hpp ids.hpp
+source.o: source.cpp
 states.o: states.cpp states.hpp ids.hpp
 straceparser.o: straceparser.cpp straceparser.hpp include/tao/pegtl.hpp \
  include/tao/pegtl/config.hpp include/tao/pegtl/version.hpp \
