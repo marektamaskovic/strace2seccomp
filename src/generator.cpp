@@ -37,6 +37,10 @@ namespace st2se {
         gnrt->genFuncProlog(b);
     }
 
+    void Generator::buggySeccomp(bool b){
+        gnrt->buggySeccomp(b);
+    }
+
     void Generator::setOutput(std::string o){
         gnrt->setOutput(o);
     }

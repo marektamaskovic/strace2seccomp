@@ -47,7 +47,7 @@ st2se: $(OBJ)
 
 # static analysis
 clangTidy:
-	clang-tidy *.[ch]pp -checks=* -- -std=c++17 -stdlib=libc++ -I/usr/include/c++/7/ > lint.out
+	clang-tidy *.[ch]pp -checks=* -- -std=c++17 > lint.out
 
 # Generate dependency tree for cpp files
 dep:

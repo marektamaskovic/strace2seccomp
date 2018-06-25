@@ -85,6 +85,73 @@ namespace st2se {
 
     }
 
+    bool outputCPP::checkNegativeValues(Syscall_t &sc, const unsigned pos_num) {
+        bool ret {false};
+        std::cerr << "TODO: not implemented yet." << std::endl;
+        if (sc.clustered) {
+            if (!sc.next.empty()) {
+                for (auto &pos : sc.next) {
+                    ret |= BUGcheckRule(pos, pos_num + 1, /*clustered =*/ true);
+                }
+            }
+        }
+        else {
+            if (!sc.next.empty()) {
+                for (auto &argument : sc.next) {
+                    ret |= BUGcheckRule(argument, pos_num, /*clustered =*/ false);
+                }
+            }
+        }
+        return ret;
+    }
+
+    bool outputCPP::BUGcheckRule(argument_t &arg, const unsigned &pos, const bool &clustered) {
+
+        bool ret {false};
+
+        argument_t &cluster = arg;
+
+        if (clustered) {
+
+            // get minmax
+            auto minmax = getMinMax(cluster);
+
+            if (minmax.empty()) {
+                return false;
+            }
+
+            if (isNegative(minmax)) {
+                return true;
+            }
+
+            // recursive descent
+            if (!cluster.next.empty()) {
+                if (!cluster.next.front().next.empty()) {
+                    ret = BUGcheckRule(cluster.next.front(), pos, clustered);
+
+                    if(ret)
+                        return true;
+                }
+            }
+        }
+        else {
+            // print arg as rule
+            if (isNegative(arg)) {
+                return true;
+            }
+
+            // recursive descent over IDS
+            for (auto x : arg.next) {
+                ret = BUGcheckRule(x, pos + 1, clustered);
+
+                if(ret)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
     void outputCPP::generateScRules(std::pair<std::string, Syscall_t> sc_pair) {
 
         unsigned pos_num = 0;
@@ -98,14 +165,24 @@ namespace st2se {
         writeSC(sc, 1);
 
         // TODO add param for syscall without args
+        if(bugSec){
+            if(checkNegativeValues(sc, pos_num)){
+                // write zero for allowance all params;
+                output_source << " 0";
+
+                // end sc rule
+                writeClosingBracket();
+
+                return;
+            }
+        }
 
         if (sc.clustered) {
             std::cout << "clustered branch" << std::endl;
 
             if (!sc.next.empty()) {
                 for (auto &pos : sc.next) {
-                    // TODO Find out  why this works ?
-                    generateRules(pos, pos_num++, /*clustered =*/ true);
+                    generateRules(pos, pos_num + 1, /*clustered =*/ true);
                 }
             }
         }
@@ -298,7 +375,7 @@ namespace st2se {
         return;
     }
 
-    bool outputCPP::isPointer(minmax_t minmax) {
+    bool outputCPP::isPointer(const minmax_t minmax) {
 
         if (minmax.size() == 1) {
             return minmax.front().value_type == val_type_t::POINTER ? true : false;
@@ -315,6 +392,33 @@ namespace st2se {
 
     }
 
+    bool outputCPP::isNegative(const minmax_t minmax) {
+
+        if(isNegative(minmax.front()))
+            return true;
+
+        // if pair has two items check the other part as well
+        if (minmax.size() == 2) {
+            if(isNegative(minmax.back()))
+                return true;
+        }
+
+        return false;
+
+    }
+
+    bool outputCPP::isNegative(const argument_t &arg) {
+
+        if(arg.value_type == val_type_t::INTEGER){
+            int val = std::get<long>(arg.value);
+            if(val < 0) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
 
 
 } // namespace st2se

@@ -6,6 +6,7 @@
 #include <vector>
 #include <optional>
 #include <string>
+#include <variant>
 
 #include "output.hpp"
 #include "ids.hpp"
@@ -43,6 +44,13 @@ namespace st2se {
         void generateScRules(std::pair<std::string, Syscall_t> sc);
         void generateClusterRules(argument_t pos, const unsigned pos_num);
         void generateRules(argument_t arg, const unsigned pos, const bool clustered);
+
+        // seccomp bug workarround
+        bool checkNegativeValues(Syscall_t &sc, const unsigned pos_num);
+        bool BUGcheckRule(argument_t &arg, const unsigned &pos, const bool &clustered);
+        bool isNegative(const minmax_t minmax);
+        bool isNegative(const argument_t &arg);
+
 
         std::vector<argument_t> getMinMax(argument_t &arg);
 
