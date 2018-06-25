@@ -63,8 +63,6 @@ namespace st2se {
 
         void print();
         void printClustered();
-
-
     };
 
     class Ids {

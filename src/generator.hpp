@@ -26,8 +26,6 @@ namespace st2se {
         void genFuncProlog(bool b);
         void buggySeccomp(bool b);
         void setOutput(std::string o);
-
-
     };
 } // namespace st2se
 
