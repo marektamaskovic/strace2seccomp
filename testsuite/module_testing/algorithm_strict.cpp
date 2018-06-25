@@ -1,0 +1,1 @@
+../../src/algorithm_strict.cpp
