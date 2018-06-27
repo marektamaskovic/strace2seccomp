@@ -24,7 +24,6 @@ namespace st2se {
         void removeOutput();
         void threadSupport(bool b);
         void genFuncProlog(bool b);
-        void buggySeccomp(bool b);
         void setOutput(std::string o);
     };
 } // namespace st2se

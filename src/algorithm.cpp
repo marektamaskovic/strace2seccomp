@@ -17,6 +17,7 @@ namespace st2se {
                     item.value_type == val_type_t::ARRAY ||
                     item.value_type == val_type_t::STRING
                 ) {
+                    to.push_back(argument_t());
                     continue;
                 }
 
@@ -45,7 +46,7 @@ namespace st2se {
         unsigned depth {0};
 
         if (arg.next.empty()) {
-            return 1;
+            return 1u;
         }
         else {
             for (const auto &arg : arg.next) {

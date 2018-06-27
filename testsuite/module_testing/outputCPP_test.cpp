@@ -3,17 +3,14 @@
 #include "outputCPP.hpp"
 
 TEST_CASE( "Output methods", "[Output]") {
-		st2se::outputCPP *o = new st2se::outputCPP;
+	st2se::outputCPP *o = new st2se::outputCPP;
 
-		o->threadSupport(true);
-		REQUIRE(o->Output::genThreading);
+	o->threadSupport(true);
+	REQUIRE(o->Output::genThreading);
 
-        o->genFuncProlog(true);
-        REQUIRE(o->Output::genProlog);
+    o->genFuncProlog(true);
+    REQUIRE(o->Output::genProlog);
 
-	    o->buggySeccomp(true);
-	    REQUIRE(o->Output::bugSec);
-
-		delete o;
+	delete o;
 
 }

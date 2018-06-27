@@ -57,7 +57,7 @@ namespace st2se {
         }
     }
 
-    void outputCPP::setOutput(std::string o){
+    void outputCPP::setOutput(std::string o) {
         output_source_path = o;
     }
 
@@ -66,11 +66,13 @@ namespace st2se {
 
         openFiles();
 
-        if(genProlog)
+        if (genProlog) {
             writeFirstPart();
+        }
 
-        if(genThreading)
+        if (genThreading) {
             writeThreadPart();
+        }
 
         ids.print();
 
@@ -78,78 +80,12 @@ namespace st2se {
             generateScRules(item);
         }
 
-        if(genProlog)
+        if (genProlog) {
             writeLastPart();
+        }
 
         closeFiles();
 
-    }
-
-    bool outputCPP::checkNegativeValues(Syscall_t &sc, const unsigned pos_num) {
-        bool ret {false};
-        std::cerr << "TODO: not implemented yet." << std::endl;
-        if (sc.clustered) {
-            if (!sc.next.empty()) {
-                for (auto &pos : sc.next) {
-                    ret |= BUGcheckRule(pos, pos_num + 1, /*clustered =*/ true);
-                }
-            }
-        }
-        else {
-            if (!sc.next.empty()) {
-                for (auto &argument : sc.next) {
-                    ret |= BUGcheckRule(argument, pos_num, /*clustered =*/ false);
-                }
-            }
-        }
-        return ret;
-    }
-
-    bool outputCPP::BUGcheckRule(argument_t &arg, const unsigned &pos, const bool &clustered) {
-
-        bool ret {false};
-
-        argument_t &cluster = arg;
-
-        if (clustered) {
-
-            // get minmax
-            auto minmax = getMinMax(cluster);
-
-            if (minmax.empty()) {
-                return false;
-            }
-
-            if (isNegative(minmax)) {
-                return true;
-            }
-
-            // recursive descent
-            if (!cluster.next.empty()) {
-                if (!cluster.next.front().next.empty()) {
-                    ret = BUGcheckRule(cluster.next.front(), pos, clustered);
-
-                    if(ret)
-                        return true;
-                }
-            }
-        }
-        else {
-            // print arg as rule
-            if (isNegative(arg)) {
-                return true;
-            }
-
-            // recursive descent over IDS
-            for (auto x : arg.next) {
-                ret = BUGcheckRule(x, pos + 1, clustered);
-
-                if(ret)
-                    return true;
-            }
-        }
-
-        return false;
     }
 
     void outputCPP::generateScRules(std::pair<std::string, Syscall_t> sc_pair) {
@@ -164,25 +100,12 @@ namespace st2se {
 
         writeSC(sc, 1);
 
-        // TODO add param for syscall without args
-        if(bugSec){
-            if(checkNegativeValues(sc, pos_num)){
-                // write zero for allowance all params;
-                output_source << " 0";
-
-                // end sc rule
-                writeClosingBracket();
-
-                return;
-            }
-        }
-
         if (sc.clustered) {
             std::cout << "clustered branch" << std::endl;
 
             if (!sc.next.empty()) {
                 for (auto &pos : sc.next) {
-                    generateRules(pos, pos_num + 1, /*clustered =*/ true);
+                    generateRules(pos, pos_num++, /*clustered =*/ true);
                 }
             }
         }
@@ -231,7 +154,7 @@ namespace st2se {
             // recursive descent
             if (!cluster.next.empty()) {
                 if (!cluster.next.front().next.empty()) {
-                    generateRules(cluster.next.front(), pos, clustered);
+                    generateRules(cluster.next.front(), pos + 1, clustered);
                 }
                 else {
                     // std::cout << "first not empty and second one is" << std::endl;
@@ -308,9 +231,9 @@ namespace st2se {
         output_source << pos;
         output_source << "(SCMP_CMP_IN_RANGE, ";
         output_source << arg2str(range.front());
-        output_source << ", ";
+        output_source << "u, ";
         output_source << arg2str(range.back());
-        output_source << ")";
+        output_source << "u)";
 
         // output_source << std::endl;
 
@@ -340,8 +263,23 @@ namespace st2se {
         output_source << "        ";  // indentation 8 spaces
         output_source << "SCMP_A";
         output_source << pos;
-        output_source << "(SCMP_CMP_EQ, ";
+
+        if (arg.value_type == val_type_t::CONSTANT) {
+            output_source << "(SCMP_CMP_MASKED_EQ, ";
+        }
+        else {
+            output_source << "(SCMP_CMP_EQ, ";
+        }
+
         output_source << arg2str(arg);
+
+        if (arg.value_type == val_type_t::CONSTANT) {
+            output_source << ", 1";
+        }
+        else {
+            output_source << "u";
+        }
+
         output_source << ")";
         // output_source << std::endl;
 
@@ -355,10 +293,12 @@ namespace st2se {
             output_source << "    ";
         }
 
+        // TODO make correct counter
+
         output_source << "ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(";
         output_source << sc.name;
         output_source << "), ";
-        output_source << sc.arg_num;
+        output_source << rulesCount(sc, sc.clustered);
 
         return;
     }
@@ -392,33 +332,47 @@ namespace st2se {
 
     }
 
-    bool outputCPP::isNegative(const minmax_t minmax) {
+    unsigned outputCPP::rulesCount(const Syscall_t &sc, const bool clustered) {
 
-        if(isNegative(minmax.front()))
-            return true;
+        if (clustered) {
+            unsigned cnt {0};
 
-        // if pair has two items check the other part as well
-        if (minmax.size() == 2) {
-            if(isNegative(minmax.back()))
-                return true;
-        }
+            for (auto item : sc.next) {
 
-        return false;
+                if (item.next.front().value_format == val_format_t::EMPTY) {
+                    continue;
+                }
 
-    }
+                switch (item.next.front().value_type) {
+                case val_type_t::POINTER :
+                case val_type_t::STRING :
+                case val_type_t::STRUCTURE :
+                case val_type_t::ARRAY :
+                    continue;
 
-    bool outputCPP::isNegative(const argument_t &arg) {
+                default:
+                    break;
+                }
 
-        if(arg.value_type == val_type_t::INTEGER){
-            int val = std::get<long>(arg.value);
-            if(val < 0) {
-                return true;
+                cnt++;
+
             }
+
+            return cnt;
         }
 
-        return false;
+        // else {
+        // if(arg.next.empty())
+        //     return 1u;
+        // else{
+        //     if(arg.value_format == val_format_t::EMPTY)
+        //         return rulesCount(arg.next.front());
+        //     else
+        //         return rulesCount(arg.next.front()) + 1;
+        // }
+        // }
 
+        return 0u;
     }
-
 
 } // namespace st2se

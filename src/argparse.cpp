@@ -22,7 +22,6 @@ std::ostream &operator<< (std::ostream &os, const Params &a) {
         << "-o: " << a.output << std::endl
         << "--prolog: " << a.prolog << std::endl
         << "--thread: " << a.thread << std::endl
-        << "--buggySeccomp: " << a.buggySec << std::endl
         << "Err flag: " << param_error << std::endl
         << acc;
 }
@@ -50,7 +49,6 @@ void Params::printHelp() {
     std::cout << s4 << "-a [--advanaced]\t\t: use advanced algotirthm" << std::endl;
     std::cout << s4 << "--prolog\t\t\t: generate function prolog" << std::endl;
     std::cout << s4 << "--thread\t\t\t: add filter synchronization among threads/processes" << std::endl;
-    std::cout << s4 << "--buggySeccomp\t\t\t: workaround for libseccomp bug with negative values" << std::endl;
     std::cout << std::endl;
 
 }
@@ -73,7 +71,6 @@ Params::Params(int argc, char *argv[]) {
             {"analyze-grammar",  no_argument, &this->analysis, 1},
             {"thread",           no_argument, &this->thread,   1},
             {"prolog",           no_argument, &this->prolog,   1},
-            {"buggySeccomp",     no_argument, &this->buggySec, 1},
             {"output",     optional_argument, nullptr,       'o'},
             {"help",       optional_argument, nullptr,       'h'},
             {nullptr,                      0, nullptr,         0}
@@ -162,7 +159,7 @@ Params::Params(int argc, char *argv[]) {
         }
     }
 
-    if (help){
+    if (help) {
         exit(0);
     }
 

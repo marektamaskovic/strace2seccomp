@@ -62,7 +62,7 @@ TEST_CASE( "constructors", "[argument_t]") {
 
 		REQUIRE_FALSE( arg->key.compare("key") );
 
-		long val = std::get<long>(arg->value);
+		auto val = std::get<unsigned long>(arg->value);
 		REQUIRE( val == 5 );
 
 		int size = arg->next.size();

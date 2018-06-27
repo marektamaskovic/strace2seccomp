@@ -261,7 +261,7 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            // states.set_val_format(val_format_t::VALUE);
+            states.set_val_format(val_format_t::VALUE);
 
             if (states.get_val_type() == val_type_t::INTEGER) {
                 // FIXME rewrite it as a template

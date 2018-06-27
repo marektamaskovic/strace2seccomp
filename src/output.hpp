@@ -7,8 +7,8 @@ namespace st2se {
 
     class Output {
       public:
-      	bool genThreading {false};
-      	bool genProlog {false};
+        bool genThreading {false};
+        bool genProlog {false};
         bool bugSec {false};
 
         Output() = default;
@@ -19,8 +19,6 @@ namespace st2se {
 
         void threadSupport(bool b);
         void genFuncProlog(bool b);
-		    void buggySeccomp(bool b);
-
     };
 
 } // namespace st2se

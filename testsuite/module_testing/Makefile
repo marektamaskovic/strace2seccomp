@@ -11,6 +11,8 @@ params_test: params_test.o argparse.o
 
 test_main: ids_test.o ids.o outputCPP_test.o outputCPP.o output.o
 
+run:
+	./$(BIN)
 
 clean:
 	-rm *.o

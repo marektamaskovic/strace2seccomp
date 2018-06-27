@@ -23,7 +23,6 @@ class Params {
     int analysis {0};
     int thread {0};
     int prolog {0};
-    int buggySec {0};
     std::string output {};
     std::vector<std::string> file_names {};
 

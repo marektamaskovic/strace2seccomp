@@ -20,8 +20,9 @@ int main(int argc, char *argv[]) {
 
     auto *params = new Params(argc, argv);
 
-    if (params->debug)
+    if (params->debug) {
         std::cout << *params << std::endl;
+    }
 
     st2se::Ids in {};
     st2se::Ids out {};

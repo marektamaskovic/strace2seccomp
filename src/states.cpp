@@ -72,7 +72,7 @@ namespace st2se {
             std::string tmp = std::visit([](auto &&arg) -> std::string {
                 using T = std::decay_t<decltype(arg)>;
 
-                if constexpr(std::is_same_v<T, long>)
+                if constexpr(std::is_same_v<T, unsigned long>)
                     return std::to_string(arg);
                 else if constexpr(std::is_same_v<T, std::string>)
                     return arg;
