@@ -11,8 +11,6 @@ clean:
 	@cd src/ && $(MAKE) clean
 
 check_unit:
-	pwd
-	ls `pwd`
 	cd testsuite/module_testing/  && $(MAKE)
 	cd testsuite/module_testing/  && $(MAKE) run
 

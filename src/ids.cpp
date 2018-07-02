@@ -16,6 +16,7 @@ namespace st2se {
         return os << std::endl << std::endl;
     }
 
+    // Make sure you are putting two INTEGER values into this operator
     bool operator<(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
 
         if (lhs.value < rhs.value) {

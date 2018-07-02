@@ -141,3 +141,48 @@ TEST_CASE("Inertion into IDS", "[Ids]") {
 	REQUIRE(ids.data["write"].next.front().next.size() == 1);
 	REQUIRE(ids.data["write"].next.front().next.front().next.size() == 3);
 }
+
+
+TEST_CASE("argument compare", "[operators]") {
+
+	SECTION("== integer"){
+		st2se::argument_t l;
+		st2se::argument_t r;
+
+		l.value_type = st2se::val_type_t::INTEGER;
+		r.value_type = st2se::val_type_t::INTEGER;
+
+		l.value_format = st2se::val_format_t::VALUE;
+		r.value_format = st2se::val_format_t::VALUE;
+
+		l.value = 5;
+		r.value = 5;
+
+		REQUIRE(l == r);
+
+		r.value = 6;
+		REQUIRE_FALSE( l == r);
+
+		REQUIRE( l < r);
+	}
+
+	SECTION("== string"){
+		st2se::argument_t l;
+		st2se::argument_t r;
+
+		l.value_type = st2se::val_type_t::STRING;
+		r.value_type = st2se::val_type_t::STRING;
+
+		l.value_format = st2se::val_format_t::VALUE;
+		r.value_format = st2se::val_format_t::VALUE;
+
+		l.value = "Hello";
+		r.value = "Hello";
+
+		REQUIRE(l == r);
+
+		r.value = "Ehlo";
+		REQUIRE_FALSE( l == r);
+	}
+
+}

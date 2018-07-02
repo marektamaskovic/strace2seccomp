@@ -42,10 +42,11 @@ namespace st2se {
         void set_name(const std::string &str);
         void set_bitfields(const bool &b);
 
-        const bool &get_bitfields();
-        const std::string &get_name();
-        const val_format_t &get_val_format();
-        const val_type_t &get_val_type();
+        bool &get_bitfields();
+        int get_ret_val();
+        std::string &get_name();
+        val_format_t &get_val_format();
+        val_type_t &get_val_type();
 
         std::string argsStr();
         Syscall_t getSyscall();

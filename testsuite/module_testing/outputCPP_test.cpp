@@ -1,14 +1,14 @@
-#include <iostream>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <iostream>
 #include <sstream>
-#include <unistd.h>
 #include <string>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "catch2/catch.hpp"
 
-#include "outputCPP.hpp"
 #include "ids.hpp"
+#include "outputCPP.hpp"
 
 st2se::Syscall_t createSyscall(std::string name, int rc, std::string other, unsigned an, int a, std::string b, int c);
 
