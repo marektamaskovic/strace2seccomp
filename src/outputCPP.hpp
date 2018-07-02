@@ -27,17 +27,17 @@ namespace st2se {
         std::string template_file_t_path = "../seccomp_template/template.c.thread";
         std::string output_source_path = "./source.cpp";
 
-        void openFiles();
         void writeFirstPart();
         void writeLastPart();
         void writeThreadPart();
-        void closeFiles();
 
         bool writeZero = true;
 
       public:
         outputCPP() = default;
 
+        void openFiles();
+        void closeFiles();
 
         virtual void generate(Ids &ids);
         virtual void setOutput(std::string o);
