@@ -4,18 +4,18 @@ template<class T> struct always_false : std::false_type {};
 
 namespace st2se {
     void States::push_parsed_val(argument_t &arg) {
-        this->parsed_val.push_back(arg);
+        parsed_val.push_back(arg);
     }
 
     void States::pop_parsed_val() {
-        this->parsed_val.pop_back();
+        parsed_val.pop_back();
     }
 
     bool States::process_val(Ids &ids) {
 
-        Syscall_t s = this->getSyscall();
+        Syscall_t s = getSyscall();
 
-        ids.insert(this->get_name(), s);
+        ids.insert(get_name(), s);
 
         // s.print();
 
@@ -23,40 +23,44 @@ namespace st2se {
     }
 
     void States::set_val_format(const val_format_t &fmt) {
-        this->arg_format = fmt;
+        arg_format = fmt;
     }
 
     void States::set_val_type(const val_type_t &fmt) {
-        this->last_arg_type = fmt;
+        last_arg_type = fmt;
     }
 
     void States::set_ret_val(const std::string &str) {
         std::stringstream buf(str);
-        buf >> this->return_val;
+        buf >> return_val;
     }
 
     void States::set_name(const std::string &str) {
-        this->name = str;
+        name = str;
     }
 
     void States::set_bitfields(const bool &b) {
-        this->bitfields = b;
+        bitfields = b;
     }
 
-    const bool &States::get_bitfields() {
-        return this->bitfields;
+    int States::get_ret_val() {
+        return return_val;
     }
 
-    const std::string &States::get_name() {
-        return this->name;
+    bool &States::get_bitfields() {
+        return bitfields;
     }
 
-    const val_format_t &States::get_val_format() {
-        return this->arg_format;
+    std::string &States::get_name() {
+        return name;
     }
 
-    const val_type_t &States::get_val_type() {
-        return this->last_arg_type;
+    val_format_t &States::get_val_format() {
+        return arg_format;
+    }
+
+    val_type_t &States::get_val_type() {
+        return last_arg_type;
     }
 
     void States::clear() {
@@ -68,11 +72,11 @@ namespace st2se {
     std::string States::argsStr() {
         std::string str {" "};
 
-        for (auto &w : this->parsed_val) {
+        for (auto &w : parsed_val) {
             std::string tmp = std::visit([](auto &&arg) -> std::string {
                 using T = std::decay_t<decltype(arg)>;
 
-                if constexpr(std::is_same_v<T, long>)
+                if constexpr(std::is_same_v<T, unsigned long>)
                     return std::to_string(arg);
                 else if constexpr(std::is_same_v<T, std::string>)
                     return arg;

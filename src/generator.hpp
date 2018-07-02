@@ -3,6 +3,7 @@
 
 #include "ids.hpp"
 #include "outputCPP.hpp"
+#include "argparse.hpp"
 
 namespace st2se {
 
@@ -17,9 +18,13 @@ namespace st2se {
         Generator() = default;
         Generator(Output *_out);
         bool initialize(Output *_out);
+        void configure(const Params &p);
         bool generate(Ids &ids);
         bool isInitialized();
         void removeOutput();
+        void threadSupport(bool b);
+        void genFuncProlog(bool b);
+        void setOutput(std::string o);
     };
 } // namespace st2se
 

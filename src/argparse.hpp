@@ -2,6 +2,8 @@
 #define ARGPARSE_HPP
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <memory>
@@ -19,9 +21,13 @@ class Params {
     int debug {0};
     int tracing {0};
     int analysis {0};
+    int thread {0};
+    int prolog {0};
+    std::string output {};
     std::vector<std::string> file_names {};
 
     Params(int argc, char *argv[]);
+    void printHelp();
     // ~Params();
 
 

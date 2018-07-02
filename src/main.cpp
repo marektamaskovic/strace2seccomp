@@ -13,11 +13,16 @@
 #include "generator.hpp"
 
 int main(int argc, char *argv[]) {
+
+    std::ios::sync_with_stdio(false);
+
     int ret_val {0};
 
     auto *params = new Params(argc, argv);
 
-    // std::cout << *params << std::endl;
+    if (params->debug) {
+        std::cout << *params << std::endl;
+    }
 
     st2se::Ids in {};
     st2se::Ids out {};
@@ -73,17 +78,15 @@ int main(int argc, char *argv[]) {
 
     out.print();
 
-    st2se::Generator gen;
 
+    st2se::Generator gen;
     st2se::Output *cpp = new st2se::outputCPP();
 
+    // initialize and configure generator
     gen.initialize(cpp);
+    gen.configure(*params);
+
     gen.generate(out);
-
-
-    // out.data["close"].print();
-
-    std::cout << "Exiting ..." << std::endl;
 
     // remove and dealloc algorithm
     opti.useAlgorithm(nullptr);

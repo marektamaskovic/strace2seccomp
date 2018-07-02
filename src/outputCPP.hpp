@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 #include <optional>
+#include <string>
+#include <variant>
 
 #include "output.hpp"
 #include "ids.hpp"
@@ -25,35 +27,33 @@ namespace st2se {
         std::string template_file_t_path = "../seccomp_template/template.c.thread";
         std::string output_source_path = "./source.cpp";
 
-        void openFiles();
         void writeFirstPart();
-        void writeThreadPart();
         void writeLastPart();
-<<<<<<< HEAD
-=======
         void writeThreadPart();
->>>>>>> testbranch
-        void closeFiles();
 
         bool writeZero = true;
 
       public:
         outputCPP() = default;
 
+        void openFiles();
+        void closeFiles();
 
         virtual void generate(Ids &ids);
+        virtual void setOutput(std::string o);
         void generateScRules(std::pair<std::string, Syscall_t> sc);
         void generateClusterRules(argument_t pos, const unsigned pos_num);
-        void generateRules(Syscall_t &sc, argument_t arg, const unsigned pos, const bool clustered);
+        void generateRules(argument_t arg, const unsigned pos, const bool clustered);
 
         std::vector<argument_t> getMinMax(argument_t &arg);
 
         void writeValue(minmax_t &range, unsigned pos);
-        void writeValue(argument_t &arg, unsigned pos, int op);
-
+        void writeValue(argument_t &arg, unsigned pos);
         void writeSC(Syscall_t &sc, unsigned tab_len);
         void writeClosingBracket();
+
         bool isPointer(minmax_t minmax);
+        unsigned rulesCount(const Syscall_t &sc, const bool clustered);
     };
 
 } // namespace st2se

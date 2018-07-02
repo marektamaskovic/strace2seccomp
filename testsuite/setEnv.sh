@@ -18,6 +18,8 @@ BGreen='\033[1;32m'       # Green
 
 coreutils='coreutils-8.29'
 findutils='findutils-4.6.0'
+usbguard='usbguard-0.7.2'
+testovac='testovac'
 
 nproc=8
 
@@ -47,12 +49,20 @@ download(){
 
     echo -e "$BWhite" "Dowloading coreutils ..." "$Color_Off"
     wget -nv https://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz
+
+    echo -e "$BWhite" "Dowloading usbguard ..." "$Color_Off"
+    wget -nv https://github.com/USBGuard/usbguard/releases/download/usbguard-0.7.2/usbguard-0.7.2.tar.gz
+
+    echo -e "$BWhite" "Dowloading testovac ..." "$Color_Off"
+    wget -nv https://github.com/tammar96/ISA-testovac/releases/download/untagged-7d8ed3a74b854254df64/testovac.tar
 }
 
 extract(){
     echo -e "$BWhite" "Extracting sources ..." "$Color_Off"
     tar -xzf findutils-4.6.0.tar.gz
     tar -xJf coreutils-8.29.tar.xz
+    tar -xzf usbguard-0.7.2.tar.gz
+    mkdir -p testovac && tar -xf testovac.tar -C testovac
 }
 
 configure(){
@@ -114,7 +124,35 @@ main(){
 
 	elif [ "$1" = "prep" ]; then
 	    #Prepare
-	    download
+
+	    if [ "$#" -eq 2 ]; then
+	    	if [ "$2" != "--local" ]; then
+	    		download
+	    	else
+	    		if [ ! -e "`echo $findutils`.tar.gz" ]; then
+	    			echo "Provide" "`echo $findutils`.tar.gz"
+	    			exit 1
+	    		fi
+
+	    		if [ ! -e "`echo $coreutils`.tar.xz" ]; then
+	    			echo "Provide" "`echo $coreutils`.tar.xz"
+	    			exit 1
+	    		fi
+
+	    		if [ ! -e "`echo $usbguard`.tar.gz" ]; then
+	    			echo "Provide" "`echo $usbguard`.tar.gz"
+	    			exit 1
+	    		fi
+
+	    		if [ ! -e "`echo $testovac`.tar.gz" ]; then
+	    			echo "Provide" "`echo $testovac`.tar.gz"
+	    			exit 1
+	    		fi
+	    	fi
+	    else
+	    	download
+	    fi
+
 	    extract
 
 	    echo -e "$BWhite" "Patch Makefile.in files" "$Color_Off"
@@ -124,6 +162,7 @@ main(){
 	    # Configure sources
 	    configure $coreutils &
 	    configure $findutils &
+	    configure $usbguard & # --wtih-bundled-pegtl make sure about dependencies dependencies
 
 	    wait
 
@@ -160,8 +199,12 @@ main(){
 
 	elif [ "$1" = "make" ]; then
 	    # Make custom binaries
-	    runMake $coreutils
-	    runMake $findutils
+	    runMake $coreutils &
+	    runMake $findutils &
+	    runMake $usbguard &
+	    runMake $testovac &
+
+	    wait
 
 	elif [ "$1" = "tests" ]; then
 		#Run tests
@@ -174,6 +217,10 @@ main(){
 	    rm -rf ./`echo $findutils`.tar.gz
 	    rm -rf ./`echo $coreutils`/
 	    rm -rf ./`echo $coreutils`.tar.xz
+	    rm -rf ./`echo $usbguard`/
+	    rm -rf ./`echo $usbguard`.tar.gz
+	    rm -rf ./`echo $testovac`/
+	    rm -rf ./`echo $testovac`.tar
 
 	else
 		printHelp

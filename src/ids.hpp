@@ -40,12 +40,12 @@ namespace st2se {
     struct _argument_t {
         val_format_t value_format;
         val_type_t value_type;
-        std::string key;
-        std::variant<long, std::string> value;
+        std::string key {""};
+        std::variant<unsigned long, std::string> value {""};
         std::vector<_argument_t> next;
         _argument_t();
         _argument_t(val_format_t fmt, val_type_t type, std::vector<_argument_t> vec);
-        _argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key, std::variant<long, std::string> _value,
+        _argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key, std::variant<unsigned long, std::string> _value,
             std::vector<_argument_t> _next);
 
         void print();
@@ -63,8 +63,6 @@ namespace st2se {
 
         void print();
         void printClustered();
-
-
     };
 
     class Ids {

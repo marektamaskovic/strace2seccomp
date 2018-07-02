@@ -416,8 +416,8 @@ namespace st2se {
             left.value_type == val_type_t::INTEGER
         ) {
             // number distance ???
-            long a = *std::get_if<long>(&(left.value));
-            long b = *std::get_if<long>(&(right.value));
+            unsigned long a = *std::get_if<unsigned long>(&(left.value));
+            unsigned long b = *std::get_if<unsigned long>(&(right.value));
 
             if (a > b) {
                 ret_val = a - b;

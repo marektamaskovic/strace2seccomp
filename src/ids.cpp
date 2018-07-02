@@ -16,6 +16,7 @@ namespace st2se {
         return os << std::endl << std::endl;
     }
 
+    // Make sure you are putting two INTEGER values into this operator
     bool operator<(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
 
         if (lhs.value < rhs.value) {
@@ -35,8 +36,8 @@ namespace st2se {
 
         bool b_val = false;
 
-        if (auto lval = std::get_if<long>(&lhs.value))
-            if (auto rval = std::get_if<long>(&rhs.value))
+        if (auto lval = std::get_if<unsigned long>(&lhs.value))
+            if (auto rval = std::get_if<unsigned long>(&rhs.value))
                 if (*lval == *rval) {
                     b_val = true;
                 }
@@ -118,13 +119,13 @@ namespace st2se {
         return os << "UNDEF";
     }
 
-    _argument_t::_argument_t(val_format_t _fmt, val_type_t _type, std::vector<_argument_t> _vec):
-        value_format(_fmt), value_type(_type), next(_vec) {
+    _argument_t::_argument_t(val_format_t _fmt, val_type_t _type, std::vector<_argument_t> _vec)
+        : value_format(_fmt), value_type(_type), next(_vec) {
     }
 
-    _argument_t::_argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key, std::variant<long, std::string> _value,
-        std::vector<_argument_t> _next):
-        value_format(_fmt), value_type(_type), key(_key), value(_value), next(_next) {
+    _argument_t::_argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key,
+        std::variant<unsigned long, std::string> _value, std::vector<_argument_t> _next)
+        : value_format(_fmt), value_type(_type), key(_key), value(_value), next(_next) {
     }
 
     _argument_t::_argument_t():
@@ -303,7 +304,7 @@ namespace st2se {
             [pointer](auto &&arg) -> std::string {
                 using T = std::decay_t<decltype(arg)>;
 
-                if constexpr(std::is_same_v<T, long>){
+                if constexpr(std::is_same_v<T, unsigned long>){
                     if(pointer){
                         std::stringstream ss;
                         std::string ret_val;
