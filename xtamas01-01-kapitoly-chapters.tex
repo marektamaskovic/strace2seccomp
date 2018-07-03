@@ -1019,7 +1019,7 @@ This tool uses line coverage technique and it is the poorest coverage from the c
 	\texttt{-A}           & \texttt{----analyze-grammar} & analyze grammar \\
 	\texttt{-o=FILE}      & \texttt{----output=FILE}       &  set output file \\ \hline
 	\end{tabular}
-	\caption{My caption}
+	\caption{General options overview}
 	\label{my-label}
 \end{table}
 
@@ -1035,7 +1035,7 @@ This tool uses line coverage technique and it is the poorest coverage from the c
 	                      & \texttt{----thread}       & generate function prolog \\
 	                      & \texttt{----prolog}       & add filter synchronization among threads/processes \\ \hline
 	\end{tabular}
-	\caption{My caption}
+	\caption{Configuration options overview}
 	\label{my-label}
 \end{table}
 
@@ -1051,7 +1051,7 @@ in source.cpp. Files filename1 and filename2 will be used as input.
 \begin{lstlisting}
 > ./st2se -v -w --output=source.cpp filename1 filename2
 \end{lstlisting}
-	\caption{asd}
+	\caption{Example no. 1}
 	\label{exec/run1}
 \end{figure}
 
@@ -1065,7 +1065,7 @@ behavior is helpful for copy \& paste output into an existing program.
 \begin{lstlisting}
 > ./st2se -w --output=source.cpp filename --thread --prolog
 \end{lstlisting}
-	\caption{asd}
+	\caption{Example no. 2}
 	\label{exec/run2}
 \end{figure}
 
@@ -1079,7 +1079,7 @@ found issues. This behaviour we can see in Figure \ref{exec/run3}
 \begin{lstlisting}
 > ./st2se -A
 \end{lstlisting}
-	\caption{asd}
+	\caption{Example no. 3}
 	\label{exec/run3}
 \end{figure}
 
@@ -1105,21 +1105,72 @@ Table \ref{table:moduletesting} shows us the description of module's test suits.
 
 \begin{table}[h]
 	\centering
-	\begin{tabular}{|l|p{10cm}|}
+	\begin{tabular}{||l|p{10cm}||}
 		\hline
 		\textbf{Module / Component}	&	\textbf{Test descriptiom} \\ \hline \hline
-		Params 						& Validity of recognized runtime arguments \\ \hline
-		StraceParser				& Syntax testing, correct error handling \\ \hline
+		Argparse					& Validity of recognized runtime arguments \\ \hline
+		Generator					& Check methods functionality \\ \hline
+		IDS							& Validity of constructors and class methods \\ \hline
 		Output                      & Check the validity of generated policy \\ \hline
+		States						& Check the getters and setter of states \\ \hline
+		StraceParser				& Validity of all parser states by fuzzing \\ \hline
 	\end{tabular}
 	\caption{Test plan}
 	\label{table:moduletesting}
 \end{table}
 
-\subsection{Params Testing}
-Testing of the parameters was done manually which means by systematically picking border values
-or some invalid ones and providing them as runtime arguments for the strace2seccomp tool.
-It was automated with a handmande script.
+For module testing was chosen Catch\footnote{\url{https://github.com/catchorg/Catch2}}
+framework. This framework was chosen for its essential features which are:
+\begin{itemize}
+	\item one header library,
+	\item no external dependencies,
+	\item only one core assertion macro,
+	\item tests can be tagged, and you can run only selected groups of tests,
+	\item supports BDD\footnote{Behaviour Driven Development} and
+	TDD\footnote{Test Driven Development} which can be used for next development
+	cycle.
+\end{itemize}
+
+\paragraph{Params Testing}
+Testing of the parameters was done manually which means by systematically
+picking border values or some invalid ones and providing them as runtime
+arguments for the strace2seccomp tool. It was automated with a handmande script.
+
+\paragraph{Generator}
+This test insists on setting class variables with class methods. The only reason
+for this is that this class is used as abstract and thus we check only setters.
+
+\paragraph{IDS}
+This module test has multiple test cases. Here are tested constructors for
+\texttt{argument\_t} structure, it has tree constructors. Next, there are tested
+comparison operators for \texttt{argument\_t} class. After that, there is a test
+for insertion into \texttt{ids\_t}. Another test case consists of support
+functions of IDS module.
+
+\paragraph{Output}
+The output module test checks if the generated output is the same as expected
+output. This test is considered as complicated because it depends on insertion
+arguments into IDS, reading data from IDS and setting up the output generator.
+This module test includes a test for setting class variables as well as the
+module tests mentioned above.
+
+\paragraph{States}
+This module is crucial for the parser, so it is essential to have good module
+test. In this test, we are checking the constructor, setters and getters and
+class methods.
+
+\paragraph{Module tests execution}
+In Figure \ref{exec/unit_tests} you can see how to run module tests from project
+root directory.
+
+\begin{figure}[h]
+	\lstset{style=npl}
+\begin{lstlisting}
+> make check_unit
+\end{lstlisting}
+	\caption{Example of running module tests from project root directory.}
+	\label{exec/unit_tests}
+\end{figure}
 
 \subsection{StraceParser Testing}
 StraceParser module is responsible for parsing the strace output and translating
