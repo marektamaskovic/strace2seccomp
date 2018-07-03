@@ -98,9 +98,16 @@ namespace st2se {
 
         // it's writen this way for better readabilty
 
-        writeSC(sc, 1);
 
         if (sc.clustered) {
+
+            if(genProlog) {
+                writeSC(sc, 1);
+            }
+            else {
+                writeSC(sc, 0);
+            }
+
             std::cout << "clustered branch" << std::endl;
 
             if (!sc.next.empty()) {
@@ -108,16 +115,26 @@ namespace st2se {
                     generateRules(pos, pos_num++, /*clustered =*/ true);
                 }
             }
+
+            writeClosingBracket();
         }
         else {
+            std::string prefix;
+
+            if(genProlog) {
+                prefix = sc2str(sc, 1);
+            }
+            else {
+                prefix = sc2str(sc, 0);
+            }
+
             if (!sc.next.empty()) {
                 for (auto &argument : sc.next) {
-                    generateRules(argument, pos_num, /*clustered =*/ false);
+                    generateRules(argument, pos_num, /*clustered =*/ false, prefix);
                 }
             }
         }
 
-        writeClosingBracket();
     }
 
     void outputCPP::generateRules(argument_t arg, const unsigned pos, const bool clustered) {
@@ -166,16 +183,51 @@ namespace st2se {
                 return;
             }
         }
-        else {
-            // print arg as rule
-            writeValue(arg, pos);
+        // TODO this branch you can delete
+        // else {
+        //     // print arg as rule
+        //     writeValue(arg, pos);
 
-            // recursive descent over IDS
-            for (auto x : arg.next) {
-                generateRules(x, pos + 1, clustered);
-            }
+        //     // recursive descent over IDS
+        //     for (auto x : arg.next) {
+        //         generateRules(x, pos + 1, clustered);
+        //     }
+        // }
+
+    }
+
+    void outputCPP::generateRules(argument_t arg, const unsigned pos, const bool clustered, std::string prefix) {
+        std::string buffer {prefix};
+
+        if(arg.value_type == val_type_t::INTEGER){
+            if(genProlog)
+                buffer += "    ";
+
+            buffer += ",\n    SCMP_A" + std::to_string(pos) + "(SCMP_CMP_EQ, "+ arg2str(arg) +"u)";
+        }
+        else if(arg.value_type == val_type_t::CONSTANT || arg.value_type == val_type_t::BITFIELD){
+            if(genProlog)
+                buffer += "    ";
+
+            buffer += ",\n    SCMP_A" + std::to_string(pos) + "(SCMP_CMP_MASKED_EQ, "+ arg2str(arg) +", 1)";
         }
 
+        if(!arg.next.empty()) {
+            for(auto item : arg.next){
+                generateRules(item, pos + 1, clustered, buffer);
+            }
+        }
+        else {
+            buffer += "\n";
+            if(genProlog)
+                buffer += "    ";
+            buffer += ");";
+            writeString(buffer);
+        }
+    }
+
+    void outputCPP::writeString(std::string &str) {
+        output_source << str << std::endl;
     }
 
     std::vector<argument_t> outputCPP::getMinMax(argument_t &arg) {
@@ -287,6 +339,24 @@ namespace st2se {
         return;
     }
 
+    std::string outputCPP::sc2str(Syscall_t &sc, unsigned tab_len) {
+
+        std::string buffer {""};
+
+        for (unsigned i = 0; i < tab_len; ++i) {
+            buffer += "    ";
+        }
+
+        // TODO make correct counter
+
+        buffer += "ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(";
+        buffer += sc.name;
+        buffer += "), ";
+        buffer += std::to_string(rulesCount(sc, sc.clustered));
+
+        return buffer;
+    }
+
     void outputCPP::writeSC(Syscall_t &sc, unsigned tab_len) {
 
         for (unsigned i = 0; i < tab_len; ++i) {
@@ -302,6 +372,7 @@ namespace st2se {
 
         return;
     }
+
     void outputCPP::writeClosingBracket() {
 
         if (writeZero) {
@@ -355,24 +426,27 @@ namespace st2se {
                 }
 
                 cnt++;
+            }
+            return cnt;
+        }
+        else {
+            unsigned cnt {0};
 
+            if(sc.next.empty()){
+                return cnt;
+            }
+
+            argument_t arg = sc.next.front();
+
+            while(!arg.next.empty()){
+                arg = arg.next.front();
+                cnt++;
             }
 
             return cnt;
         }
 
-        // else {
-        // if(arg.next.empty())
-        //     return 1u;
-        // else{
-        //     if(arg.value_format == val_format_t::EMPTY)
-        //         return rulesCount(arg.next.front());
-        //     else
-        //         return rulesCount(arg.next.front()) + 1;
-        // }
-        // }
-
-        return 0u;
+        return 0;
     }
 
 } // namespace st2se

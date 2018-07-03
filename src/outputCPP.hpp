@@ -44,6 +44,7 @@ namespace st2se {
         void generateScRules(std::pair<std::string, Syscall_t> sc);
         void generateClusterRules(argument_t pos, const unsigned pos_num);
         void generateRules(argument_t arg, const unsigned pos, const bool clustered);
+        void generateRules(argument_t arg, const unsigned pos, const bool clustered, std::string prefix);
 
         std::vector<argument_t> getMinMax(argument_t &arg);
 
@@ -51,6 +52,8 @@ namespace st2se {
         void writeValue(argument_t &arg, unsigned pos);
         void writeSC(Syscall_t &sc, unsigned tab_len);
         void writeClosingBracket();
+        void writeString(std::string &str);
+        std::string sc2str(Syscall_t &sc, unsigned tab_len);
 
         bool isPointer(minmax_t minmax);
         unsigned rulesCount(const Syscall_t &sc, const bool clustered);
