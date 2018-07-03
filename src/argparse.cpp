@@ -46,7 +46,7 @@ void Params::printHelp() {
     std::cout << "Configuration options:" << std::endl;
     std::cout << s4 << "-w [--weak]\t\t\t: use weak algotirthm" << std::endl;
     std::cout << s4 << "-s [--strict]\t\t: use strict algotirthm" << std::endl;
-    std::cout << s4 << "-a [--advanaced]\t\t: use advanced algotirthm" << std::endl;
+    std::cout << s4 << "-a [--advanced]\t\t: use advanced algotirthm" << std::endl;
     std::cout << s4 << "--prolog\t\t\t: generate function prolog" << std::endl;
     std::cout << s4 << "--thread\t\t\t: add filter synchronization among threads/processes" << std::endl;
     std::cout << std::endl;
