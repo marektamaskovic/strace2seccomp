@@ -129,7 +129,7 @@ namespace st2se {
             }
 
             if (!sc.next.empty()) {
-                for (auto &argument : sc.next) {
+                for (auto argument : sc.next) {
                     generateRules(argument, pos_num, /*clustered =*/ false, prefix);
                 }
             }
@@ -347,12 +347,12 @@ namespace st2se {
             buffer += "    ";
         }
 
-        // TODO make correct counter
+        unsigned cnt = rulesCount(sc, sc.clustered);
 
         buffer += "ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(";
         buffer += sc.name;
         buffer += "), ";
-        buffer += std::to_string(rulesCount(sc, sc.clustered));
+        buffer += std::to_string(cnt);
 
         return buffer;
     }
@@ -415,14 +415,14 @@ namespace st2se {
                 }
 
                 switch (item.next.front().value_type) {
-                case val_type_t::POINTER :
-                case val_type_t::STRING :
-                case val_type_t::STRUCTURE :
-                case val_type_t::ARRAY :
-                    continue;
+                    case val_type_t::POINTER :
+                    case val_type_t::STRING :
+                    case val_type_t::STRUCTURE :
+                    case val_type_t::ARRAY :
+                        continue;
 
-                default:
-                    break;
+                    default:
+                        break;
                 }
 
                 cnt++;
@@ -439,8 +439,20 @@ namespace st2se {
             argument_t arg = sc.next.front();
 
             while(!arg.next.empty()){
-                arg = arg.next.front();
+
+                switch (arg.value_type) {
+                    case val_type_t::INTEGER :
+                    case val_type_t::CONSTANT :
+                    case val_type_t::BITFIELD :
+                        break;
+
+                    default:
+                        arg = arg.next.front();
+                        continue;
+                }
+
                 cnt++;
+                arg = arg.next.front();
             }
 
             return cnt;

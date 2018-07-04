@@ -14,8 +14,6 @@
 
 int main(int argc, char *argv[]) {
 
-    std::ios::sync_with_stdio(false);
-
     int ret_val {0};
 
     auto *params = new Params(argc, argv);

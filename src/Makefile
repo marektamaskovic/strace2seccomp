@@ -26,8 +26,8 @@ CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
 
 # Recipes
 # -------
-
-all: CXXFLAGS += -g3 -fsanitize=address,undefined -fno-omit-frame-pointer
+# all: CXXFLAGS += -g3 -fsanitize=address,undefined -fno-omit-frame-pointer
+all: CXXFLAGS += -g3
 all: st2se
 
 release: CXXFLAGS += -O2
