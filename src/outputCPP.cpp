@@ -96,9 +96,6 @@ namespace st2se {
         // Write zero when no arguments provided.
         writeZero = true;
 
-        // it's writen this way for better readabilty
-
-
         if (sc.clustered) {
 
             if(genProlog) {
@@ -129,7 +126,9 @@ namespace st2se {
             }
 
             if (!sc.next.empty()) {
-                for (auto argument : sc.next) {
+                for (argument_t &argument : sc.next) {
+                    std::cout << "calee:" << arg2str(argument) << std::endl;
+                    std::cout << "calee:" << prefix << std::endl;
                     generateRules(argument, pos_num, /*clustered =*/ false, prefix);
                 }
             }
@@ -137,23 +136,17 @@ namespace st2se {
 
     }
 
-    void outputCPP::generateRules(argument_t arg, const unsigned pos, const bool clustered) {
-
-        argument_t &cluster = arg;
+    void outputCPP::generateRules(argument_t cluster, const unsigned pos, const bool clustered) {
 
         if (clustered) {
 
             // get minmax
             auto minmax = getMinMax(cluster);
 
-            // std::cout << "\n\n\n\n" << arg2str(cluster) << " ." << cluster.next.size() << std::endl;
-            // FIXME
             if (minmax.empty()) {
                 return;
             }
 
-            // std::cout << arg2str(minmax.first) << " " << arg2str(minmax.second) << std::endl;
-            // print minmax
             std::cout << "minmax.size():" << minmax.size() << std::endl;
 
             // ENHANCEMENT add here param switch when program is running without ASLR
@@ -173,31 +166,17 @@ namespace st2se {
                 if (!cluster.next.front().next.empty()) {
                     generateRules(cluster.next.front(), pos + 1, clustered);
                 }
-                else {
-                    // std::cout << "first not empty and second one is" << std::endl;
-                    return;
-                }
-            }
-            else {
-                // std::cout << "first and second empty" << std::endl;
-                return;
             }
         }
-        // TODO this branch you can delete
-        // else {
-        //     // print arg as rule
-        //     writeValue(arg, pos);
-
-        //     // recursive descent over IDS
-        //     for (auto x : arg.next) {
-        //         generateRules(x, pos + 1, clustered);
-        //     }
-        // }
-
+        else{
+            std::cerr << "Error expected clustered argument" << std::endl;
+        }
     }
 
-    void outputCPP::generateRules(argument_t arg, const unsigned pos, const bool clustered, std::string prefix) {
+    void outputCPP::generateRules(argument_t &arg, const unsigned pos, const bool clustered, std::string prefix) {
         std::string buffer {prefix};
+        std::cout << "func:" << prefix << std::endl;
+        // std::string buffer = prefix;
 
         if(arg.value_type == val_type_t::INTEGER){
             if(genProlog)
@@ -213,7 +192,7 @@ namespace st2se {
         }
 
         if(!arg.next.empty()) {
-            for(auto item : arg.next){
+            for(auto &item : arg.next){
                 generateRules(item, pos + 1, clustered, buffer);
             }
         }
@@ -262,10 +241,6 @@ namespace st2se {
 
     void outputCPP::writeValue(minmax_t &range, unsigned pos) {
 
-        // if(writeZero){
-        //     output_source << std::endl;
-        // }
-
         std::cout << range.back().value_type << std::endl;
 
         if (range.back().value_type == val_type_t::BITFIELD) {
@@ -274,8 +249,6 @@ namespace st2se {
         }
 
         writeZero = false;
-
-        // std::cout << "TODO: print as rule: range:\t" << arg2str(range.front()) << " " << arg2str(range.back()) << std::endl;
 
         output_source << "," << std::endl;
         output_source << "        ";  // indentation 8 spaces
@@ -287,15 +260,10 @@ namespace st2se {
         output_source << arg2str(range.back());
         output_source << "u)";
 
-        // output_source << std::endl;
-
         return;
     }
     void outputCPP::writeValue(argument_t &arg, unsigned pos) {
 
-        // if(writeZero){
-        //     output_source << std::endl;
-        // }
         if (arg2str(arg).length() == 0) {
             return;
         }
@@ -308,8 +276,6 @@ namespace st2se {
         }
 
         writeZero = false;
-
-        // std::cout << "TODO: print as rule: val:\t" << arg2str(arg) << std::endl;
 
         output_source << "," << std::endl;
         output_source << "        ";  // indentation 8 spaces
@@ -333,8 +299,6 @@ namespace st2se {
         }
 
         output_source << ")";
-        // output_source << std::endl;
-
 
         return;
     }
@@ -362,8 +326,6 @@ namespace st2se {
         for (unsigned i = 0; i < tab_len; ++i) {
             output_source << "    ";
         }
-
-        // TODO make correct counter
 
         output_source << "ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(";
         output_source << sc.name;

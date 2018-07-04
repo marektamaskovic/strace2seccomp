@@ -12,43 +12,41 @@ std::ostream &operator<< (std::ostream &os, const Params &a) {
         acc.append("\n");
     }
 
-    return os << "-h: " << a.help << std::endl
-        << "-w: " << a.weak << std::endl
-        << "-s: " << a.strict << std::endl
-        << "-a: " << a.advanced << std::endl
-        << "-v: " << a.verbose << std::endl
-        << "-d: " << a.debug << std::endl
-        << "-A: " << a.analysis << std::endl
-        << "-o: " << a.output << std::endl
-        << "--prolog: " << a.prolog << std::endl
-        << "--thread: " << a.thread << std::endl
-        << "Err flag: " << param_error << std::endl
-        << acc;
+    return os << "-h: " << a.help
+        << "\n-w: " << a.weak
+        << "\n-s: " << a.strict
+        << "\n-a: " << a.advanced
+        << "\n-v: " << a.verbose
+        << "\n-d: " << a.debug
+        << "\n-A: " << a.analysis
+        << "\n-o: " << a.output
+        << "\n--prolog: " << a.prolog
+        << "\n--thread: " << a.thread
+        << "\nErr flag: " << param_error
+        << "\n" << acc;
 }
 
 void Params::printHelp() {
 
     std::string s4 {"    "}; // four spaces
 
-    std::cout << "Usage:" << std::endl;
-    std::cout << "\tst2se [OPTION] filename ..." << std::endl;
-    std::cout << std::endl;
+    std::cout << "Usage:\n";
+    std::cout << "\tst2se [OPTION] filename ...\n";
 
-    std::cout << "Generic options:" << std::endl;
-    std::cout << s4 << "-h [--help]\t\t\t: print this message" << std::endl;
-    std::cout << s4 << "-v [--verbose]\t\t: turn on verbose mode" << std::endl;
-    std::cout << s4 << "-d [--debug]\t\t: turn on debug mode" << std::endl;
-    std::cout << s4 << "-t [--tracing]\t\t: turn on tracing mode" << std::endl;
-    std::cout << s4 << "-A [--analyze-grammar] \t: analyze grammar" << std::endl;
-    std::cout << s4 << "-o FILE [--output=FILE]\t: set output file" << std::endl;
-    std::cout << std::endl;
+    std::cout << "Generic options:\n";
+    std::cout << s4 << "-h [--help]\t\t\t: print this message\n";
+    std::cout << s4 << "-v [--verbose]\t\t: turn on verbose mode\n";
+    std::cout << s4 << "-d [--debug]\t\t: turn on debug mode\n";
+    std::cout << s4 << "-t [--tracing]\t\t: turn on tracing mode\n";
+    std::cout << s4 << "-A [--analyze-grammar] \t: analyze grammar\n";
+    std::cout << s4 << "-o FILE [--output=FILE]\t: set output file\n";
 
-    std::cout << "Configuration options:" << std::endl;
-    std::cout << s4 << "-w [--weak]\t\t\t: use weak algotirthm" << std::endl;
-    std::cout << s4 << "-s [--strict]\t\t: use strict algotirthm" << std::endl;
-    std::cout << s4 << "-a [--advanced]\t\t: use advanced algotirthm" << std::endl;
-    std::cout << s4 << "--prolog\t\t\t: generate function prolog" << std::endl;
-    std::cout << s4 << "--thread\t\t\t: add filter synchronization among threads/processes" << std::endl;
+    std::cout << "Configuration options:\n";
+    std::cout << s4 << "-w [--weak]\t\t\t: use weak algotirthm\n";
+    std::cout << s4 << "-s [--strict]\t\t: use strict algotirthm\n";
+    std::cout << s4 << "-a [--advanced]\t\t: use advanced algotirthm\n";
+    std::cout << s4 << "--prolog\t\t\t: generate function prolog\n";
+    std::cout << s4 << "--thread\t\t\t: add filter synchronization among threads/processes\n";
     std::cout << std::endl;
 
 }

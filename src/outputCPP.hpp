@@ -43,8 +43,8 @@ namespace st2se {
         virtual void setOutput(std::string o);
         void generateScRules(std::pair<std::string, Syscall_t> sc);
         void generateClusterRules(argument_t pos, const unsigned pos_num);
-        void generateRules(argument_t arg, const unsigned pos, const bool clustered);
-        void generateRules(argument_t arg, const unsigned pos, const bool clustered, std::string prefix);
+        void generateRules(argument_t cluster, const unsigned pos, const bool clustered);
+        void generateRules(argument_t &arg, const unsigned pos, const bool clustered, std::string prefix);
 
         std::vector<argument_t> getMinMax(argument_t &arg);
 
