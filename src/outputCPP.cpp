@@ -281,7 +281,7 @@ namespace st2se {
 
         if (arg.value_type == val_type_t::BITFIELD) {
             output_source << fmt::format(
-                "(SCMP_CMP_MASKED_EQ, {0}, -1)",
+                "(SCMP_CMP_MASKED_EQ, {0}, -1u)",
                 arg2str(arg)
             );
         }
@@ -380,25 +380,10 @@ namespace st2se {
             unsigned cnt {0};
 
             for (auto item : sc.next) {
-
-                if (item.next.front().value_format == val_format_t::EMPTY) {
-                    continue;
+                if(!item.next.empty()){
+                    cnt++;
                 }
-
-                switch (item.next.front().value_type) {
-                case val_type_t::POINTER :
-                case val_type_t::STRING :
-                case val_type_t::STRUCTURE :
-                case val_type_t::ARRAY :
-                    continue;
-
-                default:
-                    break;
-                }
-
-                cnt++;
             }
-
             return cnt;
         }
         else {
@@ -412,14 +397,14 @@ namespace st2se {
 
             while (!arg.next.empty()) {
                 switch (arg.value_type) {
-                case val_type_t::INTEGER :
-                case val_type_t::CONSTANT :
-                case val_type_t::BITFIELD :
-                    break;
+                    case val_type_t::INTEGER :
+                    case val_type_t::CONSTANT :
+                    case val_type_t::BITFIELD :
+                        break;
 
-                default:
-                    arg = arg.next.front();
-                    continue;
+                    default:
+                        arg = arg.next.front();
+                        continue;
                 }
 
                 cnt++;

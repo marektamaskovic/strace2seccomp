@@ -62,26 +62,41 @@ namespace st2se {
             std::cout << "\targ no." << arg_pos << " is " << v.size() << " items long" << std::endl;
 
             std::vector<argument_t> clustered_v {};
+            argument_t bitfield {};
 
             if (v.size() != 1) {
-                if(v.back().value_type == val_type_t::INTEGER) {
-                    clustered_v.push_back(v.front());
-                    clustered_v.push_back(v.back());
-                    std::cout << "\t\tmax: " << arg2str(v.front()) << std::endl;
-                    std::cout << "\t\tmin: " << arg2str(v.back()) << std::endl;
-                }
-                else {
-                    argument_t bitfield = mergeConstants(v);
-                    clustered_v.push_back(bitfield);
-                    std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
-                }
+                switch(v.back().value_type){
+                    case val_type_t::INTEGER:
+                        clustered_v.push_back(v.front());
+                        clustered_v.push_back(v.back());
+                        std::cout << "\t\tmax: " << arg2str(v.front()) << std::endl;
+                        std::cout << "\t\tmin: " << arg2str(v.back()) << std::endl;
+                        break;
 
+                    case val_type_t::CONSTANT:
+                    case val_type_t::BITFIELD:
+                        bitfield = mergeConstants(v);
+                        clustered_v.push_back(bitfield);
+                        std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
+                        break;
+
+                    default:
+                        break;
+                }
             }
             else {
-                clustered_v.push_back(v.front());
-                std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
-            }
+                switch(v.back().value_type){
+                    case val_type_t::INTEGER:
+                    case val_type_t::CONSTANT:
+                    case val_type_t::BITFIELD:
+                        clustered_v.push_back(v.front());
+                        std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
+                        break;
 
+                    default:
+                        break;
+                }
+            }
 
             std::cout << "arg_pos: " << arg_pos << " v:" << std::endl;
 
@@ -129,6 +144,7 @@ namespace st2se {
         boost::split(results, text, [](char c){return c == '|';});
 
         // uniq
+        std::sort(results.begin(), results.end());
         it = std::unique(results.begin(), results.end());
         results.resize( std::distance(results.begin(), it) );
 
