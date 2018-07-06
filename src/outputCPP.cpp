@@ -2,7 +2,7 @@
 
 namespace st2se {
 
-    void outputCPP::openFiles() {
+    inline void outputCPP::openFiles() {
         template_file_begin.open(template_file_b_path, std::ios::in);
         template_file_end.open(template_file_e_path, std::ios::in);
         template_file_thread.open(template_file_t_path, std::ios::in);
@@ -25,14 +25,14 @@ namespace st2se {
         }
     }
 
-    void outputCPP::closeFiles() {
+    inline void outputCPP::closeFiles() {
         template_file_begin.close();
         template_file_end.close();
         template_file_thread.close();
         output_source.close();
     }
 
-    void outputCPP::writeFirstPart() {
+    inline void outputCPP::writeFirstPart() {
         std::string line;
 
         while (getline(template_file_begin, line)) {
@@ -40,7 +40,7 @@ namespace st2se {
         }
     }
 
-    void outputCPP::writeLastPart() {
+    inline void outputCPP::writeLastPart() {
         std::string line;
 
         // print the end of the  template.c
@@ -49,7 +49,7 @@ namespace st2se {
         }
     }
 
-    void outputCPP::writeThreadPart() {
+    inline void outputCPP::writeThreadPart() {
         std::string line;
 
         while (getline(template_file_thread, line)) {
@@ -57,7 +57,7 @@ namespace st2se {
         }
     }
 
-    void outputCPP::setOutput(std::string o) {
+    inline void outputCPP::setOutput(std::string o) {
         output_source_path = o;
     }
 
@@ -204,7 +204,7 @@ namespace st2se {
         }
     }
 
-    void outputCPP::writeString(std::string &str) {
+    inline void outputCPP::writeString(std::string &str) {
         output_source << str << std::endl;
     }
 
@@ -242,12 +242,12 @@ namespace st2se {
 
         if (range.back().value_type == val_type_t::BITFIELD) {
             output = fmt::format(
-                    ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, -1u, 1)",
+                    ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, -1u, -1u)",
                     indent,
                     pos
                 );
         }
-        else if (range.back().value_type != val_type_t::INTEGER) {
+        else if (range.back().value_type == val_type_t::CONSTANT) {
             output = fmt::format(
                     ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, -1u, 1)",
                     indent,
@@ -274,35 +274,26 @@ namespace st2se {
             return;
         }
 
-        std::cout << arg.value_type << std::endl;
-
-        if (arg.value_type == val_type_t::BITFIELD) {
-            // std::cout << "skiping bitfield" << std::endl;
-            return;
-        }
-
         writeZero = false;
-
         std::string indent {"        "};  // 8 spaces
+
         output_source << fmt::format(",\n{0}SCMP_A{1}", indent, pos);
 
-        if (arg.value_type == val_type_t::CONSTANT) {
-            output_source << "(SCMP_CMP_MASKED_EQ, ";
+        if (arg.value_type == val_type_t::BITFIELD) {
+            output_source << fmt::format(
+                "(SCMP_CMP_MASKED_EQ, {0}, -1)",
+                arg2str(arg)
+            );
+        }
+        else if (arg.value_type == val_type_t::CONSTANT) {
+            output_source << fmt::format(
+                "(SCMP_CMP_MASKED_EQ, {0}, 1)",
+                arg2str(arg)
+            );
         }
         else {
-            output_source << "(SCMP_CMP_EQ, ";
+            output_source << fmt::format("(SCMP_CMP_EQ, {0}u)", arg2str(arg));
         }
-
-        output_source << arg2str(arg);
-
-        if (arg.value_type == val_type_t::CONSTANT) {
-            output_source << ", 1";
-        }
-        else {
-            output_source << "u";
-        }
-
-        output_source << ")";
 
         return;
     }

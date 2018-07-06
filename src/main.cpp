@@ -16,19 +16,19 @@ int main(int argc, char *argv[]) {
 
     int ret_val {0};
 
-    auto *params = new Params(argc, argv);
+    Params params(argc, argv);
 
-    if (params->debug) {
-        std::cout << *params << std::endl;
+    if (params.debug) {
+        std::cout << params << std::endl;
     }
 
     st2se::Ids in {};
     st2se::Ids out {};
-    st2se::StraceParser o(in);
     st2se::States states {};
+    st2se::StraceParser o(in);
 
     // run grammar analysis
-    if (params->analysis != 0) {
+    if (params.analysis != 0) {
 
         std::cout << "Analyzing grammar ..." << std::endl;
 
@@ -36,25 +36,21 @@ int main(int argc, char *argv[]) {
 
         std::cout << "Found " << issues << " issues." << std::endl;
 
-        return 0;
+        return ret_val;
     }
 
     // parse files
-    for (const auto &fn : params->file_names) {
-        // std::cout << fn << std::endl;
-        o.parse(fn, in, *params, states);
+    for (const auto &fn : params.file_names) {
+        o.parse(fn, in, params, states);
     }
-
-    // print IDS
-    // in.print();
 
     // optimize IDS
     st2se::Algorithm *algo {nullptr};
 
-    if (params->weak != 0) {
+    if (params.weak != 0) {
         algo = new st2se::Algo_weak();
     }
-    else if (params->strict != 0) {
+    else if (params.strict != 0) {
         algo = new st2se::Algo_strict();
     }
     else {
@@ -74,15 +70,12 @@ int main(int argc, char *argv[]) {
         ret_val = 1;
     }
 
-    // out.print();
-
-
     st2se::Generator gen;
     st2se::Output *cpp = new st2se::outputCPP();
 
     // initialize and configure generator
     gen.initialize(cpp);
-    gen.configure(*params);
+    gen.configure(params);
 
     gen.generate(out);
 
@@ -90,13 +83,9 @@ int main(int argc, char *argv[]) {
     opti.useAlgorithm(nullptr);
     delete algo;
 
-
     // remove and dealloc output generator
     gen.removeOutput();
     delete cpp;
-
-    // delete params object
-    delete params;
 
     return ret_val;
 
