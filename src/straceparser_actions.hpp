@@ -295,7 +295,7 @@ namespace st2se::grammar {
                     auto search = signal_map.find(in.string());
 
                     if (search != signal_map.end()) {
-                        std::cout << "Found " << search->first << " " << search->second << '\n';
+                        // std::cout << "Found " << search->first << " " << search->second << '\n';
                         states.value = search->second;
                     }
                     else {

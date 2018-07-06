@@ -8,6 +8,9 @@
 #include <string>
 #include <variant>
 
+#include "fmt/core.h"
+#include "fmt/format.h"
+
 #include "output.hpp"
 #include "ids.hpp"
 
@@ -50,10 +53,10 @@ namespace st2se {
 
         void writeValue(minmax_t &range, unsigned pos);
         void writeValue(argument_t &arg, unsigned pos);
-        void writeSC(Syscall_t &sc, unsigned tab_len);
+        void writeSC(Syscall_t &sc);
         void writeClosingBracket();
         void writeString(std::string &str);
-        std::string sc2str(Syscall_t &sc, unsigned tab_len);
+        std::string sc2str(Syscall_t &sc);
 
         bool isPointer(minmax_t minmax);
         unsigned rulesCount(const Syscall_t &sc, const bool clustered);

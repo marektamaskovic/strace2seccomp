@@ -15,7 +15,7 @@ CXX=g++
 
 OBJ=main.o straceparser.o ids.o argparse.o states.o optimizer.o algorithm.o\
 	algorithm_weak.o algorithm_strict.o algorithm_advanced.o \
-	generator.o output.o outputCPP.o
+	generator.o output.o outputCPP.o format.o posix.o
 
 BIN=st2se
 LDFLAGS=-Iinclude/
@@ -26,11 +26,11 @@ CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
 
 # Recipes
 # -------
-# all: CXXFLAGS += -g3 -fsanitize=address,undefined -fno-omit-frame-pointer
-all: CXXFLAGS += -g3
+all: CXXFLAGS += -g3 -fsanitize=address,undefined -fno-omit-frame-pointer
+# all: CXXFLAGS += -g3
 all: st2se
 
-release: CXXFLAGS += -O2
+release: CXXFLAGS += -Ofast -march=native -flto
 release: st2se
 
 coverage: CXXFLAGS += -fprofile-arcs -ftest-coverage

@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
     }
 
     // print IDS
-    in.print();
+    // in.print();
 
     // optimize IDS
     st2se::Algorithm *algo {nullptr};
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
         ret_val = 1;
     }
 
-    out.print();
+    // out.print();
 
 
     st2se::Generator gen;

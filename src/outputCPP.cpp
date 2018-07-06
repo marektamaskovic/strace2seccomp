@@ -74,7 +74,7 @@ namespace st2se {
             writeThreadPart();
         }
 
-        ids.print();
+        // ids.print();
 
         for (const auto &item : ids.data) {
             generateScRules(item);
@@ -96,16 +96,8 @@ namespace st2se {
         // Write zero when no arguments provided.
         writeZero = true;
 
-        if (sc.clustered) {
-
-            if(genProlog) {
-                writeSC(sc, 1);
-            }
-            else {
-                writeSC(sc, 0);
-            }
-
-            std::cout << "clustered branch" << std::endl;
+        if (sc.clustered) { // clustered branch
+            writeSC(sc);
 
             if (!sc.next.empty()) {
                 for (auto &pos : sc.next) {
@@ -115,20 +107,11 @@ namespace st2se {
 
             writeClosingBracket();
         }
-        else {
-            std::string prefix;
-
-            if(genProlog) {
-                prefix = sc2str(sc, 1);
-            }
-            else {
-                prefix = sc2str(sc, 0);
-            }
+        else {  // unclustered branch
+            std::string prefix {sc2str(sc)};
 
             if (!sc.next.empty()) {
                 for (argument_t &argument : sc.next) {
-                    std::cout << "calee:" << arg2str(argument) << std::endl;
-                    std::cout << "calee:" << prefix << std::endl;
                     generateRules(argument, pos_num, /*clustered =*/ false, prefix);
                 }
             }
@@ -147,7 +130,7 @@ namespace st2se {
                 return;
             }
 
-            std::cout << "minmax.size():" << minmax.size() << std::endl;
+            // std::cout << "minmax.size():" << minmax.size() << std::endl;
 
             // ENHANCEMENT add here param switch when program is running without ASLR
             if (isPointer(minmax)) {
@@ -168,38 +151,54 @@ namespace st2se {
                 }
             }
         }
-        else{
+        else {
             std::cerr << "Error expected clustered argument" << std::endl;
         }
     }
 
     void outputCPP::generateRules(argument_t &arg, const unsigned pos, const bool clustered, std::string prefix) {
         std::string buffer {prefix};
-        std::cout << "func:" << prefix << std::endl;
-        // std::string buffer = prefix;
+        std::string s4 {"    "}; // four spaces
 
-        if(arg.value_type == val_type_t::INTEGER){
-            if(genProlog)
-                buffer += "    ";
+        if (arg.value_type == val_type_t::INTEGER) {
+            if (genProlog) {
+                buffer += s4;
+            }
 
-            buffer += ",\n    SCMP_A" + std::to_string(pos) + "(SCMP_CMP_EQ, "+ arg2str(arg) +"u)";
+            buffer +=
+                fmt::format(",\n{0}SCMP_A{1}(SCMP_CMP_EQ, {2}u)",
+                    s4,
+                    std::to_string(pos),
+                    arg2str(arg)
+                );
         }
-        else if(arg.value_type == val_type_t::CONSTANT || arg.value_type == val_type_t::BITFIELD){
-            if(genProlog)
-                buffer += "    ";
+        else if (arg.value_type == val_type_t::CONSTANT || arg.value_type == val_type_t::BITFIELD) {
+            if (genProlog) {
+                buffer += s4;
+            }
 
-            buffer += ",\n    SCMP_A" + std::to_string(pos) + "(SCMP_CMP_MASKED_EQ, "+ arg2str(arg) +", 1)";
+            buffer +=
+                fmt::format(",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, {2}, 1)",
+                    s4,
+                    std::to_string(pos),
+                    arg2str(arg)
+                );
         }
 
-        if(!arg.next.empty()) {
-            for(auto &item : arg.next){
+        if (!arg.next.empty()) {
+            for (auto &item : arg.next) {
                 generateRules(item, pos + 1, clustered, buffer);
             }
         }
         else {
-            buffer += "\n";
-            if(genProlog)
-                buffer += "    ";
+            if (prefix.back() != '0') {
+                buffer += "\n";
+            }
+
+            if (genProlog) {
+                buffer += s4;
+            }
+
             buffer += ");";
             writeString(buffer);
         }
@@ -220,10 +219,6 @@ namespace st2se {
             }
         }
 
-        // vec.push_back(arg);
-
-        // std::cout << "arg.next.size()" << arg.next.size() << std::endl;
-
         std::vector<argument_t> ret_val {};
 
         std::sort(vec.begin(), vec.end());
@@ -240,25 +235,36 @@ namespace st2se {
     }
 
     void outputCPP::writeValue(minmax_t &range, unsigned pos) {
-
-        std::cout << range.back().value_type << std::endl;
-
-        if (range.back().value_type == val_type_t::BITFIELD) {
-            std::cout << "skiping bitfield" << std::endl;
-            return;
-        }
-
         writeZero = false;
 
-        output_source << "," << std::endl;
-        output_source << "        ";  // indentation 8 spaces
-        output_source << "SCMP_A";
-        output_source << pos;
-        output_source << "(SCMP_CMP_IN_RANGE, ";
-        output_source << arg2str(range.front());
-        output_source << "u, ";
-        output_source << arg2str(range.back());
-        output_source << "u)";
+        std::string indent {"        "};  // 8 spaces
+        std::string output {""};
+
+        if (range.back().value_type == val_type_t::BITFIELD) {
+            output = fmt::format(
+                    ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, -1u, 1)",
+                    indent,
+                    pos
+                );
+        }
+        else if (range.back().value_type != val_type_t::INTEGER) {
+            output = fmt::format(
+                    ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, -1u, 1)",
+                    indent,
+                    pos
+                );
+        }
+        else {
+            output = fmt::format(
+                    ",\n{0}SCMP_A{1}(SCMP_CMP_IN_RANGE, {2}u, {3}u)",
+                    indent,
+                    pos,
+                    arg2str(range.front()),
+                    arg2str(range.back())
+                );
+        }
+
+        output_source << output;
 
         return;
     }
@@ -271,16 +277,14 @@ namespace st2se {
         std::cout << arg.value_type << std::endl;
 
         if (arg.value_type == val_type_t::BITFIELD) {
-            std::cout << "skiping bitfield" << std::endl;
+            // std::cout << "skiping bitfield" << std::endl;
             return;
         }
 
         writeZero = false;
 
-        output_source << "," << std::endl;
-        output_source << "        ";  // indentation 8 spaces
-        output_source << "SCMP_A";
-        output_source << pos;
+        std::string indent {"        "};  // 8 spaces
+        output_source << fmt::format(",\n{0}SCMP_A{1}", indent, pos);
 
         if (arg.value_type == val_type_t::CONSTANT) {
             output_source << "(SCMP_CMP_MASKED_EQ, ";
@@ -303,7 +307,16 @@ namespace st2se {
         return;
     }
 
-    std::string outputCPP::sc2str(Syscall_t &sc, unsigned tab_len) {
+    std::string outputCPP::sc2str(Syscall_t &sc) {
+
+        unsigned tab_len {0};
+
+        if (genProlog) {
+            tab_len = 1;
+        }
+        else {
+            tab_len = 0;
+        }
 
         std::string buffer {""};
 
@@ -313,38 +326,43 @@ namespace st2se {
 
         unsigned cnt = rulesCount(sc, sc.clustered);
 
-        buffer += "ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(";
-        buffer += sc.name;
-        buffer += "), ";
-        buffer += std::to_string(cnt);
+        buffer += fmt::format("ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, "
+                "SCMP_SYS({0}), {1}", sc.name, std::to_string(cnt));
 
         return buffer;
     }
 
-    void outputCPP::writeSC(Syscall_t &sc, unsigned tab_len) {
+    void outputCPP::writeSC(Syscall_t &sc) {
+
+        unsigned tab_len {0};
+
+        if (genProlog) {
+            tab_len = 1;
+        }
+        else {
+            tab_len = 0;
+        }
 
         for (unsigned i = 0; i < tab_len; ++i) {
             output_source << "    ";
         }
 
-        output_source << "ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(";
-        output_source << sc.name;
-        output_source << "), ";
-        output_source << rulesCount(sc, sc.clustered);
+        output_source << fmt::format("ret |= seccomp_rule_add(ctx, "
+                "SCMP_ACT_ALLOW, SCMP_SYS({0}), {1}", sc.name,
+                rulesCount(sc, sc.clustered)
+            );
 
         return;
     }
 
     void outputCPP::writeClosingBracket() {
-
         if (writeZero) {
             output_source << ");" << std::endl;
             return;
         }
 
-        output_source << std::endl;
-        output_source << "    ";
-        output_source << ");" << std::endl;
+        output_source << fmt::format("\n    );\n");
+
         return;
     }
 
@@ -377,44 +395,45 @@ namespace st2se {
                 }
 
                 switch (item.next.front().value_type) {
-                    case val_type_t::POINTER :
-                    case val_type_t::STRING :
-                    case val_type_t::STRUCTURE :
-                    case val_type_t::ARRAY :
-                        continue;
+                case val_type_t::POINTER :
+                case val_type_t::STRING :
+                case val_type_t::STRUCTURE :
+                case val_type_t::ARRAY :
+                    continue;
 
-                    default:
-                        break;
+                default:
+                    break;
                 }
 
                 cnt++;
             }
+
             return cnt;
         }
         else {
             unsigned cnt {0};
 
-            if(sc.next.empty()){
+            if (sc.next.empty()) {
                 return cnt;
             }
 
             argument_t arg = sc.next.front();
 
-            while(!arg.next.empty()){
-
+            while (!arg.next.empty()) {
                 switch (arg.value_type) {
-                    case val_type_t::INTEGER :
-                    case val_type_t::CONSTANT :
-                    case val_type_t::BITFIELD :
-                        break;
+                case val_type_t::INTEGER :
+                case val_type_t::CONSTANT :
+                case val_type_t::BITFIELD :
+                    break;
 
-                    default:
-                        arg = arg.next.front();
-                        continue;
+                default:
+                    arg = arg.next.front();
+                    continue;
                 }
 
                 cnt++;
-                arg = arg.next.front();
+                argument_t tmp {arg.next.front()};
+                arg = tmp;
             }
 
             return cnt;
