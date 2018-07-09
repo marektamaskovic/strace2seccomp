@@ -18,15 +18,16 @@ _Used sources are from official project pages and repositories._
 
 ## `./setEnv.sh`
 `./setEnv.sh` is a script which will setup environment for testing. It is simple bash script controlled with subcommands.
+You should use subcommands in this order:
 
-![alt text][architecture]
-[architecture]: https://github.com/tammar96/IBP/raw/source_dev/testsuite/resources/architecture.png "Architecture of ./setEnv.sh"
+![Architecture of ./setEnv.sh]( https://github.com/tammar96/IBP/blob/source_dev/testsuite/resources/architecture.png "Architecture of ./setEnv.sh")
 
 ## Script subcommands
 
 - `$ ./setEnv help` - print this help
 - `$ ./setEnv prep` - downloads, extracts and configures sources
-- ~~`$ ./setEnv applyPolicy`~~ - generates strace, runs st2se, patch sources __NOT WORKING__
+- `$ ./setEnv applyPolicy` -  ~~generates strace, runs st2se, patch sources~~
+__NOT WORKING:__ _You must do it manualy._
 - `$ ./setEnv make` - make binaries
 - `$ ./setEnv test` - run tests
 - `$ ./setEnv clean` - removes downloaded packages and temporary files
