@@ -130,8 +130,6 @@ namespace st2se {
                 return;
             }
 
-            // std::cout << "minmax.size():" << minmax.size() << std::endl;
-
             // ENHANCEMENT add here param switch when program is running without ASLR
             if (isPointer(minmax)) {
                 return;
@@ -160,29 +158,34 @@ namespace st2se {
         std::string buffer {prefix};
         std::string s4 {"    "}; // four spaces
 
-        if (arg.value_type == val_type_t::INTEGER) {
-            if (genProlog) {
-                buffer += s4;
-            }
+        switch(arg.value_type){
+            case val_type_t::INTEGER:
+                if (genProlog) {
+                    buffer += s4;
+                }
 
-            buffer +=
-                fmt::format(",\n{0}SCMP_A{1}(SCMP_CMP_EQ, {2}u)",
-                    s4,
-                    std::to_string(pos),
-                    arg2str(arg)
-                );
-        }
-        else if (arg.value_type == val_type_t::CONSTANT || arg.value_type == val_type_t::BITFIELD) {
-            if (genProlog) {
-                buffer += s4;
-            }
+                buffer +=
+                    fmt::format(",\n{0}SCMP_A{1}(SCMP_CMP_EQ, {2}u)",
+                        s4,
+                        std::to_string(pos),
+                        arg2str(arg)
+                    );
+                break;
+            case val_type_t::BITFIELD:
+            case val_type_t::CONSTANT:
+                if (genProlog) {
+                    buffer += s4;
+                }
 
-            buffer +=
-                fmt::format(",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, {2}, 1)",
-                    s4,
-                    std::to_string(pos),
-                    arg2str(arg)
-                );
+                buffer +=
+                    fmt::format(",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, {2}, 1)",
+                        s4,
+                        std::to_string(pos),
+                        arg2str(arg)
+                    );
+                break;
+            default:
+                break;
         }
 
         if (!arg.next.empty()) {
@@ -240,28 +243,30 @@ namespace st2se {
         std::string indent {"        "};  // 8 spaces
         std::string output {""};
 
-        if (range.back().value_type == val_type_t::BITFIELD) {
-            output = fmt::format(
+        switch(range.back().value_type){
+            case val_type_t::BITFIELD:
+                output = fmt::format(
                     ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, -1u, -1u)",
                     indent,
                     pos
                 );
-        }
-        else if (range.back().value_type == val_type_t::CONSTANT) {
-            output = fmt::format(
-                    ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, -1u, 1)",
+                break;
+            case val_type_t::CONSTANT:
+                output = fmt::format(
+                    ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, -1u, -1u)",
                     indent,
                     pos
                 );
-        }
-        else {
-            output = fmt::format(
+                break;
+            default:
+                output = fmt::format(
                     ",\n{0}SCMP_A{1}(SCMP_CMP_IN_RANGE, {2}u, {3}u)",
                     indent,
                     pos,
                     arg2str(range.front()),
                     arg2str(range.back())
                 );
+                break;
         }
 
         output_source << output;
@@ -300,20 +305,10 @@ namespace st2se {
 
     std::string outputCPP::sc2str(Syscall_t &sc) {
 
-        unsigned tab_len {0};
-
-        if (genProlog) {
-            tab_len = 1;
-        }
-        else {
-            tab_len = 0;
-        }
-
         std::string buffer {""};
 
-        for (unsigned i = 0; i < tab_len; ++i) {
+        if (genProlog) {
             buffer += "    ";
-        }
 
         unsigned cnt = rulesCount(sc, sc.clustered);
 
@@ -325,16 +320,7 @@ namespace st2se {
 
     void outputCPP::writeSC(Syscall_t &sc) {
 
-        unsigned tab_len {0};
-
-        if (genProlog) {
-            tab_len = 1;
-        }
-        else {
-            tab_len = 0;
-        }
-
-        for (unsigned i = 0; i < tab_len; ++i) {
+        if (genProlog) { // if genProlog we need to indent rules
             output_source << "    ";
         }
 
@@ -349,11 +335,10 @@ namespace st2se {
     void outputCPP::writeClosingBracket() {
         if (writeZero) {
             output_source << ");" << std::endl;
-            return;
         }
-
-        output_source << fmt::format("\n    );\n");
-
+        else{
+            output_source << fmt::format("\n    );\n");
+        }
         return;
     }
 

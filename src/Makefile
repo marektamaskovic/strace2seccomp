@@ -10,6 +10,7 @@
 # Variables
 # ---------
 
+# CXX=/opt/intel/system_studio_2018/compilers_and_libraries/linux/bin/intel64/icc
 CXX=g++
 # CXX=clang++
 
