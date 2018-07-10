@@ -200,10 +200,10 @@ main(){
 
 	elif [ "$1" = "make" ]; then
 	    # Make custom binaries
-	    runMake $coreutils &
-	    runMake $findutils &
-	    runMake $usbguard &
-	    runMake $testovac &
+	     runMake $coreutils &
+	    # runMake $findutils &
+	    # runMake $usbguard &
+	    # runMake $testovac &
 
 	    wait
 

@@ -88,6 +88,27 @@ namespace st2se {
 
     }
 
+    unsigned outputCPP::getPrintable(argument_t & arg) {
+        unsigned cnt {0};
+
+        if(!arg.next.empty()) {
+            for(auto &item : arg.next) {
+                cnt += getPrintable(item);
+            }
+        }
+
+        switch(arg.value_type) {
+            case val_type_t::INTEGER:
+            case val_type_t::CONSTANT:
+            case val_type_t::BITFIELD:
+                cnt++;
+            default:
+                break;
+        }
+
+        return cnt;
+    }
+
     void outputCPP::generateScRules(std::pair<std::string, Syscall_t> sc_pair) {
 
         unsigned pos_num = 0;
@@ -115,6 +136,8 @@ namespace st2se {
                     generateRules(argument, pos_num, /*clustered =*/ false, prefix);
                 }
             }
+
+            writeString();
         }
 
     }
@@ -162,6 +185,7 @@ namespace st2se {
             case val_type_t::INTEGER:
                 if (genProlog) {
                     buffer += s4;
+                    s4 += s4;
                 }
 
                 buffer +=
@@ -175,6 +199,7 @@ namespace st2se {
             case val_type_t::CONSTANT:
                 if (genProlog) {
                     buffer += s4;
+                    s4 += s4;
                 }
 
                 buffer +=
@@ -203,12 +228,27 @@ namespace st2se {
             }
 
             buffer += ");";
-            writeString(buffer);
+            storeString(buffer);
         }
     }
 
-    inline void outputCPP::writeString(std::string &str) {
-        output_source << str << std::endl;
+    inline void outputCPP::storeString(std::string &str) {
+        batch.push_back(str);
+    }
+
+    inline void outputCPP::writeString() {
+
+        std::sort(batch.begin(), batch.end());
+        std::vector<std::string>::iterator end = std::unique(batch.begin(), batch.end());
+        batch.erase(end, batch.end());
+
+        for(auto &item : batch) {
+            output_source << item << std::endl;
+        }
+
+        batch.clear();
+
+        // output_source << str << std::endl;
     }
 
     std::vector<argument_t> outputCPP::getMinMax(argument_t &arg) {
@@ -273,6 +313,7 @@ namespace st2se {
 
         return;
     }
+
     void outputCPP::writeValue(argument_t &arg, unsigned pos) {
 
         if (arg2str(arg).length() == 0) {
@@ -307,8 +348,9 @@ namespace st2se {
 
         std::string buffer {""};
 
-        if (genProlog) {
-            buffer += "    ";
+        if (genProlog) { // if genProlog we need to indent rules
+            output_source << "    ";
+        }
 
         unsigned cnt = rulesCount(sc, sc.clustered);
 
@@ -388,7 +430,8 @@ namespace st2se {
                         break;
 
                     default:
-                        arg = arg.next.front();
+                        argument_t tmp {arg.next.front()};
+                        arg = tmp;
                         continue;
                 }
 

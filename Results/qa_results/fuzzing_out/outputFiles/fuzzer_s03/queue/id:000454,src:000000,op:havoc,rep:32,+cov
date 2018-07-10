@@ -1,19 +1,0 @@
-fcntl(10, F_D_CLOEXEC, 0)       = 11
-fcntl(11, F       = 0x2 (s O_RDWR)
-fcntl(11, F_GETFL)                      = 0x802 (flK)
-fcntl(11, F_SETçT           = 0
-fcntl(11, F O_RDWLOCK)   = 0
-fcntl(13, F_GETFL)                      = 0 
-fcntl(13, _SETFD, LOEXEC)          = 0
-fcntl(13, F_SETFL, O_RDONLY|O_NONBLOCK) = 0
-fcntl(14, F_GETFL)                      = 0x2 ()
-fcntl(14, F_SETFL, O_RDWR|O_ONBLOCK)   = 0
-fcntl(15, F_GETFL)     5          R)
-fcntl(1+, F_SENBLOCK) = 0
-fcntl(1(18-     s ÿ_RDWR)
-fags OR)
-fcntl(18, F_SETFL, O_RDWR|U_NONBLOCK)   = 0f F_D_CLOEXEC, 0)           = 20
-fcntl(19, FFD, LOEXE®)  = 0
-fcntl(5, F_GETFL)            = 0x2 ()
-fcntl(5, F_SETFL, O_RDWR|O_NONBLOCK)    = 0
-fcntl(7, FFL)         _RDWRL

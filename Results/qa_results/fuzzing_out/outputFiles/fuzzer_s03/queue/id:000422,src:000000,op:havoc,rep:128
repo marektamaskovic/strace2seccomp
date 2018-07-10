@@ -1,6 +1,0 @@
-fRntl(10, F_D_CLO      = 0x2 (flags O_RdWR)
-fcntl(14,    = 0xxxxxxxxxxxx 0
-fcntl(15, F_GETFL)               g= 0
-fcntl(18, %_GETF'        = &
-fcnth(T, ((lags R_RDPX)     
- OLOC,%FFNA/      

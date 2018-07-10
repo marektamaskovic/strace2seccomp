@@ -30,6 +30,8 @@ namespace st2se {
         std::string template_file_t_path = "../seccomp_template/template.c.thread";
         std::string output_source_path = "./source.cpp";
 
+        std::vector<std::string> batch {};
+
         void writeFirstPart();
         void writeLastPart();
         void writeThreadPart();
@@ -55,11 +57,14 @@ namespace st2se {
         void writeValue(argument_t &arg, unsigned pos);
         void writeSC(Syscall_t &sc);
         void writeClosingBracket();
-        void writeString(std::string &str);
+        void writeString();
         std::string sc2str(Syscall_t &sc);
 
         bool isPointer(minmax_t minmax);
         unsigned rulesCount(const Syscall_t &sc, const bool clustered);
+        unsigned getPrintable(argument_t & arg);
+        void storeString(std::string &str);
+
     };
 
 } // namespace st2se
