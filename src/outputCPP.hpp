@@ -58,6 +58,7 @@ namespace st2se {
         void writeSC(Syscall_t &sc);
         void writeClosingBracket();
         void writeString();
+        bool checkForPointers(argument_t &arg);
         std::string sc2str(Syscall_t &sc);
 
         bool isPointer(minmax_t minmax);

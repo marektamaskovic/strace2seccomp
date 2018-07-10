@@ -286,16 +286,18 @@ namespace st2se {
         switch(range.back().value_type){
             case val_type_t::BITFIELD:
                 output = fmt::format(
-                    ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, -1u, -1u)",
+                    ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, {2}, -1u)",
                     indent,
-                    pos
+                    pos,
+                    arg2str(range.front())
                 );
                 break;
             case val_type_t::CONSTANT:
                 output = fmt::format(
-                    ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, -1u, -1u)",
+                    ",\n{0}SCMP_A{1}(SCMP_CMP_MASKED_EQ, {2}, -1u)",
                     indent,
-                    pos
+                    pos,
+                    arg2str(range.front())
                 );
                 break;
             default:
@@ -421,10 +423,17 @@ namespace st2se {
             }
 
             argument_t arg = sc.next.front();
+            argument_t last = arg;
 
             while (!arg.next.empty()) {
                 switch (arg.value_type) {
                     case val_type_t::INTEGER :
+                        if(checkForPointers(last)){
+                            argument_t tmp {arg.next.front()};
+                            arg = tmp;
+                            last = arg;
+                            continue;
+                        }
                     case val_type_t::CONSTANT :
                     case val_type_t::BITFIELD :
                         break;
@@ -432,18 +441,41 @@ namespace st2se {
                     default:
                         argument_t tmp {arg.next.front()};
                         arg = tmp;
+                        last = arg;
                         continue;
                 }
 
                 cnt++;
                 argument_t tmp {arg.next.front()};
                 arg = tmp;
+                last = arg;
+            }
+
+            switch (arg.value_type) {
+                case val_type_t::INTEGER :
+                    if(checkForPointers(last)){
+                        break;
+                    }
+                case val_type_t::CONSTANT :
+                case val_type_t::BITFIELD :
+                    cnt++;
+                default:
+                    break;
             }
 
             return cnt;
         }
 
         return 0;
+    }
+
+    bool outputCPP::checkForPointers(argument_t &arg) {
+        for(auto &item : arg.next){
+            if(item.value_type == val_type_t::POINTER){
+                return true;
+            }
+        }
+        return false;
     }
 
 } // namespace st2se
