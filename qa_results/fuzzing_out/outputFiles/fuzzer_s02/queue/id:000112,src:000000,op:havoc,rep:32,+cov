@@ -1,0 +1,19 @@
+fcntl(10, F_D_C WR)
+fcntl(11, F_L)   l(1F\)                      = 0x2 (s O_RDWR)
+fcntl(11, F_GETFL)   ”””””ONBLOCK)
+fLntl(11, FFD, FOEXEC)D   TTTTTTTTTTT0
+fcntl(11, FFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(13~ FFL)     ONLY)
+fcntl(13, F_SETFD, LOEXEC)   0
+fc_SETFL, K) = 0
+fcntl(14, F_GETFL)      = 0x2 (flO_RDWR)
+fcÄtNONBLOCK)   = 0
+fcntl(15GETFlags O_RDWR)
+fjntl(15, F_SETFL,+_NONBLOCK)   = 0
+fcnxl(18, F_GETFL) ,   flags O_RDWR)
+fjntl(18, F_SETFL, O_RDWR|O_NONBL13, F_SETF
+Vcntl(1, F_D_      = 20
+fcntl(19, FFD, LOEXEC)      = 0
+fXntl(5, FˇGETFL)ags O_RDWR)
+fcntl(5, F_SETFL, O_RDWR|O_NONBLOCK)= 0
+fcntl(7, FFL)    0      = 0x

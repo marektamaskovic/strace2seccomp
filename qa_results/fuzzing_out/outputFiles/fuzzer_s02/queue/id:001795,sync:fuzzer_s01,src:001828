@@ -1,0 +1,29 @@
+fcnt          = 20
+fcntl(111
+fcntl(11, FFL) )
+fcntl(11, TFL)  = 0x802 (f)K)
+fcntl(11, 8, F_S, O_|FL, O)   = 0
+fcntgs O_RDONLY)
+fcntl(13, F_SETFags
+fcntl(15, F_SETFL,13, FFL, O_RDONLY
+fcntl(14, F_GETF 0
+fcntl(11, F_L)      = SE  = 0
+fcntl(13, F_G WR)
+fcntl(15, F_L,DWETFL,13, F_Sfc= 0
+fcntl(19, F_EC,0) 
+fcntl(15, F_SETFL,13, F_SED, LOEXEC)      = 0
+fcntl(5, F_GETFL)       = 0x2 (flaR0
+fcntl(1W, DWR)
+ftl(18, F_0
+fcntl(19, F_D_CLOEGETFL)                      =  R|OBLOCK)   = 0
+fcntl(19, 5_)          = 20
+fcèflaLOCK)   = 0
+fcntl(15, F_GETFL)          O_RDWR)
+fcntl(15, F_SETFL,2O_RD
+fcntl(18, F_GETFL)     l(19_RDWR)
+fcntl(18,|O_NONBLOCK)   = 0
+fcntl(19& F_D       = 20
+fcntl(19, FFD, LOEXEC)     î= 0
+fcUtl(5, F_GETFL)               = 0x2 (fDWR)
+fcntl(5, F_SETFL, O_RDWR|O_NONBLOCK)    = 0
+fcntl(7, FFD)              L)  

@@ -1,0 +1,20 @@
+fcntl(10, F_OEXEC, 0)   =ags1, Fx2 -)
+fcntl(11, F_GETFL)                  = 0x802 (fCK)
+fcntl(1C       = 0
+fcntl(11, FCK)   = 0
+fcntl(13, F_GETFL)                      = 0 
+fcntl(13, F_SETFD, LOEXEC)          = 08888888888888888888888_N
+fcntl(14, F_GETFL)      =11111111111111111111, TFL,CK)   = 0
+fcn{l(gs O_RDWR)
+fcntl(15, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+fcntl(18, F_GETFL)                      = 0x2 (flags O_RDWR)
+fcntl(18, F_SETF   =fCK)
+fcntl(1C 0
+fcntl(19, F_D_CL)       ags O_RDWR)
+fcntl(15, F_S#TF2 (flags O_RDWR)
+fcntl(18, F_SETFL,   ÿ    = 0x2 (fl = 0
+fcntl(19, F0)$          = 20
+fcntl(ÿ,) .       = 0
+fcntl(5, F_GETFL)         _RDWR)
+fcntÿNBLOCK)    = 0
+fcntl(7, FFL)                    WR)
