@@ -30,13 +30,15 @@ namespace st2se {
         std::string template_file_t_path = "../seccomp_template/template.c.thread";
         std::string output_source_path = "./source.cpp";
 
+        std::string rule_start {""};
+        std::string indent {"    "};
+        std::string opt_indent {""};
         std::vector<std::string> batch {};
+        std::vector<std::string> ready2Print {};
 
         void writeFirstPart();
         void writeLastPart();
         void writeThreadPart();
-
-        bool writeZero = true;
 
       public:
         outputCPP() = default;
@@ -47,25 +49,17 @@ namespace st2se {
         virtual void generate(Ids &ids);
         virtual void setOutput(std::string o);
         void generateScRules(std::pair<std::string, Syscall_t> sc);
-        void generateClusterRules(argument_t pos, const unsigned pos_num);
-        void generateRules(argument_t cluster, const unsigned pos, const bool clustered);
-        void generateRules(argument_t &arg, const unsigned pos, const bool clustered, std::string prefix);
+        void generateRules(argument_t &cluster, bool clustered, unsigned pos);
 
-        std::vector<argument_t> getMinMax(argument_t &arg);
+        std::string getCondition(argument_t &arg, unsigned pos);
 
-        void writeValue(minmax_t &range, unsigned pos);
-        void writeValue(argument_t &arg, unsigned pos);
-        void writeSC(Syscall_t &sc);
-        void writeClosingBracket();
-        void writeString();
-        bool checkForPointers(argument_t &arg);
-        std::string sc2str(Syscall_t &sc);
+        void __genConditions(argument_t &arg, unsigned pos);
+        void __genCluseteredConditions(argument_t &cluster, unsigned pos);
+        std::string getClusteredCond(argument_t &cluster, unsigned pos);
 
-        bool isPointer(minmax_t minmax);
-        unsigned rulesCount(const Syscall_t &sc, const bool clustered);
-        unsigned getPrintable(argument_t & arg);
-        void storeString(std::string &str);
-
+        std::string getRuleProlog(Syscall_t &sc);
+        void writeRule();
+        void printRules();
     };
 
 } // namespace st2se
