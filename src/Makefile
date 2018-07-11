@@ -20,11 +20,10 @@ OBJ=main.o straceparser.o ids.o argparse.o states.o optimizer.o algorithm.o \
 
 OBJ_TEST=ids_test.o ids.o outputCPP_test.o outputCPP.o output.o argparse.o  \
 		argparse_test.o generator.o generator_test.o states.o states_test.o \
-		format.o posix.o
+		format.o posix.o test_main.o
 
 BIN=st2se
 BIN_TEST=module_tests
-LDFLAGS=-Iinclude/
 LINK.o = $(LINK.cpp)
 DATASET=../testdata/dataset.reduced
 CXXFLAGS:=-Wall -Wextra -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
@@ -92,6 +91,7 @@ clean:
 	-rm -f *.o
 	-rm -f *.orig
 	-rm -f $(BIN)
+	-rm -f $(BIN_TEST)
 	-rm -f vgcore.* core.* lint.out
 	-rm -rf ./html
 	-rm -f *.gcda *.gcno coverage.info

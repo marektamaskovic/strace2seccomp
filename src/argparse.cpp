@@ -22,6 +22,7 @@ std::ostream &operator<< (std::ostream &os, const Params &a) {
         << "\n-o: " << a.output
         << "\n--prolog: " << a.prolog
         << "\n--thread: " << a.thread
+        << "\n--scOnly: " << a.scOnly
         << "\nErr flag: " << param_error
         << "\n" << acc;
 }

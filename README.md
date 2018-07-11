@@ -31,6 +31,8 @@ algorithm for clustering. The thesis can be found in another
 	    -a [--advanaced]					: use advanced algotirthm
 	    --prolog										: generate function prolog
 	    --thread										: add filter synchronization among threads/processes
+    	--scOnly                                        : generate only syscall allowance
+
 
 ## Examples
 

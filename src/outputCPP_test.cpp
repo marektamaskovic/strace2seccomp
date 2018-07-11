@@ -87,12 +87,8 @@ TEST_CASE("OutputCPP write methods", "[OutputCPP]") {
 	// Here we create a needed files for source code generation.
 	struct stat st;
 	if (stat("../seccomp_template", &st) == -1) {
-	    mkdir("../seccomp_template", 0700);
+	    FAIL("seccomp_template/ folder not found");
 	}
-
-	creat("../seccomp_template/template.c.begin", S_IRWXU|S_IRWXG|S_IRWXO );
-	creat("../seccomp_template/template.c.end", S_IRWXU|S_IRWXG|S_IRWXO );
-	creat("../seccomp_template/template.c.thread", S_IRWXU|S_IRWXG|S_IRWXO );
 
 	// GENERATE OUTPUT
 	// ---------------
@@ -123,11 +119,8 @@ TEST_CASE("OutputCPP write methods", "[OutputCPP]") {
 
 	output.close();
 
-	remove("../seccomp_template/template.c.begin");
-	remove("../seccomp_template/template.c.end");
-	remove("../seccomp_template/template.c.thread");
-	remove("../seccomp_template");
 	remove("./source.cpp");
+
 	delete o;
 
 }
