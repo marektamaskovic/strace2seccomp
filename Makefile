@@ -13,7 +13,10 @@ clean:
 check:
 	@cd src/ && $(MAKE) check
 
-xtamas01.tar.gz: src/ Makefile README.md
+doxygen:
+	cd src/ && doxygen doxyfile
+
+xtamas01.tar.gz: doc/man/ src/ Makefile README.md testsuite/ Vagrantfile
 	tar tar cvzf $@ $^
 
 run:

@@ -2,7 +2,7 @@
 # ------------------
 #  Author: Marek Tamaskovic
 #  - xtamas01.stud.fit.vutbr.cz
-#  - mtamasko.redhat.cz
+#  - mtamasko.redhat.com
 #  Project: strace2seccomp - st2se
 #  Compiled:  insert uname -a
 #  Note:
