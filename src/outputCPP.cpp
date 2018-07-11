@@ -187,7 +187,7 @@ namespace st2se {
 
         switch(cluster.next.front().value_type){
             case val_type_t::INTEGER:
-                if(cluster.next.size() == 2){
+                if(cluster.next.size() >= 2){
                     ret += fmt::format(
                         "SCMP_CMP_IN_RANGE, {}u, {}u)",
                         arg2str(cluster.next.front()),
@@ -202,6 +202,9 @@ namespace st2se {
                     );
                     break;
                 }
+                // if(cluster.next.size() > 2){
+                //     ret += "WHOOA TOO BIG: " + std::to_string(cluster.next.size());
+                // }
                 break;
             case val_type_t::CONSTANT:
                 ret += fmt::format(

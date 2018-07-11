@@ -129,20 +129,7 @@ TEST_CASE("Argument parser", "[Argparse]") {
 
 	(void) argc;
 
-	char cnt[argc][50] = {
-		{'-', 'h', '\0'},
-		{'-', 'w', '\0'},
-		{'-', 'A', '\0'},
-		{'-', '-', 't', 'h', 'r', 'e', 'a', 'd', '\0'},
-		{'-', '-', 'p', 'r', 'o', 'l', 'o', 'g', '\0'},
-		{'f', 'i', 'l', 'e', 'n', 'a', 'm', 'e', '1', '\0'}
-	};
-
 	std::string argv = createArgv(val, file_names);
 
 	// Params p(argc, (char**)cnt);
-
-	#warning
-	// FIXME
-
 }

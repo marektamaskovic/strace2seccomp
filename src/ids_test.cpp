@@ -96,8 +96,6 @@ st2se::Syscall_t createSyscall(std::string name, int rc, std::string other, unsi
 	sc.other = other;
 	sc.arg_num = an;
 
-	st2se::argument_t *arg_next = nullptr;
-
 	st2se::val_format_t _fmt = st2se::val_format_t::VALUE;
     st2se::val_type_t _type = st2se::val_type_t::INTEGER;
     std::string _key = "";
