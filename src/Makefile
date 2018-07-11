@@ -52,7 +52,7 @@ st2se: $(OBJ)
 #Module tests
 check: $(OBJ_TEST)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ_TEST) -o $(BIN_TEST)
-	# ./$(BIN_TEST)
+	./$(BIN_TEST)
 
 
 # static analysis
@@ -262,7 +262,6 @@ outputCPP_test.o: outputCPP_test.cpp include/catch2/catch.hpp ids.hpp \
  outputCPP.hpp include/fmt/core.h include/fmt/format.h include/fmt/core.h \
  output.hpp
 params_test.o: params_test.cpp include/../../src/argparse.hpp
-source.o: source.cpp
 states.o: states.cpp states.hpp ids.hpp
 states_test.o: states_test.cpp include/catch2/catch.hpp ids.hpp \
  states.hpp
@@ -402,4 +401,3 @@ straceparser.o: straceparser.cpp straceparser.hpp include/tao/pegtl.hpp \
  include/tao/pegtl/analysis/insert_guard.hpp straceparser_actions.hpp \
  straceparser_grammar.hpp argparse.hpp states.hpp ids.hpp
 test_main.o: test_main.cpp include/catch2/catch.hpp
-tstplc.o: tstplc.cpp
