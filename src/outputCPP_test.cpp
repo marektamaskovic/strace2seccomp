@@ -109,8 +109,8 @@ TEST_CASE("OutputCPP write methods", "[OutputCPP]") {
 	// read the source.cpp and compare it with expected output
 	for(unsigned i = 0; i < 3; i++){
 		std::getline(output, buf);
-		INFO("Expected:\t '"+lines.at(i)+"'");
-		INFO("Got:\t\t '"+buf+"'");
+		INFO("Expected:\t '" + lines.at(i) + "'");
+		INFO("Got:\t\t '" + buf + "'");
 		REQUIRE_FALSE(buf.compare(lines.at(i)));
 	}
 

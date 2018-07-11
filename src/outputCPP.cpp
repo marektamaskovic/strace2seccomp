@@ -189,7 +189,7 @@ namespace st2se {
             case val_type_t::INTEGER:
                 if(cluster.next.size() >= 2){
                     ret += fmt::format(
-                        "SCMP_CMP_IN_RANGE, {}u, {}u)",
+                        "SCMP_CMP_IN_RANGE, {1}u, {0}u)",
                         arg2str(cluster.next.front()),
                         arg2str(cluster.next.back())
                         );
