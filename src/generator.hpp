@@ -25,6 +25,8 @@ namespace st2se {
         void threadSupport(bool b);
         void genFuncProlog(bool b);
         void setOutput(std::string o);
+        void setAllowOnlySc(bool b);
+
     };
 } // namespace st2se
 

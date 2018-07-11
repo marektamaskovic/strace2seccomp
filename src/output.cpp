@@ -10,4 +10,8 @@ namespace st2se {
         genProlog = b;
     }
 
+    void Output::setAllowOnlySc(bool b) {
+    	allowOnlySc = b;
+    }
+
 } // namespace st2se

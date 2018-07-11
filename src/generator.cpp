@@ -30,19 +30,28 @@ namespace st2se {
         if (!p.output.empty()) {
             setOutput(p.output);
         }
+
+        if(p.scOnly) {
+            setAllowOnlySc(/*turn on =*/true);
+        }
     }
 
-    void Generator::threadSupport(bool b) {
+    inline void Generator::threadSupport(bool b) {
         gnrt->threadSupport(b);
     }
 
-    void Generator::genFuncProlog(bool b) {
+    inline void Generator::genFuncProlog(bool b) {
         gnrt->genFuncProlog(b);
     }
 
-    void Generator::setOutput(std::string o) {
+    inline void Generator::setOutput(std::string o) {
         gnrt->setOutput(o);
     }
+
+    inline void Generator::setAllowOnlySc(bool b) {
+        gnrt->setAllowOnlySc(b);
+    }
+
 
     bool Generator::isInitialized() {
         return gnrt == nullptr ? false : true;

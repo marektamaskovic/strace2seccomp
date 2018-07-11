@@ -10,6 +10,7 @@ namespace st2se {
         bool genThreading {false};
         bool genProlog {false};
         bool bugSec {false};
+        bool allowOnlySc {false};
 
         Output() = default;
         virtual ~Output() = default;
@@ -19,6 +20,7 @@ namespace st2se {
 
         void threadSupport(bool b);
         void genFuncProlog(bool b);
+        void setAllowOnlySc(bool b);
     };
 
 } // namespace st2se

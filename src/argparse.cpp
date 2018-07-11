@@ -42,9 +42,10 @@ void Params::printHelp() {
     std::cout << s4 << "-o FILE [--output=FILE]\t: set output file\n";
 
     std::cout << "Configuration options:\n";
-    std::cout << s4 << "-w [--weak]\t\t\t: use weak algotirthm\n";
-    std::cout << s4 << "-s [--strict]\t\t: use strict algotirthm\n";
-    std::cout << s4 << "-a [--advanced]\t\t: use advanced algotirthm\n";
+    std::cout << s4 << "-w [--weak]\t\t\t: use weak algorithm\n";
+    std::cout << s4 << "-s [--strict]\t\t: use strict algorithm\n";
+    std::cout << s4 << "-a [--advanced]\t\t: use advanced algorithm\n";
+    std::cout << s4 << "--scOnly\t\t\t: generate only syscall allowance\n";
     std::cout << s4 << "--prolog\t\t\t: generate function prolog\n";
     std::cout << s4 << "--thread\t\t\t: add filter synchronization among threads/processes\n";
     std::cout << std::endl;
@@ -52,9 +53,6 @@ void Params::printHelp() {
 }
 
 Params::Params(int argc, char *argv[]) {
-    std::string help_str{"-h asd"};
-    // std::shared_ptr<char*> _argv {argv};
-
     int c;
 
     while (true) {
@@ -69,6 +67,7 @@ Params::Params(int argc, char *argv[]) {
             {"analyze-grammar",  no_argument, &this->analysis, 1},
             {"thread",           no_argument, &this->thread,   1},
             {"prolog",           no_argument, &this->prolog,   1},
+            {"scOnly",           no_argument, &this->scOnly,   1},
             {"output",     optional_argument, nullptr,       'o'},
             {"help",       optional_argument, nullptr,       'h'},
             {nullptr,                      0, nullptr,         0}

@@ -101,6 +101,10 @@ namespace st2se {
                 rule_start = getRuleProlog(sc);
                 generateRules(item, sc.clustered, pos++);
             }
+            if(sc.clustered) {
+                writeRule();
+                batch.clear();
+            }
         }
 
         printRules();
@@ -110,6 +114,9 @@ namespace st2se {
     void outputCPP::generateRules(argument_t &arg, bool clustered, unsigned pos) {
         if(!clustered) { // unclustered branch
             __genConditions(arg, /*pos=*/0);
+        }
+        else if(allowOnlySc) {
+            return;
         }
         else { // clustered branch
             __genCluseteredConditions(arg, pos);
@@ -139,6 +146,8 @@ namespace st2se {
 
     void outputCPP::__genCluseteredConditions(argument_t &cluster, unsigned pos) {
         std::string condition = getClusteredCond(cluster, pos);
+        if(condition.compare(""))
+            batch.push_back(condition);
     }
 
     std::string outputCPP::getCondition(argument_t &arg, unsigned pos) {
@@ -170,8 +179,13 @@ namespace st2se {
 
     std::string outputCPP::getClusteredCond(argument_t &cluster, unsigned pos){
 
+        if(cluster.next.empty()){
+            return std::string {""};
+        }
+
         std::string ret = fmt::format(",\n{}{}SCMP_A{}(", indent, opt_indent, pos);
-        switch(cluster.value_type){
+
+        switch(cluster.next.front().value_type){
             case val_type_t::INTEGER:
                 if(cluster.next.size() == 2){
                     ret += fmt::format(
