@@ -2,3 +2,4 @@
 *.orig
 *.o
 .vagrant
+./doc/doxygen_doc/*

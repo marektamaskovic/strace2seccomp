@@ -95,7 +95,7 @@ namespace st2se {
         Syscall_t s;
 
         if (parsed_val.empty()) {
-            std::cerr << "Error: " << this->get_name() << ": Parsed val is empty." << std::endl;
+            // std::cerr << "Error: " << this->get_name() << ": Parsed val is empty." << std::endl;
 
             argument_t a;
 

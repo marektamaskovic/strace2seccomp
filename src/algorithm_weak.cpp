@@ -62,19 +62,41 @@ namespace st2se {
             std::cout << "\targ no." << arg_pos << " is " << v.size() << " items long" << std::endl;
 
             std::vector<argument_t> clustered_v {};
+            argument_t bitfield {};
 
             if (v.size() != 1) {
-                clustered_v.push_back(v.front());
-                clustered_v.push_back(v.back());
+                switch(v.back().value_type){
+                    case val_type_t::INTEGER:
+                        clustered_v.push_back(v.front());
+                        clustered_v.push_back(v.back());
+                        std::cout << "\t\tmax: " << arg2str(v.front()) << std::endl;
+                        std::cout << "\t\tmin: " << arg2str(v.back()) << std::endl;
+                        break;
 
-                std::cout << "\t\tmax: " << arg2str(v.front()) << std::endl;
-                std::cout << "\t\tmin: " << arg2str(v.back()) << std::endl;
+                    case val_type_t::CONSTANT:
+                    case val_type_t::BITFIELD:
+                        bitfield = mergeConstants(v);
+                        clustered_v.push_back(bitfield);
+                        std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
+                        break;
+
+                    default:
+                        break;
+                }
             }
             else {
-                clustered_v.push_back(v.front());
-                std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
-            }
+                switch(v.back().value_type){
+                    case val_type_t::INTEGER:
+                    case val_type_t::CONSTANT:
+                    case val_type_t::BITFIELD:
+                        clustered_v.push_back(v.front());
+                        std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
+                        break;
 
+                    default:
+                        break;
+                }
+            }
 
             std::cout << "arg_pos: " << arg_pos << " v:" << std::endl;
 
@@ -96,6 +118,52 @@ namespace st2se {
         // TODO
         // put intervals into out structure
     }
+
+    argument_t Algo_weak::mergeConstants(std::vector<argument_t> vec) {
+        argument_t arg;
+        std::string text {""};
+        std::vector<std::string> results;
+        std::vector<std::string>::iterator it;
+
+        //merge every item into one string
+        for(auto &item : vec) {
+            if(auto pval = std::get_if<unsigned long>(&item.value)) {
+                unsigned long a = *pval;
+                text += std::to_string(a) + "|";
+            }
+            else if(auto pval = std::get_if<std::string>(&item.value)) {
+                std::string a = *pval;
+                text += a + "|";
+            }
+        }
+
+        // remove last separator
+        text.resize(text.size() - 1);
+
+        //split
+        boost::split(results, text, [](char c){return c == '|';});
+
+        // uniq
+        std::sort(results.begin(), results.end());
+        it = std::unique(results.begin(), results.end());
+        results.resize( std::distance(results.begin(), it) );
+
+
+        // merge back to string
+        text = "";
+        for(auto &item : results) {
+            text += item + "|";
+        }
+        // remove last separator
+        text.resize(text.size() - 1);
+
+        arg.value_format = val_format_t::VALUE;
+        arg.value_type = val_type_t::BITFIELD;
+        arg.value = text;
+
+        return arg;
+    }
+
 
     void Algo_weak::findMinMax(Syscall_t &sc, Ids &out) {
         (void) sc;

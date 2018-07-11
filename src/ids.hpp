@@ -12,8 +12,8 @@
 #include <variant>
 #include <vector>
 
-#define POSITION_MACRO "\x1B[4m\x1B[34m" << __FILE__ << "\x1B[0m"                 \
-    << ":" << "\x1B[1m\x1B[31m" << __func__ << "()\x1B[0m"    \
+#define POSITION_MACRO "\x1B[4m\x1B[34m" << __FILE__ << "\x1B[0m"  \
+    << ":" << "\x1B[1m\x1B[31m" << __func__ << "()\x1B[0m"         \
     << ":\x1B[32m" << __LINE__ << "\x1B[0m:"
 
 namespace st2se {

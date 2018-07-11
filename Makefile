@@ -10,9 +10,8 @@ clean:
 	rm $(BIN)
 	@cd src/ && $(MAKE) clean
 
-check_unit:
-	cd testsuite/module_testing/  && $(MAKE)
-	cd testsuite/module_testing/  && $(MAKE) run
+check:
+	@cd src/ && $(MAKE) check
 
 xtamas01.tar.gz: src/ Makefile README.md
 	tar tar cvzf $@ $^

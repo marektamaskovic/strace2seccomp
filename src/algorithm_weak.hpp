@@ -9,6 +9,8 @@
 #include <variant>
 #include <vector>
 
+#include <boost/algorithm/string.hpp>
+
 #include "ids.hpp"
 #include "algorithm.hpp"
 
@@ -18,6 +20,8 @@ namespace st2se {
         bool optimize(Ids &in, Ids &out) override;
         void processSyscall(const Syscall_t &sc, Ids &out);
         void findMinMax(Syscall_t &sc, Ids &out);
+    	argument_t mergeConstants(std::vector<argument_t> vec);
+
     };
 
 } // namespace st2se

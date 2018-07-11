@@ -8,7 +8,7 @@
 
 
 #===============================================================================
-# Variables
+# Global Variables
 #===============================================================================
 
 Color_Off='\033[0m'       # Text Reset
@@ -67,12 +67,12 @@ extract(){
 
 configure(){
     echo -e "$BWhite" "Configuring" "$BGreen" "$1" "$Color_Off"
-    cd $1 && ./configure && cd ..
+    cd $1 && shift && ./configure $* && cd ..
 }
 
 runMake(){
     echo -e "$BWhite" "Making" "$BGreen" "$1" "$Color_Off"
-    cd $1 && make -j 8 && cd ..
+    cd $1 && make -j 16 && cd ..
 }
 
 __run_tests() {
@@ -144,7 +144,7 @@ main(){
 	    			exit 1
 	    		fi
 
-	    		if [ ! -e "`echo $testovac`.tar.gz" ]; then
+	    		if [ ! -e "`echo $testovac`.tar" ]; then
 	    			echo "Provide" "`echo $testovac`.tar.gz"
 	    			exit 1
 	    		fi
@@ -162,7 +162,8 @@ main(){
 	    # Configure sources
 	    configure $coreutils &
 	    configure $findutils &
-	    configure $usbguard & # --wtih-bundled-pegtl make sure about dependencies dependencies
+	    configure $usbguard --with-crypto-library=gcrypt --with-bundled-pegtl --with-bundled-catch &
+	    # testovac doesn't provide a configure script
 
 	    wait
 
@@ -199,10 +200,10 @@ main(){
 
 	elif [ "$1" = "make" ]; then
 	    # Make custom binaries
-	    runMake $coreutils &
-	    runMake $findutils &
-	    runMake $usbguard &
-	    runMake $testovac &
+	     runMake $coreutils &
+	    # runMake $findutils &
+	    # runMake $usbguard &
+	    # runMake $testovac &
 
 	    wait
 
