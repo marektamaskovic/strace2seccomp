@@ -77,7 +77,7 @@ namespace st2se {
                     case val_type_t::BITFIELD:
                         bitfield = mergeConstants(v);
                         clustered_v.push_back(bitfield);
-                        std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
+                        std::cout << "\t\tval: " << arg2str(clustered_v.back()) << std::endl;
                         break;
 
                     default:
@@ -90,7 +90,7 @@ namespace st2se {
                     case val_type_t::CONSTANT:
                     case val_type_t::BITFIELD:
                         clustered_v.push_back(v.front());
-                        std::cout << "\t\tval: " << arg2str(v.front()) << std::endl;
+                        std::cout << "\t\tval: " << arg2str(clustered_v.back()) << std::endl;
                         break;
 
                     default:
