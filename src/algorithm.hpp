@@ -33,6 +33,7 @@
 namespace st2se {
 
     class Algorithm {
+
         Algorithm() = default;
 
         friend class Algo_weak;
@@ -40,6 +41,7 @@ namespace st2se {
         friend class Algo_advanced;
 
       public:
+        virtual ~Algorithm() = default;
         virtual bool optimize(Ids &in, Ids &out) = 0;
         unsigned getDepth(const argument_t &arg);
 
