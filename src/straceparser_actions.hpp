@@ -2,9 +2,13 @@
 #define _SRC_STRACEPARSER_ACTIONS
 
 #include <utility>
+#include <sstream>
 
 #include "tao/pegtl.hpp"
 #include "tao/pegtl/contrib/tracer.hpp"
+
+#include "fmt/core.h"
+#include "fmt/format.h"
 
 #include "straceparser_grammar.hpp"
 #include "argparse.hpp"
@@ -100,16 +104,24 @@ const std::map<std::string, int> signal_map {
         }                                                           \
     }while(0)
 
-#define CONV(output, input, base)                                                    \
-    do{                                                                              \
-        try {                                                                        \
-                long long tmp = std::stoll((input).string(), nullptr, (base));       \
-                (output) = static_cast<unsigned long>(tmp);                          \
-            }                                                                        \
-            catch (std::out_of_range &e) {                                           \
-                std::cerr << "state type: " << states.get_val_type() << std::endl;   \
-                throw tao::pegtl::parse_error("stol err '" + in.string() + "'", in); \
-            }                                                                        \
+#define CONV(output, input, base)                                               \
+    do{                                                                         \
+        try {                                                                   \
+            long long tmp = std::stoll((input).string(), nullptr, (base));      \
+            (output) = static_cast<unsigned long>(tmp);                         \
+        }                                                                       \
+        catch (std::out_of_range &e) {                                          \
+            std::stringstream ss;                                               \
+            std::string state_type;                                             \
+            ss << states.get_val_type();                                        \
+            ss >> state_type;                                                   \
+            std::string err_msg =                                               \
+                fmt::format("state type: {0}\nstol err '{1}'",                  \
+                    state_type,                                                 \
+                    (input).string()                                            \
+                );                                                              \
+            throw tao::pegtl::parse_error(err_msg, (input));                    \
+        }                                                                       \
     } while(0)
 // *INDENT-ON*
 
