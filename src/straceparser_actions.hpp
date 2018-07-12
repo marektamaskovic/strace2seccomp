@@ -99,6 +99,18 @@ const std::map<std::string, int> signal_map {
             (Val) = (InputStr).string();                            \
         }                                                           \
     }while(0)
+
+#define CONV(output, input, base)                                                    \
+    do{                                                                              \
+        try {                                                                        \
+                long long tmp = std::stoll((input).string(), nullptr, (base));       \
+                (output) = static_cast<unsigned long>(tmp);                          \
+            }                                                                        \
+            catch (std::out_of_range &e) {                                           \
+                std::cerr << "state type: " << states.get_val_type() << std::endl;   \
+                throw tao::pegtl::parse_error("stol err '" + in.string() + "'", in); \
+            }                                                                        \
+    } while(0)
 // *INDENT-ON*
 
 namespace st2se::grammar {
@@ -264,26 +276,14 @@ namespace st2se::grammar {
             states.set_val_format(val_format_t::VALUE);
 
             if (states.get_val_type() == val_type_t::INTEGER) {
-                // FIXME rewrite it as a template
-                try {
-                    states.value = std::stol(in.string());
-                }
-                catch (std::out_of_range &e) {
-                    throw tao::pegtl::parse_error("stol err '" + in.string() + "'", in);
-                }
+                CONV(states.value, in, 10);
             }
             else if (states.get_val_type() == val_type_t::POINTER) {
                 if (!in.string().compare("NULL") || !in.string().compare("nullptr")) {
                     states.value = 0;
                 }
                 else {
-                    // FIXME rewrite it as a template
-                    try {
-                        states.value = std::stol(in.string(), nullptr, 16);
-                    }
-                    catch (std::out_of_range &e) {
-                        throw tao::pegtl::parse_error("stol err '" + in.string() + "'", in);
-                    }
+                    CONV(states.value, in, 16);
                 }
             }
             else {
