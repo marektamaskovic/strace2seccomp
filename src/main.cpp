@@ -1,3 +1,19 @@
+
+/*! \mainpage strace2seccomp tool
+ *
+ * \section intro_sec Introduction
+ *
+ * This bachelor thesis is focused on an automatic generation of seccomp rules
+ * from strace logs. The output is generated in C/C++ syntax. Input can be
+ * optimized with three optimization algorithms. One is called strict, and it
+ * will produce 1:1 output compared to input. Another one is called minimax or
+ * weak. This algorithm will provide on the output only extremes as border
+ * values for allowance interval. The last one is called advanced which
+ * implements DBSCAN algorithm for clustering.
+ *
+ * Closer info is located here: https://github.com/tammar96/IBP
+ */
+
 #include <iostream>
 
 #include "tao/pegtl.hpp"
