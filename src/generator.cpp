@@ -19,11 +19,11 @@ namespace st2se {
     }
 
     void Generator::configure(const Params &p) {
-        if (p.thread) {
+        if (p.thread != 0) {
             threadSupport(/*turn on =*/true);
         }
 
-        if (p.prolog) {
+        if (p.prolog != 0) {
             genFuncProlog(/*turn on =*/true);
         }
 
@@ -31,7 +31,7 @@ namespace st2se {
             setOutput(p.output);
         }
 
-        if(p.scOnly) {
+        if(p.scOnly != 0) {
             setAllowOnlySc(/*turn on =*/true);
         }
     }
@@ -45,7 +45,7 @@ namespace st2se {
     }
 
     inline void Generator::setOutput(std::string o) {
-        gnrt->setOutput(o);
+        gnrt->setOutput(std::move(o));
     }
 
     inline void Generator::setAllowOnlySc(bool b) {
@@ -54,7 +54,7 @@ namespace st2se {
 
 
     bool Generator::isInitialized() {
-        return gnrt == nullptr ? false : true;
+        return gnrt != nullptr;
     }
 
     bool Generator::generate(Ids &ids) {

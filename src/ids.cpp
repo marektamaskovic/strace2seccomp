@@ -150,7 +150,7 @@ namespace st2se {
                 }
                 else {
                     //recursive descent
-                    print_recursive(std::string(printing), item.next);
+                    print_recursive(printing, item.next);
                 }
             }
         };
@@ -214,7 +214,6 @@ namespace st2se {
                     insertArg(arg.next.front(), item.next);
                     return container;
                 }
-
             }
         }
 
@@ -280,11 +279,11 @@ namespace st2se {
                 std::cout << "Clusters for arg:" << std::endl;
 
                 // iterate through clusters
-                for (auto cluster : pos.next) {
+                for (auto &cluster : pos.next) {
                     std::cout << "\t" << arg2str(cluster) << ", ";
 
                     // iterate in cluster
-                    for (auto item : cluster.next) {
+                    for (auto &item : cluster.next) {
                         std::cout << arg2str(item) << ", ";
                     }
 
@@ -301,23 +300,23 @@ namespace st2se {
         // std::cout << POSITION_MACRO << "\tvalue:" << std::endl;
         const bool pointer = arg.value_type == val_type_t::POINTER;
         return std::visit(
-            [pointer](auto &&arg) -> std::string {
-                using T = std::decay_t<decltype(arg)>;
+            [pointer](auto &&val) -> std::string {
+                using T = std::decay_t<decltype(val)>;
 
                 if constexpr(std::is_same_v<T, unsigned long>){
                     if(pointer){
                         std::stringstream ss;
                         std::string ret_val;
 
-                        ss << std::hex << arg;
+                        ss << std::hex << val;
                         ss >> ret_val;
 
                         return "0x" + ret_val;
                     }
-                    return std::to_string(arg);
+                    return std::to_string(val);
                 }
                 else if constexpr(std::is_same_v<T, std::string>)
-                    return arg;
+                    return val;
                 else {
                     static_assert(always_false<T>::value, "non-exhaustive visitor!");
                     return "Error: Variant is empty";

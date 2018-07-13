@@ -139,9 +139,6 @@ namespace st2se {
 
         if(condition.compare(""))
             batch.pop_back();
-
-        return;
-
     }
 
     void outputCPP::__genCluseteredConditions(argument_t &cluster, unsigned pos) {
@@ -166,7 +163,7 @@ namespace st2se {
                 ret += fmt::format("SCMP_CMP_EQ, {})", arg2str(arg));
                 break;
             case val_type_t::BITFIELD:
-                ret += fmt::format("SCMP_CMP_MASKED_EQ, {}, -1u)", arg2str(arg));
+                ret += fmt::format("SCMP_CMP_MASKED_EQ, {0}, {0}", arg2str(arg));
                 break;
 
             default:
@@ -214,7 +211,7 @@ namespace st2se {
                 break;
             case val_type_t::BITFIELD:
                 ret += fmt::format(
-                    "SCMP_CMP_MASKED_EQ, {}, -1u)",
+                    "SCMP_CMP_MASKED_EQ, {0}, {0})",
                     arg2str(cluster.next.front())
                 );
                 break;

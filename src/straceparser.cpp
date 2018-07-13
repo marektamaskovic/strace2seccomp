@@ -9,7 +9,7 @@ namespace st2se {
     StraceParser::StraceParser(st2se::Ids &_output) : output(_output) {
     }
 
-    StraceParser::StraceParser(const std::string &_filename, st2se::Ids &_output):
+    StraceParser::StraceParser(std::string &_filename, st2se::Ids &_output):
         filename(_filename), output(_output) {
     }
 

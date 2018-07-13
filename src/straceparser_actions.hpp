@@ -1,8 +1,8 @@
 #ifndef _SRC_STRACEPARSER_ACTIONS
 #define _SRC_STRACEPARSER_ACTIONS
 
-#include <utility>
 #include <sstream>
+#include <utility>
 
 #include "tao/pegtl.hpp"
 #include "tao/pegtl/contrib/tracer.hpp"
@@ -10,9 +10,9 @@
 #include "fmt/core.h"
 #include "fmt/format.h"
 
-#include "straceparser_grammar.hpp"
 #include "argparse.hpp"
 #include "states.hpp"
+#include "straceparser_grammar.hpp"
 
 extern int syscalls;
 
@@ -386,8 +386,8 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            std::string key {""};
-            std::string val {""};
+            std::string key;
+            std::string val;
             states.arg_num++;
             divideKV(in, key, val);
 

@@ -29,7 +29,7 @@ namespace st2se {
         bool bitfields {false};
 
       public:
-        unsigned arg_num;
+        unsigned arg_num {0};
         std::variant<unsigned long, std::string> value;
 
         void push_parsed_val(argument_t &arg);

@@ -11,8 +11,8 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "ids.hpp"
 #include "algorithm.hpp"
+#include "ids.hpp"
 
 namespace st2se {
 

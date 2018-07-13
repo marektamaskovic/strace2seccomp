@@ -1,9 +1,9 @@
 #ifndef SRC_GENERATOR_HPP
 #define SRC_GENERATOR_HPP
 
+#include "argparse.hpp"
 #include "ids.hpp"
 #include "outputCPP.hpp"
-#include "argparse.hpp"
 
 namespace st2se {
 
@@ -16,7 +16,7 @@ namespace st2se {
         Output *gnrt {nullptr};
       public:
         Generator() = default;
-        Generator(Output *_out);
+        explicit Generator(Output *_out);
         bool initialize(Output *_out);
         void configure(const Params &p);
         bool generate(Ids &ids);

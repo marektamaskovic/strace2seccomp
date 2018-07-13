@@ -11,7 +11,7 @@ namespace st2se {
     class Optimizer {
         Algorithm *opt_adapter {nullptr}; // TODO uniq pointer
       public:
-        Optimizer(Algorithm *_opt_adapter);
+        explicit Optimizer(Algorithm *_opt_adapter);
         Optimizer();
         void useAlgorithm(Algorithm *_opt_adapter);
         bool isInitialized();
