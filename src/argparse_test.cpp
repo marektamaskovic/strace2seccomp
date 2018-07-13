@@ -3,16 +3,16 @@
 #include "argparse.hpp"
 
 struct values_t {
-	int help;
-    int weak;
-    int strict;
-    int advanced;
-    int verbose;
-    int debug;
-    int tracing;
-    int analysis;
-    int thread;
-    int prolog;
+	int help {0};
+    int weak {0};
+    int strict {0};
+    int advanced {0};
+    int verbose {0};
+    int debug {0};
+    int tracing {0};
+    int analysis {0};
+    int thread {0};
+    int prolog {0};
     std::string output {};
 };
 
@@ -33,43 +33,42 @@ bool operator==(const Params &a, const struct values_t &b) {
 	{
 		return true;
 	}
-	else {
-		return false;
-	}
+
+	return false;
 }
 
 std::string createArgv(const struct values_t &_values, const std::vector<std::string> &_file_names)
 {
 	std::string argv;
 
-	if(_values.help)
+	if(_values.help != 0)
 		argv.append("-h ");
 
-	if(_values.weak)
+	if(_values.weak != 0)
 		argv.append("-w ");
 
-	if(_values.strict)
+	if(_values.strict != 0)
 		argv.append("-s ");
 
-	if(_values.advanced)
+	if(_values.advanced != 0)
 		argv.append("-a ");
 
-	if(_values.verbose)
+	if(_values.verbose != 0)
 		argv.append("-v ");
 
-	if(_values.debug)
+	if(_values.debug != 0)
 		argv.append("-d ");
 
-	if(_values.tracing)
+	if(_values.tracing != 0)
 		argv.append("-t ");
 
-	if(_values.thread)
+	if(_values.thread != 0)
 		argv.append("--thread ");
 
-	if(_values.prolog)
+	if(_values.prolog != 0)
 		argv.append("--prolog ");
 
-	if(_values.analysis)
+	if(_values.analysis != 0)
 		argv.append("-A ");
 
 	for(auto item : _file_names){

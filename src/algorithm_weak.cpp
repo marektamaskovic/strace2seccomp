@@ -121,18 +121,18 @@ namespace st2se {
 
     argument_t Algo_weak::mergeConstants(std::vector<argument_t> vec) {
         argument_t arg;
-        std::string text {""};
+        std::string text;
         std::vector<std::string> results;
         std::vector<std::string>::iterator it;
 
         //merge every item into one string
         for(auto &item : vec) {
-            if(auto pval = std::get_if<unsigned long>(&item.value)) {
-                unsigned long a = *pval;
+            if(auto pval_int = std::get_if<unsigned long>(&item.value)) {
+                unsigned long a = *pval_int;
                 text += std::to_string(a) + "|";
             }
-            else if(auto pval = std::get_if<std::string>(&item.value)) {
-                std::string a = *pval;
+            else if(auto pval_str = std::get_if<std::string>(&item.value)) {
+                std::string a = *pval_str;
                 text += a + "|";
             }
         }

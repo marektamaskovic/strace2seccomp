@@ -45,21 +45,21 @@ int main(int argc, char *argv[]) {
     }
 
     // optimize IDS
-    st2se::Algorithm *algo {nullptr};
+    std::unique_ptr<st2se::Algorithm> algo;
 
     if (params.weak != 0) {
-        algo = new st2se::Algo_weak();
+        algo = std::make_unique<st2se::Algo_weak>();
     }
     else if (params.strict != 0) {
-        algo = new st2se::Algo_strict();
+        algo = std::make_unique<st2se::Algo_strict>();
     }
     else {
-        algo = new st2se::Algo_advanced();
+        algo = std::make_unique<st2se::Algo_advanced>();
     }
 
     st2se::Optimizer opti;
 
-    opti.useAlgorithm(algo);
+    opti.useAlgorithm(algo.get());
 
     try {
         opti.optimize(in, out);
@@ -71,21 +71,17 @@ int main(int argc, char *argv[]) {
     }
 
     st2se::Generator gen;
-    st2se::Output *cpp = new st2se::outputCPP();
+
+    std::unique_ptr<st2se::Output> cpp = std::make_unique<st2se::outputCPP>();
 
     // initialize and configure generator
-    gen.initialize(cpp);
+    gen.initialize(cpp.get());
     gen.configure(params);
 
     gen.generate(out);
 
-    // remove and dealloc algorithm
-    opti.useAlgorithm(nullptr);
-    delete algo;
-
     // remove and dealloc output generator
     gen.removeOutput();
-    delete cpp;
 
     return ret_val;
 

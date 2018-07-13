@@ -1,14 +1,14 @@
 #ifndef ARGPARSE_HPP
 #define ARGPARSE_HPP
 
-#include <iostream>
 #include <fstream>
+#include <getopt.h>
+#include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <memory>
 
-#include <getopt.h>
 
 
 class Params {

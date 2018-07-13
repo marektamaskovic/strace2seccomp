@@ -33,9 +33,7 @@ bool operator==(const Params &a, const struct values_t &b) {
 	{
 		return true;
 	}
-	else {
-		return false;
-	}
+	return false;
 }
 
 

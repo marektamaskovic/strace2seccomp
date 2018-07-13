@@ -3,16 +3,16 @@
 
 #include <fstream>
 #include <iostream>
-#include <vector>
 #include <optional>
 #include <string>
 #include <variant>
+#include <vector>
 
 #include "fmt/core.h"
 #include "fmt/format.h"
 
-#include "output.hpp"
 #include "ids.hpp"
+#include "output.hpp"
 
 namespace st2se {
 
@@ -46,10 +46,10 @@ namespace st2se {
         void openFiles();
         void closeFiles();
 
-        virtual void generate(Ids &ids);
-        virtual void setOutput(std::string o);
-        void generateScRules(std::pair<std::string, Syscall_t> sc);
-        void generateRules(argument_t &cluster, bool clustered, unsigned pos);
+        void generate(Ids &ids) override;
+        void setOutput(std::string o) override;
+        void generateScRules(std::pair<std::string, Syscall_t> sc_pair);
+        void generateRules(argument_t &arg, bool clustered, unsigned pos);
 
         std::string getCondition(argument_t &arg, unsigned pos);
 

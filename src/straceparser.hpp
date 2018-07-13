@@ -1,10 +1,10 @@
 #ifndef _SRC_STRACEPARSER_HPP
 #define _SRC_STRACEPARSER_HPP
 
-#include <iostream>
 #include <fstream>
-#include <string>
+#include <iostream>
 #include <map>
+#include <string>
 
 #include "tao/pegtl.hpp"
 #include "tao/pegtl/contrib/tracer.hpp"
@@ -23,7 +23,7 @@ namespace st2se {
 
       public:
         explicit StraceParser(st2se::Ids &_output);
-        StraceParser(const std::string &_filename, st2se::Ids &_output);
+        StraceParser(std::string &_filename, st2se::Ids &_output);
         // ~StraceParser();
 
         bool parse(const std::string &_filename, st2se::Ids &_output, Params &params, States &states);

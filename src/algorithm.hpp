@@ -12,16 +12,16 @@
 #include "ids.hpp"
 
 #ifndef NDEBUG
-#define DEBUGprintArgumentSet(__set_variable) do {                      \
-        std::cout << "\t\x1B[33m";                                      \
-        for (auto item : __set_variable) {                              \
-            std::cout << "  " << arg2str(item);                         \
-        }                                                               \
-        std::cout << "\x1B[0m" << std::endl;                            \
+#define DEBUGprintArgumentSet(__set_variable) do {   \
+        std::cout << "\t\x1B[33m";                   \
+        for (auto item : (__set_variable)) {         \
+            std::cout << "  " << arg2str(item);      \
+        }                                            \
+        std::cout << "\x1B[0m" << std::endl;         \
     } while(0)
 
-#define DEBUGprint(__string_variable) do {                              \
-        std::cout << POSITION_MACRO << __string_variable ;              \
+#define DEBUGprint(__string_variable) do {                    \
+        std::cout << POSITION_MACRO << (__string_variable) ;  \
     } while(0)
 #else
 
