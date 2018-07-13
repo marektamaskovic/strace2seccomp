@@ -1,18 +1,20 @@
-
-/*! \mainpage strace2seccomp tool
- *
- * \section intro_sec Introduction
- *
- * This bachelor thesis is focused on an automatic generation of seccomp rules
- * from strace logs. The output is generated in C/C++ syntax. Input can be
- * optimized with three optimization algorithms. One is called strict, and it
- * will produce 1:1 output compared to input. Another one is called minimax or
- * weak. This algorithm will provide on the output only extremes as border
- * values for allowance interval. The last one is called advanced which
- * implements DBSCAN algorithm for clustering.
- *
- * Closer info is located here: https://github.com/tammar96/IBP
- */
+// Copyright (c) 2018 Red Hat <mtamasko@redhat.com>
+// Author: Marek Tamaskovic <tamaskovic.marek@gmail.com>
+//
+// This file is part of strace2seccomp tool.
+//
+// strace2seccomp tool is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// strace2seccomp tool is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with strace2seccomp tool.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <iostream>
 
