@@ -1,3 +1,7 @@
+/**
+ * @file straceparser_actions.hpp
+ * @brief Parser actions
+ */
 #ifndef _SRC_STRACEPARSER_ACTIONS
 #define _SRC_STRACEPARSER_ACTIONS
 

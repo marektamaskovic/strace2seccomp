@@ -1,3 +1,7 @@
+/**
+ * @file straceparser_grammar.hpp
+ * @brief Parser Grammar
+ */
 #ifndef _SRC_STRACEPARSER_GRAMMAR
 #define _SRC_STRACEPARSER_GRAMMAR
 
