@@ -125,11 +125,11 @@
   supervisor.title.p={Ing.},   %titul před jménem (nepovinné) / title before the name (optional)
   %supervisor.title.a={Ph.D.},    %titul za jménem (nepovinné) / title after the name (optional)
   % Klíčová slova / keywords
-  keywords.cs={seccomp, libseccomp, strace, optimalizátor, zhlukovaniem C++, generátor politík}, % klíčová slova v českém či slovenském jazyce / keywords in czech or slovak language
-  keywords.en={seccomp, libseccomp, strace, optimizer, clustering, C++, policy generator}, % klíčová slova v anglickém jazyce / keywords in english
+  keywords.cs={seccomp, libseccomp, strace, optimalizátor, zhlukovanie C++, generátor politík, systémové volania, obmedzenie spustiteľných súborov, catch2, american fuzzy lop, fuzzying}, % klíčová slova v českém či slovenském jazyce / keywords in czech or slovak language
+  keywords.en={seccomp, libseccomp, strace, optimizer, clustering, C++, policy generator, system calls, executable binaries limitations, catch2, american fuzzy lop, fuzzying}, % klíčová slova v anglickém jazyce / keywords in english
   % Abstrakt / Abstract
-  abstract.cs={Do tohoto odstavce bude zapsán výtah (abstrakt) práce v českém (slovenském) jazyce.}, % abstrakt v českém či slovenském jazyce / abstract in czech or slovak language
-  abstract.en={Do tohoto odstavce bude zapsán výtah (abstrakt) práce v anglickém jazyce.}, % abstrakt v anglickém jazyce / abstract in english
+  abstract.cs={Táto práca sa zaoberá generovaním bezpečnostných politík, ktoré obmedzujú systémové volania v rámci operačného systému Linux. Výstupom tejto práce je nástroj ktorý vie transformovať zoznam systémových volaní do bezpečnostnej politiky. V tejto práci sú definované požiadavky, navrhnutá architektúra programu a popísaná testovacia metodika.}, % abstrakt v českém či slovenském jazyce / abstract in czech or slovak language
+  abstract.en={This thesis deals with creation of security policy that limits usage of system calls in Linux. The output of this thesis is a program that transform strace output into a security policy in libseccomp. In this thesis is defined software requirements, designed architecture of the program and described testing methods. }, % abstrakt v anglickém jazyce / abstract in english
   % Prohlášení (u anglicky psané práce anglicky, u slovensky psané práce slovensky) / Declaration (for thesis in english should be in english)
   declaration={Hereby I declare that this bachelor's thesis was prepared as an original author’s work under the supervision of Ms. Ing. Lenka Turoňová (FIT BUT) and by Mr. Bc. Daniek Kopecek (Red Hat, Inc.).
 The supplementary information was provided by Security Engineering team.
@@ -138,8 +138,7 @@ All the relevant information sources, which were used during preparation of this
 % The supplementary information was provided by Mr. Y
 % All the relevant information sources, which were used during preparation of this thesis, are properly cited and included in the list of references.},
   % Poděkování (nepovinné, nejlépe v jazyce práce) / Acknowledgement (optional, ideally in the language of the thesis)
-  acknowledgment={V této sekci je možno uvést poděkování vedoucímu práce a těm, kteří poskytli odbornou pomoc
-(externí zadavatel, konzultant, apod.).},
+  acknowledgment={I would like to thank my supervisor Ing. Lenka Turoňová (FIT) for guidance and formal part of this thesis. I would like to thank and mention Bc. Daniel Kopeček (RedHat) for technical guidance and as well thank to Paul Moore (RedHat) for patience he got in discussions about libseccomp. And I would like to specialy notes of thanks to my friends Rado, Marian and Martin, who keep me motivated during the works on this thesis. },
   %acknowledgment={Here it is possible to express thanks to the supervisor and to the people which provided professional help
 %(external submitter, consultant, etc.).},
   % Rozšířený abstrakt (cca 3 normostrany) - lze definovat zde nebo níže / Extended abstract (approximately 3 standard pages) - can be defined here or below
