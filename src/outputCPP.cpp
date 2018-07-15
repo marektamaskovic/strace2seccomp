@@ -108,9 +108,9 @@ namespace st2se {
     }
 
 
-    void outputCPP::generateScRules(std::pair<std::string, Syscall_t> sc_pair) {
+    void outputCPP::generateScRules(std::pair<std::string, Syscall> sc_pair) {
 
-        Syscall_t &sc = sc_pair.second;
+        Syscall &sc = sc_pair.second;
 
 
         if (!sc.next.empty()) {
@@ -129,7 +129,7 @@ namespace st2se {
 
     }
 
-    void outputCPP::generateRules(argument_t &arg, bool clustered, unsigned pos) {
+    void outputCPP::generateRules(Argument &arg, bool clustered, unsigned pos) {
         if(!clustered) { // unclustered branch
             __genConditions(arg, /*pos=*/0);
         }
@@ -141,7 +141,7 @@ namespace st2se {
         }
     }
 
-    void outputCPP::__genConditions(argument_t &arg, unsigned pos) {
+    void outputCPP::__genConditions(Argument &arg, unsigned pos) {
         std::string condition = getCondition(arg, pos);
         if(condition.compare(""))
             batch.push_back(condition);
@@ -159,28 +159,28 @@ namespace st2se {
             batch.pop_back();
     }
 
-    void outputCPP::__genCluseteredConditions(argument_t &cluster, unsigned pos) {
+    void outputCPP::__genCluseteredConditions(Argument &cluster, unsigned pos) {
         std::string condition = getClusteredCond(cluster, pos);
         if(condition.compare(""))
             batch.push_back(condition);
     }
 
-    std::string outputCPP::getCondition(argument_t &arg, unsigned pos) {
+    std::string outputCPP::getCondition(Argument &arg, unsigned pos) {
 
-        if(arg.value_format == val_format_t::EMPTY){
+        if(arg.value_format == Value_format::EMPTY){
             return std::string {""};
         }
 
         std::string ret = fmt::format(",\n{}{}SCMP_A{}(", indent, opt_indent, pos);
 
         switch(arg.value_type){
-            case val_type_t::INTEGER:
+            case Value_type::INTEGER:
                 ret += fmt::format("SCMP_CMP_EQ, {})", arg2str(arg));
                 break;
-            case val_type_t::CONSTANT:
+            case Value_type::CONSTANT:
                 ret += fmt::format("SCMP_CMP_EQ, {})", arg2str(arg));
                 break;
-            case val_type_t::BITFIELD:
+            case Value_type::BITFIELD:
                 ret += fmt::format("SCMP_CMP_MASKED_EQ, {0}, {0}", arg2str(arg));
                 break;
 
@@ -192,7 +192,7 @@ namespace st2se {
     }
 
 
-    std::string outputCPP::getClusteredCond(argument_t &cluster, unsigned pos){
+    std::string outputCPP::getClusteredCond(Argument &cluster, unsigned pos){
 
         if(cluster.next.empty()){
             return std::string {""};
@@ -201,7 +201,7 @@ namespace st2se {
         std::string ret = fmt::format(",\n{}{}SCMP_A{}(", indent, opt_indent, pos);
 
         switch(cluster.next.front().value_type){
-            case val_type_t::INTEGER:
+            case Value_type::INTEGER:
                 if(cluster.next.size() >= 2){
                     ret += fmt::format(
                         "SCMP_CMP_IN_RANGE, {1}u, {0}u)",
@@ -221,13 +221,13 @@ namespace st2se {
                 //     ret += "WHOOA TOO BIG: " + std::to_string(cluster.next.size());
                 // }
                 break;
-            case val_type_t::CONSTANT:
+            case Value_type::CONSTANT:
                 ret += fmt::format(
                     "SCMP_CMP_EQ, {})",
                     arg2str(cluster.next.front())
                 );
                 break;
-            case val_type_t::BITFIELD:
+            case Value_type::BITFIELD:
                 ret += fmt::format(
                     "SCMP_CMP_MASKED_EQ, {0}, {0})",
                     arg2str(cluster.next.front())
@@ -241,7 +241,7 @@ namespace st2se {
         return ret;
     }
 
-    std::string outputCPP::getRuleProlog(Syscall_t &sc){
+    std::string outputCPP::getRuleProlog(Syscall &sc){
         std::string ret {""};
 
         ret = fmt::format(

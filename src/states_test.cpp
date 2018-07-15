@@ -26,8 +26,8 @@
 TEST_CASE("Setter and getters", "[States]") {
 	SECTION("value format"){
 		st2se::States states;
-		st2se::val_format_t set = st2se::val_format_t::VALUE;
-		st2se::val_format_t get;
+		st2se::Value_format set = st2se::Value_format::VALUE;
+		st2se::Value_format get;
 
 
 		states.set_val_format(set);
@@ -38,8 +38,8 @@ TEST_CASE("Setter and getters", "[States]") {
 
 	SECTION("value type"){
 		st2se::States states;
-		st2se::val_type_t set = st2se::val_type_t::INTEGER;
-		st2se::val_type_t get;
+		st2se::Value_type set = st2se::Value_type::INTEGER;
+		st2se::Value_type get;
 
 
 		states.set_val_type(set);
@@ -93,15 +93,15 @@ TEST_CASE("Setter and getters", "[States]") {
 TEST_CASE("Constructor", "[States]") {
 	st2se::States states;
 
-	st2se::val_format_t fmt = states.get_val_format();
-	st2se::val_type_t type = states.get_val_type();
+	st2se::Value_format fmt = states.get_val_format();
+	st2se::Value_type type = states.get_val_type();
 	int rc = states.get_ret_val();
 	std::string name = states.get_name();
 	bool bitfield = states.get_bitfields();
 
 
-	REQUIRE(fmt == st2se::val_format_t::EMPTY);
-	REQUIRE(type == st2se::val_type_t::EMPTY);
+	REQUIRE(fmt == st2se::Value_format::EMPTY);
+	REQUIRE(type == st2se::Value_type::EMPTY);
 	REQUIRE(rc == 0);
 	REQUIRE_FALSE(name.compare(""));
 	REQUIRE(bitfield == false);
@@ -110,24 +110,24 @@ TEST_CASE("Constructor", "[States]") {
 TEST_CASE("Clear method", "[States]") {
 	st2se::States states;
 
-	states.set_val_format(st2se::val_format_t::VALUE);
-	states.set_val_type(st2se::val_type_t::INTEGER);
+	states.set_val_format(st2se::Value_format::VALUE);
+	states.set_val_type(st2se::Value_type::INTEGER);
 	states.set_ret_val("42");
 	states.set_name("write");
 	states.set_bitfields(true);
 
 	states.clear();
 
-	// st2se::val_format_t fmt = states.get_val_format();
-	// st2se::val_type_t type = states.get_val_type();
+	// st2se::Value_format fmt = states.get_val_format();
+	// st2se::Value_type type = states.get_val_type();
 	// int rc = states.get_ret_val();
 	// std::string name = states.get_name();
 	bool bitfield = states.get_bitfields();
 
 	// TODO
 	// check if you could reset these values as well
-	// REQUIRE(fmt == st2se::val_format_t::EMPTY);
-	// REQUIRE(type == st2se::val_type_t::EMPTY);
+	// REQUIRE(fmt == st2se::Value_format::EMPTY);
+	// REQUIRE(type == st2se::Value_type::EMPTY);
 	// REQUIRE(rc == 0);
 	// REQUIRE_FALSE(name.compare(""));
 	REQUIRE(bitfield == false);

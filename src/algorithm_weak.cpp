@@ -31,7 +31,7 @@ namespace st2se {
         return true;
     }
 
-    void Algo_weak::processSyscall(const Syscall_t &sc, Ids &out) {
+    void Algo_weak::processSyscall(const Syscall &sc, Ids &out) {
 
         unsigned depth {0};
 
@@ -56,7 +56,7 @@ namespace st2se {
         out.data[sc.name].arg_num = sc.arg_num;
 
         for (unsigned arg_pos = 0; arg_pos < depth; arg_pos++) {
-            std::vector<argument_t> v;
+            std::vector<Argument> v;
             v = getArguemntsFromPos(sc.next, arg_pos);
 
             if (v.empty()) {
@@ -65,12 +65,12 @@ namespace st2se {
 
             /*INDENT-OFF*/
             std::sort(v.begin(), v.end(),
-                [](argument_t a, argument_t b)
+                [](Argument a, Argument b)
                     {return a.value > b.value;}
             );
 
             auto end = std::unique(v.begin(), v.end(),
-                [](argument_t l, argument_t r)
+                [](Argument l, Argument r)
                     {return l.value == r.value;}
             );
             /*INDENT-ON*/
@@ -79,20 +79,20 @@ namespace st2se {
 
             std::cout << "\targ no." << arg_pos << " is " << v.size() << " items long" << std::endl;
 
-            std::vector<argument_t> clustered_v {};
-            argument_t bitfield {};
+            std::vector<Argument> clustered_v {};
+            Argument bitfield {};
 
             if (v.size() != 1) {
                 switch(v.back().value_type){
-                    case val_type_t::INTEGER:
+                    case Value_type::INTEGER:
                         clustered_v.push_back(v.front());
                         clustered_v.push_back(v.back());
                         std::cout << "\t\tmax: " << arg2str(v.front()) << std::endl;
                         std::cout << "\t\tmin: " << arg2str(v.back()) << std::endl;
                         break;
 
-                    case val_type_t::CONSTANT:
-                    case val_type_t::BITFIELD:
+                    case Value_type::CONSTANT:
+                    case Value_type::BITFIELD:
                         bitfield = mergeConstants(v);
                         clustered_v.push_back(bitfield);
                         std::cout << "\t\tval: " << arg2str(clustered_v.back()) << std::endl;
@@ -104,9 +104,9 @@ namespace st2se {
             }
             else {
                 switch(v.back().value_type){
-                    case val_type_t::INTEGER:
-                    case val_type_t::CONSTANT:
-                    case val_type_t::BITFIELD:
+                    case Value_type::INTEGER:
+                    case Value_type::CONSTANT:
+                    case Value_type::BITFIELD:
                         clustered_v.push_back(v.front());
                         std::cout << "\t\tval: " << arg2str(clustered_v.back()) << std::endl;
                         break;
@@ -121,8 +121,8 @@ namespace st2se {
             std::cout << "\targ no." << arg_pos << " is ";
             std::cout << clustered_v.size() << " items long" << std::endl;
 
-            out.data[sc.name].next.emplace_back(val_format_t::EMPTY,
-                val_type_t::CLUSTERS,
+            out.data[sc.name].next.emplace_back(Value_format::EMPTY,
+                Value_type::CLUSTERS,
                 clustered_v
             );
 
@@ -137,8 +137,8 @@ namespace st2se {
         // put intervals into out structure
     }
 
-    argument_t Algo_weak::mergeConstants(std::vector<argument_t> vec) {
-        argument_t arg;
+    Argument Algo_weak::mergeConstants(std::vector<Argument> vec) {
+        Argument arg;
         std::string text;
         std::vector<std::string> results;
         std::vector<std::string>::iterator it;
@@ -175,15 +175,15 @@ namespace st2se {
         // remove last separator
         text.resize(text.size() - 1);
 
-        arg.value_format = val_format_t::VALUE;
-        arg.value_type = val_type_t::BITFIELD;
+        arg.value_format = Value_format::VALUE;
+        arg.value_type = Value_type::BITFIELD;
         arg.value = text;
 
         return arg;
     }
 
 
-    void Algo_weak::findMinMax(Syscall_t &sc, Ids &out) {
+    void Algo_weak::findMinMax(Syscall &sc, Ids &out) {
         (void) sc;
         (void) out;
     }

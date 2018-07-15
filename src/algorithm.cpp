@@ -20,26 +20,26 @@
 
 namespace st2se {
 
-    std::vector<argument_t> Algorithm::getArguemntsFromPos(
-        const std::vector<argument_t> &args,
+    std::vector<Argument> Algorithm::getArguemntsFromPos(
+        const std::vector<Argument> &args,
         unsigned lvl
     ) {
-        std::vector<argument_t> v;
+        std::vector<Argument> v;
 
-        std::function<void(std::vector<argument_t>&, const std::vector<argument_t>&)> inserter;
+        std::function<void(std::vector<Argument>&, const std::vector<Argument>&)> inserter;
 
-        inserter = [](std::vector<argument_t> &to, const std::vector<argument_t> &in) {
+        inserter = [](std::vector<Argument> &to, const std::vector<Argument> &in) {
             for (auto &item : in) {
 
-                if (item.value_type == val_type_t::STRUCTURE ||
-                    item.value_type == val_type_t::ARRAY ||
-                    item.value_type == val_type_t::STRING
+                if (item.value_type == Value_type::STRUCTURE ||
+                    item.value_type == Value_type::ARRAY ||
+                    item.value_type == Value_type::STRING
                 ) {
                     to.emplace_back();
                     continue;
                 }
 
-                argument_t tmp;
+                Argument tmp;
                 tmp.value_type = item.value_type;
                 tmp.value_format = item.value_format;
                 tmp.value = item.value;
@@ -60,7 +60,7 @@ namespace st2se {
         return v;
     }
 
-    unsigned Algorithm::getDepth(const argument_t &arg) {
+    unsigned Algorithm::getDepth(const Argument &arg) {
         unsigned depth {0};
 
         if (arg.next.empty()) {

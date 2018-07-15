@@ -35,7 +35,7 @@ namespace st2se {
     }
 
     // Make sure you are putting two INTEGER values into this operator
-    bool operator<(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
+    bool operator<(const st2se::Argument &lhs, const st2se::Argument &rhs) {
 
         if (lhs.value < rhs.value) {
             return true;
@@ -45,7 +45,7 @@ namespace st2se {
     }
 
 
-    bool operator==(const st2se::argument_t &lhs, const st2se::argument_t &rhs) {
+    bool operator==(const st2se::Argument &lhs, const st2se::Argument &rhs) {
         // std::cout << POSITION_MACRO << "comapring:" << std::endl;
         // std::cout << "\t" << lhs.value_type << "\t" << rhs.value_type << std::endl;
         // std::cout << "\t" << lhs.value_format << "\t" << rhs.value_format << std::endl;
@@ -79,86 +79,86 @@ namespace st2se {
             b_val;
     }
 
-    std::ostream &operator<< (std::ostream &os, const st2se::val_format_t &a) {
+    std::ostream &operator<< (std::ostream &os, const st2se::Value_format &a) {
         // TODO transformt this into switch case statement
-        if (a == st2se::val_format_t::KEY_VALUE) {
+        if (a == st2se::Value_format::KEY_VALUE) {
             return os << "KEY_VALUE";
         }
 
-        if (a == st2se::val_format_t::VALUE) {
+        if (a == st2se::Value_format::VALUE) {
             return os << "VALUE";
         }
 
-        if (a == st2se::val_format_t::EMPTY) {
+        if (a == st2se::Value_format::EMPTY) {
             return os << "EMPTY";
         }
 
         return os << "UNDEF";
     }
 
-    std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a) {
+    std::ostream &operator<< (std::ostream &os, const st2se::Value_type &a) {
         // TODO transformt this into switch case statement
-        if (a == st2se::val_type_t::INTEGER) {
+        if (a == st2se::Value_type::INTEGER) {
             return os << "INTEGER";
         }
 
-        if (a == st2se::val_type_t::STRING) {
+        if (a == st2se::Value_type::STRING) {
             return os << "STRING";
         }
 
-        if (a == st2se::val_type_t::CONSTANT) {
+        if (a == st2se::Value_type::CONSTANT) {
             return os << "CONSTANT";
         }
 
-        if (a == st2se::val_type_t::POINTER) {
+        if (a == st2se::Value_type::POINTER) {
             return os << "POINTER";
         }
 
-        if (a == st2se::val_type_t::ARRAY) {
+        if (a == st2se::Value_type::ARRAY) {
             return os << "ARRAY";
         }
 
-        if (a == st2se::val_type_t::STRUCTURE) {
+        if (a == st2se::Value_type::STRUCTURE) {
             return os << "STRUCTURE";
         }
 
-        if (a == st2se::val_type_t::BITFIELD) {
+        if (a == st2se::Value_type::BITFIELD) {
             return os << "BITFIELD";
         }
 
-        if (a == st2se::val_type_t::CLUSTERS) {
+        if (a == st2se::Value_type::CLUSTERS) {
             return os << "CLUSTERS";
         }
 
-        if (a == st2se::val_type_t::EMPTY) {
+        if (a == st2se::Value_type::EMPTY) {
             return os << "EMPTY";
         }
 
         return os << "UNDEF";
     }
 
-    _argument_t::_argument_t(val_format_t _fmt, val_type_t _type, std::vector<_argument_t> _vec)
+    _Argument::_Argument(Value_format _fmt, Value_type _type, std::vector<_Argument> _vec)
         : value_format(_fmt), value_type(_type), next(_vec) {
     }
 
-    _argument_t::_argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key,
-        std::variant<unsigned long, std::string> _value, std::vector<_argument_t> _next)
+    _Argument::_Argument(Value_format &_fmt, Value_type &_type, std::string &_key,
+        std::variant<unsigned long, std::string> _value, std::vector<_Argument> _next)
         : value_format(_fmt), value_type(_type), key(_key), value(_value), next(_next) {
     }
 
-    _argument_t::_argument_t():
-        value_format(val_format_t::EMPTY),
-        value_type(val_type_t::EMPTY),
+    _Argument::_Argument():
+        value_format(Value_format::EMPTY),
+        value_type(Value_type::EMPTY),
         key(""),
         value(""),
         next({}) {
     }
 
-    void _argument_t::print() {
+    void _Argument::print() {
 
-        std::function<void(std::string, std::vector<argument_t>)> print_recursive;
+        std::function<void(std::string, std::vector<Argument>)> print_recursive;
 
-        print_recursive = [&print_recursive](std::string prefix, std::vector<argument_t> container) {
+        print_recursive = [&print_recursive](std::string prefix, std::vector<Argument> container) {
             for (auto item : container) {
                 std::string printing = prefix + " '" + arg2str(item) + "',";
 
@@ -176,9 +176,9 @@ namespace st2se {
         print_recursive("\t" + arg2str(*this), next);
     }
 
-    bool Ids::insert(const std::string &name, Syscall_t &sc) {
+    bool Ids::insert(const std::string &name, Syscall &sc) {
 
-        Syscall_t &root_sc = data[name];
+        Syscall &root_sc = data[name];
 
         if (root_sc.next.empty()) {
             root_sc.name = sc.name;
@@ -191,7 +191,7 @@ namespace st2se {
 
         }
         else {
-            for (argument_t arg : sc.next) {
+            for (Argument arg : sc.next) {
                 insertArg(arg, root_sc.next);
             }
         }
@@ -203,7 +203,7 @@ namespace st2se {
         return true;
     }
 
-    std::vector<argument_t> &Ids::insertArg(argument_t &arg, std::vector<argument_t> &container) {
+    std::vector<Argument> &Ids::insertArg(Argument &arg, std::vector<Argument> &container) {
 
         // std::cout << "-------------------------------------" << std::endl <<  std::endl;
         // std::cout << "Inserting Arg: " << arg2str(arg) << std::endl;
@@ -252,7 +252,7 @@ namespace st2se {
         }
     }
 
-    void Syscall_t::print() {
+    void Syscall::print() {
         std::cout << name << ":" << std::endl ;
 
         if (clustered) {
@@ -264,10 +264,10 @@ namespace st2se {
             std::cout << "No args" << std::endl;
         }
         else {
-            std::function<void(std::string, std::vector<argument_t>)> print_recursive;
+            std::function<void(std::string, std::vector<Argument>)> print_recursive;
 
             // lambda for recursive descent over argumnet tree;
-            print_recursive = [&print_recursive](std::string prefix, std::vector<argument_t> container) {
+            print_recursive = [&print_recursive](std::string prefix, std::vector<Argument> container) {
                 for (auto item : container) {
                     std::string printing = prefix + " '" + arg2str(item) + "',";
 
@@ -286,7 +286,7 @@ namespace st2se {
         }
     }
 
-    void Syscall_t::printClustered() {
+    void Syscall::printClustered() {
 
         if (next.empty()) {
             std::cout << "No args" << std::endl;
@@ -312,11 +312,9 @@ namespace st2se {
     }
 
     // move this function to utilities
-    std::string arg2str(const argument_t &arg) {
+    std::string arg2str(const Argument &arg) {
         // *INDENT-OFF*
-        // std::cout << POSITION_MACRO << "\tval_type:" << arg.value_type << std::endl;
-        // std::cout << POSITION_MACRO << "\tvalue:" << std::endl;
-        const bool pointer = arg.value_type == val_type_t::POINTER;
+        const bool pointer = arg.value_type == Value_type::POINTER;
         return std::visit(
             [pointer](auto &&val) -> std::string {
                 using T = std::decay_t<decltype(val)>;

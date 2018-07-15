@@ -58,16 +58,16 @@ namespace st2se {
          * @param out an IDS used as output
          * @return bool true on success false on error
          */
-        void processSyscall(const Syscall_t &sc, Ids &out);
+        void processSyscall(const Syscall &sc, Ids &out);
         /**
          * Deprecated
          */
-        void findMinMax(Syscall_t &sc, Ids &out);
+        void findMinMax(Syscall &sc, Ids &out);
         /**
          * Member will merge constants into a bitfield
          * @param vec vector of constants
          */
-    	argument_t mergeConstants(std::vector<argument_t> vec);
+    	Argument mergeConstants(std::vector<Argument> vec);
     };
 
 } // namespace st2se

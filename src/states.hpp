@@ -42,10 +42,10 @@ namespace st2se {
         // - move constructor
         // - move assignment operator
 
-        std::vector<st2se::argument_t> parsed_val {}; /**< all parsed values */
+        std::vector<st2se::Argument> parsed_val {}; /**< all parsed values */
 
-        val_format_t arg_format {val_format_t::EMPTY}; /**< value format*/
-        val_type_t last_arg_type {val_type_t::EMPTY}; /**< value type*/
+        Value_format arg_format {Value_format::EMPTY}; /**< value format*/
+        Value_type last_arg_type {Value_type::EMPTY}; /**< value type*/
         long long return_val {0}; /**< return value */
         std::string name {}; /**< name of syscall */
         bool bitfields {false}; /**< bool that indicates if was bitfields recognized */
@@ -54,7 +54,7 @@ namespace st2se {
         unsigned arg_num {0}; /**< number of parsed arguments */
         std::variant<unsigned long, std::string> value; /**< value */
 
-        void push_parsed_val(argument_t &arg);
+        void push_parsed_val(Argument &arg);
         void pop_parsed_val();
         /**
          * Move parsed syscall to ids
@@ -68,13 +68,13 @@ namespace st2se {
          * set value format
          * @param fmt value format
          */
-        void set_val_format(const val_format_t &fmt);
+        void set_val_format(const Value_format &fmt);
         /**
          * Setter
          * set value type
          * @param fmt value type
          */
-        void set_val_type(const val_type_t &fmt);
+        void set_val_type(const Value_type &fmt);
         /**
          * Setter
          * set return value
@@ -117,13 +117,13 @@ namespace st2se {
          * get value format
          * @return value format
          */
-        val_format_t &get_val_format();
+        Value_format &get_val_format();
         /**
          * Getter
          * get value type
          * @return value type
          */
-        val_type_t &get_val_type();
+        Value_type &get_val_type();
 
         /**
          * Converts arguemnts to string
@@ -134,7 +134,7 @@ namespace st2se {
          * Get syscall
          * @return syscall
          */
-        Syscall_t getSyscall();
+        Syscall getSyscall();
         /**
          * Clear states
          */

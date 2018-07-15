@@ -99,7 +99,7 @@ namespace st2se {
          * @param arg an argument
          * @return number of structure levels
          */
-        unsigned getDepth(const argument_t &arg);
+        unsigned getDepth(const Argument &arg);
 
         /**
          * method will obtain arguments from \f$n\f$-th position
@@ -107,7 +107,7 @@ namespace st2se {
          * @param lvl depth
          * @return vector of arguments
          */
-        std::vector<argument_t> getArguemntsFromPos(const std::vector<argument_t> &args, unsigned lvl);
+        std::vector<Argument> getArguemntsFromPos(const std::vector<Argument> &args, unsigned lvl);
     };
 
 } // namespace st2se

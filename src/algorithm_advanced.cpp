@@ -43,7 +43,7 @@ namespace st2se {
         return true;
     }
 
-    void Algo_advanced::processSyscall(const Syscall_t &sc, Ids &out) {
+    void Algo_advanced::processSyscall(const Syscall &sc, Ids &out) {
         unsigned depth {0};
 
         #ifndef NDEBUG
@@ -78,7 +78,7 @@ namespace st2se {
         out.data[sc.name].arg_num = sc.arg_num;
 
         for (unsigned arg_pos = 0; arg_pos < depth; arg_pos++) {
-            std::vector<argument_t> v;
+            std::vector<Argument> v;
             std::cout << "arg_pos: " << arg_pos << std::endl;
             v = getArguemntsFromPos(sc.next, arg_pos);
 
@@ -93,14 +93,14 @@ namespace st2se {
 
                 // *INDENT-OFF*
                 std::sort(v.begin(), v.end(),
-                    [](argument_t a, argument_t b) {
+                    [](Argument a, Argument b) {
                         return a.value > b.value;
                     }
                 );
 
                 auto end =
                     std::unique(v.begin(), v.end(),
-                        [](argument_t l, argument_t r) {
+                        [](Argument l, Argument r) {
                             return l.value == r.value;
                         }
                     );
@@ -111,7 +111,7 @@ namespace st2se {
 
 
             // Clustering:
-            std::vector<argument_t> clustered_v {};
+            std::vector<Argument> clustered_v {};
 
             unsigned clusters = this->cluster(v, clustered_v);
 
@@ -121,8 +121,8 @@ namespace st2se {
             std::cout << clustered_v.size() << " items long" << std::endl;
             std::cout << "\t\tclusters: " << clusters << std::endl;
 
-            out.data[sc.name].next.emplace_back(val_format_t::EMPTY,
-                val_type_t::CLUSTERS,
+            out.data[sc.name].next.emplace_back(Value_format::EMPTY,
+                Value_type::CLUSTERS,
                 clustered_v
             );
 
@@ -137,7 +137,7 @@ namespace st2se {
 
     // clustering algorithm which clusters the arguments
     // from vector 'in' and stores them in vector 'out'
-    unsigned Algo_advanced::cluster(std::vector<argument_t> &in, std::vector<argument_t> &out) {
+    unsigned Algo_advanced::cluster(std::vector<Argument> &in, std::vector<Argument> &out) {
 
         if (in.empty()) {
             return 0;
@@ -161,7 +161,7 @@ namespace st2se {
         // DEBUGprint("in is:");
         // DEBUGprintArgumentSet(in);
 
-        std::vector<argument_t> reducing_input;
+        std::vector<Argument> reducing_input;
 
         // DEBUGprint("reducing_input.size() is " << reducing_input.size() << std::endl);
 
@@ -174,8 +174,8 @@ namespace st2se {
         // DEBUGprintArgumentSet(reducing_input);
 
         // helping vectors
-        std::vector<argument_t> to_check {};
-        std::vector<argument_t> cluster {};
+        std::vector<Argument> to_check {};
+        std::vector<Argument> cluster {};
 
         auto smallest_pair = smallestDst(in);
         double eps = 2.0 * distance(smallest_pair.first, smallest_pair.second);
@@ -273,9 +273,9 @@ namespace st2se {
         return out.size();
     }
 
-    bool Algo_advanced::moveFirstItem(std::vector<argument_t> &to, std::vector<argument_t> &from) {
+    bool Algo_advanced::moveFirstItem(std::vector<Argument> &to, std::vector<Argument> &from) {
 
-        argument_t element = from.front();
+        Argument element = from.front();
 
         for (auto item : to) {
             if (item == element) {
@@ -292,7 +292,7 @@ namespace st2se {
 
 
     // asdf func()
-    bool Algo_advanced::removeItem(argument_t &arg, std::vector<argument_t> &vec) {
+    bool Algo_advanced::removeItem(Argument &arg, std::vector<Argument> &vec) {
 
         // DEBUGprint("arg is " << arg2str(arg) << std::endl);
         // DEBUGprint("vec is:" << std::endl);
@@ -317,9 +317,9 @@ namespace st2se {
     }
 
     // asdf func()
-    std::vector<argument_t> Algo_advanced::closestItemsTo(argument_t &arg, std::vector<argument_t> &vec, double eps) {
+    std::vector<Argument> Algo_advanced::closestItemsTo(Argument &arg, std::vector<Argument> &vec, double eps) {
 
-        std::vector<argument_t> ret_val {};
+        std::vector<Argument> ret_val {};
 
         if (vec.empty()) {
             return ret_val;
@@ -339,7 +339,7 @@ namespace st2se {
     }
 
     // asdf func()
-    bool Algo_advanced::moveCluster(std::vector<argument_t> &cluster, std::vector<argument_t> &out) {
+    bool Algo_advanced::moveCluster(std::vector<Argument> &cluster, std::vector<Argument> &out) {
 
         if (cluster.empty()) {
             return false;
@@ -348,7 +348,7 @@ namespace st2se {
         out.push_back(cluster.back());
         cluster.pop_back();
 
-        std::vector<argument_t> &place = out.back().next;
+        std::vector<Argument> &place = out.back().next;
 
         for (auto item : cluster) {
             place.push_back(item);
@@ -361,8 +361,8 @@ namespace st2se {
 
 
     // find the closest pair of values
-    std::pair<argument_t, argument_t> Algo_advanced::smallestDst(std::vector<argument_t> &in) {
-        std::pair<argument_t, argument_t> p;
+    std::pair<Argument, Argument> Algo_advanced::smallestDst(std::vector<Argument> &in) {
+        std::pair<Argument, Argument> p;
         double mem_dst = distance(in.front(), in.back());
         double tmp {0.0};
 
@@ -402,7 +402,7 @@ namespace st2se {
     }
 
     // computes distance for two arguments
-    double Algo_advanced::distance(argument_t &left, argument_t &right) {
+    double Algo_advanced::distance(Argument &left, Argument &right) {
         double ret_val {-1.0};
 
         std::cout << "\n\n\n";
@@ -414,13 +414,13 @@ namespace st2se {
         // constant is the same as bitfield but constant has no `|` operator
         if (
             (
-                (left.value_type == val_type_t::BITFIELD) ||
-                (left.value_type == val_type_t::CONSTANT)
+                (left.value_type == Value_type::BITFIELD) ||
+                (left.value_type == Value_type::CONSTANT)
             )
             ||
             (
-                (right.value_type == val_type_t::BITFIELD) ||
-                (right.value_type == val_type_t::CONSTANT)
+                (right.value_type == Value_type::BITFIELD) ||
+                (right.value_type == Value_type::CONSTANT)
             )
         ) {
             // compute distance between bitfields
@@ -430,8 +430,8 @@ namespace st2se {
             ret_val = bitfieldDistance(a, b);
         }
         else if (
-            left.value_type == val_type_t::POINTER ||
-            left.value_type == val_type_t::INTEGER
+            left.value_type == Value_type::POINTER ||
+            left.value_type == Value_type::INTEGER
         ) {
             // number distance ???
             unsigned long a = *std::get_if<unsigned long>(&(left.value));
@@ -457,8 +457,8 @@ namespace st2se {
     }
 
     // FIXME maybe to `ids` module?
-    // convert argument string value to bitfield_t
-    bitfield_t convert2bitfield(const argument_t &in) {
+    // convert argument string value to Bitfield
+    Bitfield convert2bitfield(const Argument &in) {
 
         std::string s;
 
@@ -466,11 +466,11 @@ namespace st2se {
             s = *_s;
         }
         else {
-            return bitfield_t {};
+            return Bitfield {};
         }
 
         std::string delim = "|";
-        bitfield_t bitfields;
+        Bitfield bitfields;
 
         auto start = 0U;
         auto end = s.find(delim);
@@ -487,7 +487,7 @@ namespace st2se {
         return bitfields;
     }
 
-    int bitfieldDistance(bitfield_t &a, bitfield_t &b) {
+    int bitfieldDistance(Bitfield &a, Bitfield &b) {
         int ret_val {0};
 
         if (a.empty() && b.empty()) {
@@ -503,7 +503,7 @@ namespace st2se {
         }
 
         if (a.size() < b.size()) {
-            const bitfield_t tmp = a;
+            const Bitfield tmp = a;
             a = b;
             b = tmp;
         }
