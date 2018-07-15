@@ -38,7 +38,7 @@
 
 namespace st2se {
 
-    using bitfield_t = std::vector<std::string>;
+    using Bitfield = std::vector<std::string>;
 
     /**
      * DBSCAN algorithm implementation
@@ -51,7 +51,7 @@ namespace st2se {
          * @param out an IDS used as output
          * @return bool true on success false on error
          */
-        void processSyscall(const Syscall_t &sc, Ids &out);
+        void processSyscall(const Syscall &sc, Ids &out);
         /**
          * Create cluster
          * This member will process arguments from input into cluster on the output
@@ -59,14 +59,14 @@ namespace st2se {
          * @param out an argument vector used as cluster output
          * @return unsigned number of members in cluster
          */
-        unsigned cluster(std::vector<argument_t> &in, std::vector<argument_t> &out);
+        unsigned cluster(std::vector<Argument> &in, std::vector<Argument> &out);
         /**
          * Return pair of two arguments which are the closest together
          * Method return two arguments which has clossest distance to each other
          * @param in an argument vector used as input
          * @return pair of nearest arguments
          */
-        std::pair<argument_t, argument_t> smallestDst(std::vector<argument_t> &in);
+        std::pair<Argument, Argument> smallestDst(std::vector<Argument> &in);
         /**
          * Computes distance between two arguments
          * This member will compute the distance between two arguments
@@ -74,7 +74,7 @@ namespace st2se {
          * @param right an argument
          * @return double distance between the two arguments
          */
-        double distance(argument_t &left, argument_t &right);
+        double distance(Argument &left, Argument &right);
 
         /**
          * deletes arguments from vector
@@ -83,7 +83,7 @@ namespace st2se {
          * @param vec vector from which will be deleted
          * @return bool true on success false on error
          */
-        bool removeItem(argument_t &arg, std::vector<argument_t> &vec);
+        bool removeItem(Argument &arg, std::vector<Argument> &vec);
         /**
          * returns closest items to argument with treshold
          * @param arg an argument
@@ -91,7 +91,7 @@ namespace st2se {
          * @param double eps between the two arguments
          * @return items in vector
          */
-        std::vector<argument_t> closestItemsTo(argument_t &arg, std::vector<argument_t> &vec, double eps);
+        std::vector<Argument> closestItemsTo(Argument &arg, std::vector<Argument> &vec, double eps);
         /**
          * move cluster from x to y
          * This member will move cluster
@@ -99,14 +99,14 @@ namespace st2se {
          * @param out an space
          * @return bool true on success false on error
          */
-        bool moveCluster(std::vector<argument_t> &cluster, std::vector<argument_t> &out);
+        bool moveCluster(std::vector<Argument> &cluster, std::vector<Argument> &out);
         /**
          * This member will move first argument from vec1 to vec2
          * @param to an vector
          * @param from an vector
          * @return bool true on success false on error
          */
-        bool moveFirstItem(std::vector<argument_t> &to, std::vector<argument_t> &from);
+        bool moveFirstItem(std::vector<Argument> &to, std::vector<Argument> &from);
         /**
          * Optimization method
          * This member overrides the optimize memver in Algorithm class.
@@ -124,13 +124,13 @@ namespace st2se {
      * @param b an bitfiled
      * @return int distance
      */
-    int bitfieldDistance(bitfield_t &a, bitfield_t &b);
+    int bitfieldDistance(Bitfield &a, Bitfield &b);
     /**
      * Convert any argument to bitfield
      * @param a an argument
-     * @return bitfield_t bitfield
+     * @return Bitfield bitfield
      */
-    bitfield_t convert2bitfield(const argument_t &in);
+    Bitfield convert2bitfield(const Argument &in);
 
 } // namespace st2se
 

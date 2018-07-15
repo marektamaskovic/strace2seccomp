@@ -21,7 +21,7 @@
 template<class T> struct always_false : std::false_type {};
 
 namespace st2se {
-    void States::push_parsed_val(argument_t &arg) {
+    void States::push_parsed_val(Argument &arg) {
         parsed_val.push_back(arg);
     }
 
@@ -31,7 +31,7 @@ namespace st2se {
 
     bool States::process_val(Ids &ids) {
 
-        Syscall_t s = getSyscall();
+        Syscall s = getSyscall();
 
         ids.insert(get_name(), s);
 
@@ -40,11 +40,11 @@ namespace st2se {
         return true;
     }
 
-    void States::set_val_format(const val_format_t &fmt) {
+    void States::set_val_format(const Value_format &fmt) {
         arg_format = fmt;
     }
 
-    void States::set_val_type(const val_type_t &fmt) {
+    void States::set_val_type(const Value_type &fmt) {
         last_arg_type = fmt;
     }
 
@@ -73,11 +73,11 @@ namespace st2se {
         return name;
     }
 
-    val_format_t &States::get_val_format() {
+    Value_format &States::get_val_format() {
         return arg_format;
     }
 
-    val_type_t &States::get_val_type() {
+    Value_type &States::get_val_type() {
         return last_arg_type;
     }
 
@@ -109,13 +109,13 @@ namespace st2se {
         return str;
     }
 
-    Syscall_t States::getSyscall() {
-        Syscall_t s;
+    Syscall States::getSyscall() {
+        Syscall s;
 
         if (parsed_val.empty()) {
             // std::cerr << "Error: " << this->get_name() << ": Parsed val is empty." << std::endl;
 
-            argument_t a;
+            Argument a;
 
             s.next.emplace_back(a);
             s.arg_num = this->arg_num;
@@ -124,7 +124,7 @@ namespace st2se {
 
         }
         else {
-            argument_t a, b;
+            Argument a, b;
 
             a = parsed_val.back();
             parsed_val.pop_back();

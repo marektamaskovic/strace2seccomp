@@ -47,7 +47,7 @@ namespace st2se {
     /**
      * value format enum
      */
-    enum class val_format_t {
+    enum class Value_format {
         KEY_VALUE, /**< value is format key and value*/
         VALUE,     /**< value is format value*/
         EMPTY      /**< value is empty*/
@@ -56,7 +56,7 @@ namespace st2se {
     /**
      * value type enum
      */
-    enum class val_type_t {
+    enum class Value_type {
         POINTER,     /**< value type is pointer*/
         INTEGER,     /**< value type is integer */
         STRING,      /**< value type is string*/
@@ -69,21 +69,24 @@ namespace st2se {
     };
 
     /**
-     * argument_t structure
+     * Argument structure
      * This structure holds information about argument
      */
-    struct _argument_t;
-    struct _argument_t {
-        val_format_t value_format {val_format_t::EMPTY};      /**< value type*/
-        val_type_t value_type {val_type_t::EMPTY};            /**< value format*/
+    struct _Argument;
+    struct _Argument {
+        using Value = std::variant<unsigned long, std::string>; /**< Alias for value type*/
+        Value_format value_format {Value_format::EMPTY};      /**< value type*/
+        Value_type value_type {Value_type::EMPTY};            /**< value format*/
         std::string key {""};                                 /**< key before value, typically key=value*/
-        std::variant<unsigned long, std::string> value {""};  /**< this variable stores value of argument. it is a unsigned number or string*/
-        std::vector<_argument_t> next;                        /**< next arguments */
+        Value value {""};  /**< this variable stores value of argument. */
+        Value value_b {""};  /**< this variable stores value of argument. This variable is used only after opitmization phase*/
+        std::vector<Value> discrete_values {}; /**< Here are stored discrete values. This variable is used only after opitmization phase*/
+        std::vector<_Argument> next;                        /**< next arguments */
         /**
          * Constructor
          * default constructor
          */
-        _argument_t();
+        _Argument();
         /**
          * Constructor
          * explicit constructor
@@ -91,7 +94,7 @@ namespace st2se {
          * @param _type an value type
          * @param _vec arguments that are on next position after this argument
          */
-        _argument_t(val_format_t _fmt, val_type_t _type, std::vector<_argument_t> _vec);
+        _Argument(Value_format _fmt, Value_type _type, std::vector<_Argument> _vec);
         /**
          * Constructor
          * explicit constructor
@@ -101,8 +104,8 @@ namespace st2se {
          * @param _value an value of argument
          * @param _vec arguments that are on next position after this argument
          */
-        _argument_t(val_format_t &_fmt, val_type_t &_type, std::string &_key, std::variant<unsigned long, std::string> _value,
-            std::vector<_argument_t> _next);
+        _Argument(Value_format &_fmt, Value_type &_type, std::string &_key, std::variant<unsigned long, std::string> _value,
+            std::vector<_Argument> _next);
         /**
          * Print class variables.
          * This member will print all inner variables of this argument and much more.
@@ -110,17 +113,17 @@ namespace st2se {
         void print();
     };
 
-    using argument_t = struct _argument_t;
+    using Argument = struct _Argument;
 
     /**
      * Data structure that holds information about syscall
      */
-    struct Syscall_t {
+    struct Syscall {
         std::string name {""}; /**< syscall name */
         int return_code {0}; /**< return code */
         std::string other {""}; /**< content parsed after return code */
         unsigned arg_num {0}; /**< number of arguments in the syscall*/
-        std::vector<argument_t> next {}; /**< first arguments */
+        std::vector<Argument> next {}; /**< first arguments */
         bool clustered = false; /**< points if the content is clustered or not*/
 
         /**
@@ -139,7 +142,7 @@ namespace st2se {
      * Object that implements whole IDS
      */
     class Ids {
-        using Sc_map = std::map<std::string, Syscall_t>;
+        using Sc_map = std::map<std::string, Syscall>;
       public:
         Sc_map data {}; /***< here are located syscalls */
         /**
@@ -148,14 +151,14 @@ namespace st2se {
          * @param sc syscall content
          * @return true if initialized false otherwise
          */
-        bool insert(const std::string &name, Syscall_t &sc);
+        bool insert(const std::string &name, Syscall &sc);
         /**
          * Argument inserter into a container
          * @param arg an argument
          * @param container in which to insert argument
          * @return vector of arguments
          */
-        std::vector<argument_t> &insertArg(argument_t &arg, std::vector<argument_t> &container);
+        std::vector<Argument> &insertArg(Argument &arg, std::vector<Argument> &container);
 
         /**
          * Print syscall
@@ -172,17 +175,17 @@ namespace st2se {
      * @param arg an argument
      * @return string value represented as string
      */
-    std::string arg2str(const argument_t &arg);
+    std::string arg2str(const Argument &arg);
     /**
      * Operator overload
      * This operator implements comparison of two arguments
      */
-    bool operator== (const st2se::argument_t &lhs, const st2se::argument_t &rhs);
+    bool operator== (const st2se::Argument &lhs, const st2se::Argument &rhs);
     /**
      * Operator overload
      * This operator implements less operator for two arguments
      */
-    bool operator< (const st2se::argument_t &lhs, const st2se::argument_t &rhs);
+    bool operator< (const st2se::Argument &lhs, const st2se::Argument &rhs);
     /**
      * Operator overload
      * This operator implements printing of IDS to output stream
@@ -192,12 +195,12 @@ namespace st2se {
      * Operator overload
      * This operator implements printing of value type enumeration to output stream
      */
-    std::ostream &operator<< (std::ostream &os, const st2se::val_type_t &a);
+    std::ostream &operator<< (std::ostream &os, const st2se::Value_type &a);
     /**
      * Operator overload
      * This operator implements printing of value format enumeration to output stream
      */
-    std::ostream &operator<< (std::ostream &os, const st2se::val_format_t &a);
+    std::ostream &operator<< (std::ostream &os, const st2se::Value_format &a);
 
 } // namespace st2se
 

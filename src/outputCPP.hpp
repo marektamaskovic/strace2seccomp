@@ -38,7 +38,7 @@
 
 namespace st2se {
 
-    using minmax_t = std::vector<argument_t>;
+    using Minmax = std::vector<Argument>;
 
     /**
      * Class that implements output generation into C/C++
@@ -107,14 +107,14 @@ namespace st2se {
          * generate Syscall rule
          * @param sc_pair that holds syscall and syscall name
          */
-        void generateScRules(std::pair<std::string, Syscall_t> sc_pair);
+        void generateScRules(std::pair<std::string, Syscall> sc_pair);
         /**
          * Generate rule for syscall
          * @param arg an argument
          * @param clustered an bool that indicates if arg is clustered or not
          * @param pos an argument position
          */
-        void generateRules(argument_t &arg, bool clustered, unsigned pos);
+        void generateRules(Argument &arg, bool clustered, unsigned pos);
 
         /**
          * Get condition from argument
@@ -122,33 +122,33 @@ namespace st2se {
          * @param pos an argument postion
          * @return string an string that holds the condition
          */
-        std::string getCondition(argument_t &arg, unsigned pos);
+        std::string getCondition(Argument &arg, unsigned pos);
 
         /**
          * Get condition from unclustered argument
          * @param arg an argument
          * @param pos an argument postion
          */
-        void __genConditions(argument_t &arg, unsigned pos);
+        void __genConditions(Argument &arg, unsigned pos);
         /**
          * Get condition from clustered argument
          * @param arg an argument
          * @param pos an argument postion
          */
-        void __genCluseteredConditions(argument_t &cluster, unsigned pos);
+        void __genCluseteredConditions(Argument &cluster, unsigned pos);
         /**
          * Get condition from unclustered argument
          * @param arg an argument
          * @param pos an argument postion
          * @return string an string that holds the condition
          */
-        std::string getClusteredCond(argument_t &cluster, unsigned pos);
+        std::string getClusteredCond(Argument &cluster, unsigned pos);
         /**
          * Get rule prolog that consist of function call rule add
          * @param sc a syscall
          * @return string an string that holds the prolog
          */
-        std::string getRuleProlog(Syscall_t &sc);
+        std::string getRuleProlog(Syscall &sc);
 
         /**
          * Write rule to buffer

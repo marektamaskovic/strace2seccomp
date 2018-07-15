@@ -28,7 +28,7 @@
 #include "ids.hpp"
 #include "outputCPP.hpp"
 
-st2se::Syscall_t createSyscall(std::string name, int rc, std::string other, unsigned an, int a, std::string b, int c);
+st2se::Syscall createSyscall(std::string name, int rc, std::string other, unsigned an, int a, std::string b, int c);
 
 TEST_CASE("Output methods", "[Output]") {
 	st2se::outputCPP *o = new st2se::outputCPP;
@@ -61,17 +61,17 @@ TEST_CASE("OutputCPP write methods", "[OutputCPP]") {
 	// a range of values.
 
 	// first cluster
-	st2se::argument_t cluster;
-	cluster.value_type = st2se::val_type_t::CLUSTERS;
+	st2se::Argument cluster;
+	cluster.value_type = st2se::Value_type::CLUSTERS;
 
-	st2se::argument_t arg;
-	arg.value_type = st2se::val_type_t::INTEGER;
-	arg.value_format = st2se::val_format_t::VALUE;
+	st2se::Argument arg;
+	arg.value_type = st2se::Value_type::INTEGER;
+	arg.value_format = st2se::Value_format::VALUE;
 	arg.value = 1;
 
 	cluster.next.push_back(arg);
 
-	st2se::Syscall_t sc;
+	st2se::Syscall sc;
 	sc.name = "write";
 	sc.arg_num = 3;
 	sc.next.push_back(cluster);
@@ -79,8 +79,8 @@ TEST_CASE("OutputCPP write methods", "[OutputCPP]") {
 
 	// second cluster
 	cluster.next.clear();
-	arg.value_type = st2se::val_type_t::EMPTY;
-	arg.value_format = st2se::val_format_t::EMPTY;
+	arg.value_type = st2se::Value_type::EMPTY;
+	arg.value_format = st2se::Value_format::EMPTY;
 	arg.value = "";
 
 	cluster.next.push_back(arg);
@@ -88,8 +88,8 @@ TEST_CASE("OutputCPP write methods", "[OutputCPP]") {
 
 	// third cluster
 	cluster.next.clear();
-	arg.value_type = st2se::val_type_t::INTEGER;
-	arg.value_format = st2se::val_format_t::VALUE;
+	arg.value_type = st2se::Value_type::INTEGER;
+	arg.value_format = st2se::Value_format::VALUE;
 	arg.value = 3;
 
 	cluster.next.push_back(arg);
@@ -99,7 +99,7 @@ TEST_CASE("OutputCPP write methods", "[OutputCPP]") {
 	sc.next.push_back(cluster);
 
 	ids.data["write"] = sc;
-	std::pair<std::string, st2se::Syscall_t> item_sc {ids.data["write"].name, ids.data["write"]};
+	std::pair<std::string, st2se::Syscall> item_sc {ids.data["write"].name, ids.data["write"]};
 	// end of initialization
 
 	// Here we create a needed files for source code generation.

@@ -20,7 +20,7 @@
 
 #include "argparse.hpp"
 
-struct values_t {
+struct Values {
 	int help {0};
     int weak {0};
     int strict {0};
@@ -34,7 +34,7 @@ struct values_t {
     std::string output {};
 };
 
-bool operator==(const Params &a, const struct values_t &b) {
+bool operator==(const Params &a, const struct Values &b) {
 	if (
 			(a.help == b.help) &&
 			(a.weak == b.weak) &&
@@ -55,7 +55,7 @@ bool operator==(const Params &a, const struct values_t &b) {
 	return false;
 }
 
-std::string createArgv(const struct values_t &_values, const std::vector<std::string> &_file_names)
+std::string createArgv(const struct Values &_values, const std::vector<std::string> &_file_names)
 {
 	std::string argv;
 
@@ -97,7 +97,7 @@ std::string createArgv(const struct values_t &_values, const std::vector<std::st
 	return argv;
 }
 
-int countArgv(const struct values_t &_values, const std::vector<std::string> &_file_names)
+int countArgv(const struct Values &_values, const std::vector<std::string> &_file_names)
 {
 	int cnt = 0;
 
@@ -139,7 +139,7 @@ int countArgv(const struct values_t &_values, const std::vector<std::string> &_f
 
 TEST_CASE("Argument parser", "[Argparse]") {
 
-	struct values_t val{1,1,0,0,0,0,0,1,1,1, "out"};
+	struct Values val{1,1,0,0,0,0,0,1,1,1, "out"};
 	std::vector<std::string> file_names {"filename1"};
 
 	int argc = countArgv(val, file_names);
