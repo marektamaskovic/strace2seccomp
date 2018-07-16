@@ -42,7 +42,7 @@ namespace st2se {
      * Wrapper over strict algorithm implementation
      */
     class Algo_strict : public Algorithm {
-    	/**
+        /**
          * Optimization method
          * This member overrides the optimize memver in Algorithm class.
          * In this member is not located any algorithm. It simple copy the input

@@ -38,11 +38,11 @@
 
 namespace st2se {
 
-	/**
-	 * Wrapper over weak algorithm implementation
-	 */
+    /**
+     * Wrapper over weak algorithm implementation
+     */
     class Algo_weak : public Algorithm {
-    	/**
+        /**
          * Optimization method
          * This member overrides the optimize memver in Algorithm class.
          * In this member is located the core implementation of DBSCAN algorithm
@@ -58,7 +58,7 @@ namespace st2se {
          * @param out an IDS used as output
          * @return bool true on success false on error
          */
-        void processSyscall(const Syscall &sc, Ids &out);
+        void processSyscall(Syscall &sc, Ids &out);
         /**
          * Deprecated
          */
@@ -67,8 +67,13 @@ namespace st2se {
          * Member will merge constants into a bitfield
          * @param vec vector of constants
          */
-    	Argument mergeConstants(std::vector<Argument> vec);
+        Argument mergeConstants(std::vector<Argument> vec);
+
+        std::pair<Argument, Argument> getMinMax(std::vector<Argument> vec);
+        std::vector<Argument> bar(std::vector<Argument> &vec);
     };
+
+
 
 } // namespace st2se
 

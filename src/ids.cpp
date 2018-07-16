@@ -47,8 +47,8 @@ namespace st2se {
 
     bool operator==(const st2se::Argument &lhs, const st2se::Argument &rhs) {
         // std::cout << POSITION_MACRO << "comapring:" << std::endl;
-        // std::cout << "\t" << lhs.value_type << "\t" << rhs.value_type << std::endl;
-        // std::cout << "\t" << lhs.value_format << "\t" << rhs.value_format << std::endl;
+        // std::cout << "\t" << lhs.valueType << "\t" << rhs.valueType << std::endl;
+        // std::cout << "\t" << lhs.valueFormat << "\t" << rhs.valueFormat << std::endl;
         // std::cout << "\t'" << lhs.key << "'\t'" << rhs.key << "'" << std::endl;
         // std::cout << "\t" << arg2str(lhs) << "\t" << arg2str(rhs) << std::endl;
 
@@ -68,87 +68,87 @@ namespace st2se {
 
         // std::cout << "\tb_val:" << b_val << std::endl;
 
-        // std::cout << "\treturning:" << (lhs.value_type == rhs.value_type &&
-        // lhs.value_format == rhs.value_format &&
+        // std::cout << "\treturning:" << (lhs.valueType == rhs.valueType &&
+        // lhs.valueFormat == rhs.valueFormat &&
         // !lhs.key.compare(rhs.key) &&
         // b_val) << std::endl;
 
-        return lhs.value_type == rhs.value_type &&
-            lhs.value_format == rhs.value_format &&
+        return lhs.valueType == rhs.valueType &&
+            lhs.valueFormat == rhs.valueFormat &&
             !lhs.key.compare(rhs.key) &&
             b_val;
     }
 
-    std::ostream &operator<< (std::ostream &os, const st2se::Value_format &a) {
+    std::ostream &operator<< (std::ostream &os, const st2se::ValueFormat &a) {
         // TODO transformt this into switch case statement
-        if (a == st2se::Value_format::KEY_VALUE) {
+        if (a == st2se::ValueFormat::KEY_VALUE) {
             return os << "KEY_VALUE";
         }
 
-        if (a == st2se::Value_format::VALUE) {
+        if (a == st2se::ValueFormat::VALUE) {
             return os << "VALUE";
         }
 
-        if (a == st2se::Value_format::EMPTY) {
+        if (a == st2se::ValueFormat::EMPTY) {
             return os << "EMPTY";
         }
 
         return os << "UNDEF";
     }
 
-    std::ostream &operator<< (std::ostream &os, const st2se::Value_type &a) {
+    std::ostream &operator<< (std::ostream &os, const st2se::ValueType &a) {
         // TODO transformt this into switch case statement
-        if (a == st2se::Value_type::INTEGER) {
+        if (a == st2se::ValueType::INTEGER) {
             return os << "INTEGER";
         }
 
-        if (a == st2se::Value_type::STRING) {
+        if (a == st2se::ValueType::STRING) {
             return os << "STRING";
         }
 
-        if (a == st2se::Value_type::CONSTANT) {
+        if (a == st2se::ValueType::CONSTANT) {
             return os << "CONSTANT";
         }
 
-        if (a == st2se::Value_type::POINTER) {
+        if (a == st2se::ValueType::POINTER) {
             return os << "POINTER";
         }
 
-        if (a == st2se::Value_type::ARRAY) {
+        if (a == st2se::ValueType::ARRAY) {
             return os << "ARRAY";
         }
 
-        if (a == st2se::Value_type::STRUCTURE) {
+        if (a == st2se::ValueType::STRUCTURE) {
             return os << "STRUCTURE";
         }
 
-        if (a == st2se::Value_type::BITFIELD) {
+        if (a == st2se::ValueType::BITFIELD) {
             return os << "BITFIELD";
         }
 
-        if (a == st2se::Value_type::CLUSTERS) {
+        if (a == st2se::ValueType::CLUSTERS) {
             return os << "CLUSTERS";
         }
 
-        if (a == st2se::Value_type::EMPTY) {
+        if (a == st2se::ValueType::EMPTY) {
             return os << "EMPTY";
         }
 
         return os << "UNDEF";
     }
 
-    _Argument::_Argument(Value_format _fmt, Value_type _type, std::vector<_Argument> _vec)
-        : value_format(_fmt), value_type(_type), next(_vec) {
+    _Argument::_Argument(ValueFormat _fmt, ValueType _type, std::vector<_Argument> _vec)
+        : valueFormat(_fmt), valueType(_type), next(_vec) {
     }
 
-    _Argument::_Argument(Value_format &_fmt, Value_type &_type, std::string &_key,
+    _Argument::_Argument(ValueFormat &_fmt, ValueType &_type, std::string &_key,
         std::variant<unsigned long, std::string> _value, std::vector<_Argument> _next)
-        : value_format(_fmt), value_type(_type), key(_key), value(_value), next(_next) {
+        : valueFormat(_fmt), valueType(_type), key(_key), value(_value), next(_next) {
     }
 
     _Argument::_Argument():
-        value_format(Value_format::EMPTY),
-        value_type(Value_type::EMPTY),
+        valueFormat(ValueFormat::EMPTY),
+        valueType(ValueType::EMPTY),
         key(""),
         value(""),
         next({}) {
@@ -186,19 +186,12 @@ namespace st2se {
             root_sc.other = sc.other;
             root_sc.arg_num = sc.arg_num;
             std::copy(sc.next.begin(), sc.next.end(), std::back_inserter(root_sc.next));
-
-            // std::cout << __func__ << "\tinserting new arg" << std::endl;
-
         }
         else {
             for (Argument arg : sc.next) {
                 insertArg(arg, root_sc.next);
             }
         }
-
-        // std::cout << "#### SC contains #####" << std::endl;
-        // root_sc.print();
-        // std::cout << "######################" << std::endl;
 
         return true;
     }
@@ -314,8 +307,10 @@ namespace st2se {
     // move this function to utilities
     std::string arg2str(const Argument &arg) {
         // *INDENT-OFF*
-        const bool pointer = arg.value_type == Value_type::POINTER;
-        return std::visit(
+        std::string ret;
+        // TODO make lambda
+        const bool pointer = arg.valueType == ValueType::POINTER;
+        ret = std::visit(
             [pointer](auto &&val) -> std::string {
                 using T = std::decay_t<decltype(val)>;
 
@@ -340,6 +335,36 @@ namespace st2se {
             },
             arg.value
         );
+
+        if(arg.numbervalues == NumberValues::RANGE){
+            ret += ", " + std::visit(
+                [pointer](auto &&val) -> std::string {
+                    using T = std::decay_t<decltype(val)>;
+
+                    if constexpr(std::is_same_v<T, unsigned long>){
+                        if(pointer){
+                            std::stringstream ss;
+                            std::string ret_val;
+
+                            ss << std::hex << val;
+                            ss >> ret_val;
+
+                            return "0x" + ret_val;
+                        }
+                        return std::to_string(val);
+                    }
+                    else if constexpr(std::is_same_v<T, std::string>)
+                        return val;
+                    else {
+                        static_assert(always_false<T>::value, "non-exhaustive visitor!");
+                        return "Error: Variant is empty";
+                    }
+                },
+                arg.value_b
+            );
+        }
+
+        return ret;
         // *INDENT-ON*
     }
 } // namespace st2se

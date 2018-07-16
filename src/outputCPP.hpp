@@ -68,11 +68,11 @@ namespace st2se {
         /**
          * Write template end in output file
          */
-         void writeLastPart();
+        void writeLastPart();
         /**
          * Write template thread in output file
          */
-         void writeThreadPart();
+        void writeThreadPart();
 
       public:
         /**
