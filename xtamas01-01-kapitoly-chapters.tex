@@ -746,7 +746,7 @@ The one of the many problems with right to left parsing algorithm is that it com
 Other inconvenience is that we must carefully determine the order in which the results for a particular column are computed.
 \textit{Packrat parsing} is a lazy derivation of a tabular algorithm that solves both of these problems.
 It computes results only when they are needed, in the same order as the original recursive descent parser would.
-
+\todo{REWRITE}
 
 \begin{table}[h]
 	\begin{center}
@@ -761,16 +761,15 @@ It computes results only when they are needed, in the same order as the original
   \label{fig:pegtl:example}
 \end{table}
 
-
-
-% \section{Translator}
-% This part is responsible for translation of IDS output to libseccomp.
-
-
-
 \chapter{Development of strace2seccomp}
-%code should be using libseccomp to be secure.
-%test it with some fuzzer
+In this chapter, we will briefly describe some implementation details, and we
+will show the reader how to get the strace logs that are used as input for
+strace2seccomp tool. Next, we will take a look at what programs were used during
+the development phase. The whole project is written in C++ and standard was
+chosen as the latest C++17. The whole project is compiled with GNU compiler.
+However, the compiler can be easily switched in build system for clang. As well
+in this chapter, we will describe the class hierarchy, and at the end, we will
+describe how to run the strace2seccomp tool.
 
 \section{Input}
 \label{strace_params}
@@ -1574,11 +1573,20 @@ line | CODE | JT | JF | K
 	\caption{Disassembled BPF filter on amd64 machine}
 \end{figure}
 
-The first issue is so critical for the correct output generator of
-strace2seccomp that we can not guarantee the future of this project. However,
-during the work on this bachelor thesis, there was generated a small pressure on
-the upstream of libseccomp project, to merge or implement own macros for range
-handling.
+As development continued, we discovered another issue that prevents from correct
+functionality. This issue is occurring when we try to load seccomp filter in a
+multithread application, and we want to synchronize it across threads or
+processes. Already stated issue is mentioned in libseccomp issue
+tracker\footnote{\url{https://github.com/seccomp/libseccomp/issues/93}} and
+there is a working solution to this issue. However, there were many conflicts in
+code when applying those patches, and even if we applied those patches, it was
+in conflict with a previously applied patch that was the workaround for ranges.
+Thus we decided to stick with range patch (it is more important then thread
+support), and not with the multithread patches. In the end, there is still
+implemented the multithread support in the developed tool without regard to
+functionality in libseccomp. As we can notice, one of the involved programs for
+complex testing, testovac, cannot be tested.
+
 
 \chapter{Conclusion}
 
