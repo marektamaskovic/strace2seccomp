@@ -126,7 +126,7 @@ const std::map<std::string, int> signal_map {
         }                                                           \
     }while(0)
 
-#define CONV(output, input, base)                                               \
+#define CONVERT(output, input, base)                                            \
     do{                                                                         \
         try {                                                                   \
             long long tmp = std::stoll((input).string(), nullptr, (base));      \
@@ -310,14 +310,14 @@ namespace st2se::grammar {
             states.set_val_format(ValueFormat::VALUE);
 
             if (states.get_val_type() == ValueType::INTEGER) {
-                CONV(states.value, in, 10);
+                CONVERT(states.value, in, 10);
             }
             else if (states.get_val_type() == ValueType::POINTER) {
                 if (!in.string().compare("NULL") || !in.string().compare("nullptr")) {
                     states.value = 0;
                 }
                 else {
-                    CONV(states.value, in, 16);
+                    CONVERT(states.value, in, 16);
                 }
             }
             else {
@@ -337,6 +337,18 @@ namespace st2se::grammar {
                     }
                 }
             }
+            // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+            // WARNING
+            // this should be removed when you want to cluster addresses or
+            // structures
+            switch(states.get_val_type()){
+                case ValueType::POINTER:
+                case ValueType::STRUCTURE:
+                    states.value = 0;
+                default:
+                    break;
+            }
+            // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
             if (params.debug) {
                 std::cout << "value: " << in.string() << "  ?" << std::endl;
