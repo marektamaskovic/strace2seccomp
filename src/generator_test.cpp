@@ -23,17 +23,17 @@
 
 TEST_CASE("Generator initialization", "[generator]") {
 
-	st2se::Generator gen;
+    st2se::Generator gen;
 
-	int a = 0;
+    int a = 0;
 
-	void *gnrt = &a;
+    void *gnrt = &a;
 
-	gen.initialize((st2se::Output*)gnrt);
+    gen.initialize((st2se::Output *)gnrt);
 
-	REQUIRE(gen.isInitialized());
+    REQUIRE(gen.isInitialized());
 
-	gen.removeOutput();
+    gen.removeOutput();
 
-	REQUIRE_FALSE(gen.isInitialized());
+    REQUIRE_FALSE(gen.isInitialized());
 }

@@ -49,7 +49,7 @@ namespace st2se {
             setOutput(p.output);
         }
 
-        if(p.scOnly != 0) {
+        if (p.scOnly != 0) {
             setAllowOnlySc(/*turn on =*/true);
         }
     }

@@ -47,25 +47,33 @@ namespace st2se {
     /**
      * value format enum
      */
-    enum class Value_format {
-        KEY_VALUE, /**< value is format key and value*/
-        VALUE,     /**< value is format value*/
-        EMPTY      /**< value is empty*/
+    enum class ValueFormat {
+        KEY_VALUE,          /**< value is format key and value*/
+        VALUE,              /**< value is format value*/
+        EMPTY               /**< value is empty*/
     };
 
     /**
      * value type enum
      */
-    enum class Value_type {
-        POINTER,     /**< value type is pointer*/
-        INTEGER,     /**< value type is integer */
-        STRING,      /**< value type is string*/
-        CONSTANT,    /**< value type is constant*/
-        ARRAY,       /**< value type is array*/
-        STRUCTURE,   /**< value type is structure*/
-        BITFIELD,    /**< value type is bitfield*/
-        CLUSTERS,    /**< value type is cluster*/
-        EMPTY        /**< value is empty */
+    enum class ValueType {
+        POINTER,            /**< value type is pointer*/
+        INTEGER,            /**< value type is integer */
+        STRING,             /**< value type is string*/
+        CONSTANT,           /**< value type is constant*/
+        ARRAY,              /**< value type is array*/
+        STRUCTURE,          /**< value type is structure*/
+        BITFIELD,           /**< value type is bitfield*/
+        CLUSTERS,           /**< value type is cluster*/
+        EMPTY               /**< value is empty */
+    };
+
+    enum class NumberValues {
+        EMPTY,              /**< Argument does not operate with multiple values or value is empty*/
+        VALUE,              /**< Argument contains only one value */
+        RANGE,              /**< Argument contains values as range */
+        VALUES,             /**< Argument contains discrete values in vector */
+        VALUES_INTERVAL     /**< Argument contains range and discrete values */
     };
 
     /**
@@ -74,14 +82,16 @@ namespace st2se {
      */
     struct _Argument;
     struct _Argument {
-        using Value = std::variant<unsigned long, std::string>; /**< Alias for value type*/
-        Value_format value_format {Value_format::EMPTY};      /**< value type*/
-        Value_type value_type {Value_type::EMPTY};            /**< value format*/
-        std::string key {""};                                 /**< key before value, typically key=value*/
-        Value value {""};  /**< this variable stores value of argument. */
-        Value value_b {""};  /**< this variable stores value of argument. This variable is used only after opitmization phase*/
-        std::vector<Value> discrete_values {}; /**< Here are stored discrete values. This variable is used only after opitmization phase*/
-        std::vector<_Argument> next;                        /**< next arguments */
+        using Value = std::variant<unsigned long, std::string>; /**< Alias for value type */
+        ValueFormat valueFormat {ValueFormat::EMPTY};           /**< value type */
+        ValueType valueType {ValueType::EMPTY};                 /**< value format */
+        NumberValues numbervalues {NumberValues::EMPTY};        /**< nubmer of values */
+        std::string key {""};                                   /**< key before value, typically key=value */
+        Value value {""};                                       /**< this variable stores value of argument. */
+        Value value_b {""};                                     /**< this variable stores value of argument. This variable is used only after opitmization phase */
+        std::vector<Value> discrete_values {};                  /**< Here are stored discrete values. This variable is used only after opitmization phase */
+        std::vector<_Argument> next;                            /**< next arguments */
+
         /**
          * Constructor
          * default constructor
@@ -94,7 +104,7 @@ namespace st2se {
          * @param _type an value type
          * @param _vec arguments that are on next position after this argument
          */
-        _Argument(Value_format _fmt, Value_type _type, std::vector<_Argument> _vec);
+        _Argument(ValueFormat _fmt, ValueType _type, std::vector<_Argument> _vec);
         /**
          * Constructor
          * explicit constructor
@@ -104,7 +114,7 @@ namespace st2se {
          * @param _value an value of argument
          * @param _vec arguments that are on next position after this argument
          */
-        _Argument(Value_format &_fmt, Value_type &_type, std::string &_key, std::variant<unsigned long, std::string> _value,
+        _Argument(ValueFormat &_fmt, ValueType &_type, std::string &_key, std::variant<unsigned long, std::string> _value,
             std::vector<_Argument> _next);
         /**
          * Print class variables.
@@ -195,12 +205,12 @@ namespace st2se {
      * Operator overload
      * This operator implements printing of value type enumeration to output stream
      */
-    std::ostream &operator<< (std::ostream &os, const st2se::Value_type &a);
+    std::ostream &operator<< (std::ostream &os, const st2se::ValueType &a);
     /**
      * Operator overload
      * This operator implements printing of value format enumeration to output stream
      */
-    std::ostream &operator<< (std::ostream &os, const st2se::Value_format &a);
+    std::ostream &operator<< (std::ostream &os, const st2se::ValueFormat &a);
 
 } // namespace st2se
 

@@ -30,15 +30,15 @@
 
 namespace st2se {
 
-	/**
-	 * Optimalizator
-	 * Uses d-pointer design pattern to hide implementation
-	 */
+    /**
+     * Optimalizator
+     * Uses d-pointer design pattern to hide implementation
+     */
     class Optimizer {
-    	// TODO uniq pointer
+        // TODO uniq pointer
         Algorithm *opt_adapter {nullptr}; /**< Pointer to optimization algorithm */
       public:
-      	/**
+        /**
          * Constructor
          * explicit constructor
          * @param _opt_adapter an optimization algorithm

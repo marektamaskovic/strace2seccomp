@@ -68,10 +68,10 @@ namespace st2se {
          * @param b bool variable
          */
         void threadSupport(bool b);
-         /**
-         * Generate wrapper around output filter
-         * @param b bool variable
-         */
+        /**
+        * Generate wrapper around output filter
+        * @param b bool variable
+        */
         void genFuncProlog(bool b);
         /**
          * Change output filename

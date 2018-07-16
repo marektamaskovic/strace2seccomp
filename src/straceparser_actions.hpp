@@ -115,7 +115,7 @@ const std::map<std::string, int> signal_map {
 // *INDENT-OFF*
 #define divideKV(InputStr,Key,Val)                                  \
     do{                                                             \
-        if (states.get_val_format() == Value_format::KEY_VALUE) {   \
+        if (states.get_val_format() == ValueFormat::KEY_VALUE) {   \
             std::string::size_type index;                           \
             index = (InputStr).string().find_first_of("=");         \
                                                                     \
@@ -160,7 +160,7 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            states.set_val_type(Value_type::POINTER);
+            states.set_val_type(ValueType::POINTER);
 
             if (params.debug) {
                 std::cout << "pointer: " << in.string() << std::endl;
@@ -177,7 +177,7 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            states.set_val_type(Value_type::POINTER);
+            states.set_val_type(ValueType::POINTER);
 
             if (params.debug) {
                 std::cout << "pointer: " << in.string() << std::endl;
@@ -194,7 +194,7 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            states.set_val_type(Value_type::INTEGER);
+            states.set_val_type(ValueType::INTEGER);
 
             if (params.debug) {
                 std::cout << "integer: " << in.string() << std::endl;
@@ -210,7 +210,7 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            states.set_val_type(Value_type::STRING);
+            states.set_val_type(ValueType::STRING);
 
             if (params.debug) {
                 std::cout << "string: " << in.string() << std::endl;
@@ -227,7 +227,7 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            states.set_val_type(Value_type::CONSTANT);
+            states.set_val_type(ValueType::CONSTANT);
 
 
             std::string s = in.string();
@@ -238,7 +238,7 @@ namespace st2se::grammar {
             auto end = s.find(delim);
 
             while (end != std::string::npos) {
-                states.set_val_type(Value_type::BITFIELD);
+                states.set_val_type(ValueType::BITFIELD);
                 bitfields.push_back(s.substr(start, end - start));
                 start = end + delim.length();
                 end = s.find(delim, start);
@@ -273,7 +273,7 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            states.set_val_type(Value_type::ARRAY);
+            states.set_val_type(ValueType::ARRAY);
 
             if (params.debug) {
                 std::cout << "array: " << in.string() << std::endl;
@@ -290,7 +290,7 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            states.set_val_type(Value_type::STRUCTURE);
+            states.set_val_type(ValueType::STRUCTURE);
 
             if (params.debug) {
                 std::cout << "structure: " << in.string() << std::endl;
@@ -307,12 +307,12 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            states.set_val_format(Value_format::VALUE);
+            states.set_val_format(ValueFormat::VALUE);
 
-            if (states.get_val_type() == Value_type::INTEGER) {
+            if (states.get_val_type() == ValueType::INTEGER) {
                 CONV(states.value, in, 10);
             }
-            else if (states.get_val_type() == Value_type::POINTER) {
+            else if (states.get_val_type() == ValueType::POINTER) {
                 if (!in.string().compare("NULL") || !in.string().compare("nullptr")) {
                     states.value = 0;
                 }
@@ -353,7 +353,7 @@ namespace st2se::grammar {
             (void) in;
             (void) params;
 
-            states.set_val_format(Value_format::KEY_VALUE);
+            states.set_val_format(ValueFormat::KEY_VALUE);
 
             if (params.debug) {
                 std::cout << "key_value: " << in.string() << std::endl;
@@ -413,8 +413,8 @@ namespace st2se::grammar {
             states.arg_num++;
             divideKV(in, key, val);
 
-            Value_type _type = states.get_val_type();
-            Value_format _fmt = states.get_val_format();
+            ValueType _type = states.get_val_type();
+            ValueFormat _fmt = states.get_val_format();
 
 
             Argument arg(_fmt, _type, key, states.value, {});

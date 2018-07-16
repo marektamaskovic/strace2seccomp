@@ -40,11 +40,11 @@ namespace st2se {
         return true;
     }
 
-    void States::set_val_format(const Value_format &fmt) {
+    void States::set_val_format(const ValueFormat &fmt) {
         arg_format = fmt;
     }
 
-    void States::set_val_type(const Value_type &fmt) {
+    void States::set_val_type(const ValueType &fmt) {
         last_arg_type = fmt;
     }
 
@@ -73,11 +73,11 @@ namespace st2se {
         return name;
     }
 
-    Value_format &States::get_val_format() {
+    ValueFormat &States::get_val_format() {
         return arg_format;
     }
 
-    Value_type &States::get_val_type() {
+    ValueType &States::get_val_type() {
         return last_arg_type;
     }
 

@@ -21,7 +21,7 @@
 #include "argparse.hpp"
 
 struct Values {
-	int help {0};
+    int help {0};
     int weak {0};
     int strict {0};
     int advanced {0};
@@ -35,118 +35,137 @@ struct Values {
 };
 
 bool operator==(const Params &a, const struct Values &b) {
-	if (
-			(a.help == b.help) &&
-			(a.weak == b.weak) &&
-			(a.strict == b.strict) &&
-			(a.advanced == b.advanced) &&
-			(a.verbose == b.verbose) &&
-			(a.debug == b.debug) &&
-			(a.tracing == b.tracing) &&
-			(a.analysis == b.analysis) &&
-			(a.thread == b.thread) &&
-			(a.prolog == b.prolog) &&
-			!a.output.compare(b.output)
-		)
-	{
-		return true;
-	}
+    if (
+        (a.help == b.help) &&
+        (a.weak == b.weak) &&
+        (a.strict == b.strict) &&
+        (a.advanced == b.advanced) &&
+        (a.verbose == b.verbose) &&
+        (a.debug == b.debug) &&
+        (a.tracing == b.tracing) &&
+        (a.analysis == b.analysis) &&
+        (a.thread == b.thread) &&
+        (a.prolog == b.prolog) &&
+        !a.output.compare(b.output)
+    ) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
-std::string createArgv(const struct Values &_values, const std::vector<std::string> &_file_names)
-{
-	std::string argv;
+std::string createArgv(const struct Values &_values, const std::vector<std::string> &_file_names) {
+    std::string argv;
 
-	if(_values.help != 0)
-		argv.append("-h ");
+    if (_values.help != 0) {
+        argv.append("-h ");
+    }
 
-	if(_values.weak != 0)
-		argv.append("-w ");
+    if (_values.weak != 0) {
+        argv.append("-w ");
+    }
 
-	if(_values.strict != 0)
-		argv.append("-s ");
+    if (_values.strict != 0) {
+        argv.append("-s ");
+    }
 
-	if(_values.advanced != 0)
-		argv.append("-a ");
+    if (_values.advanced != 0) {
+        argv.append("-a ");
+    }
 
-	if(_values.verbose != 0)
-		argv.append("-v ");
+    if (_values.verbose != 0) {
+        argv.append("-v ");
+    }
 
-	if(_values.debug != 0)
-		argv.append("-d ");
+    if (_values.debug != 0) {
+        argv.append("-d ");
+    }
 
-	if(_values.tracing != 0)
-		argv.append("-t ");
+    if (_values.tracing != 0) {
+        argv.append("-t ");
+    }
 
-	if(_values.thread != 0)
-		argv.append("--thread ");
+    if (_values.thread != 0) {
+        argv.append("--thread ");
+    }
 
-	if(_values.prolog != 0)
-		argv.append("--prolog ");
+    if (_values.prolog != 0) {
+        argv.append("--prolog ");
+    }
 
-	if(_values.analysis != 0)
-		argv.append("-A ");
+    if (_values.analysis != 0) {
+        argv.append("-A ");
+    }
 
-	for(auto item : _file_names){
-		argv.append(item);
-		argv.append(" ");
-	}
+    for (auto item : _file_names) {
+        argv.append(item);
+        argv.append(" ");
+    }
 
-	return argv;
+    return argv;
 }
 
-int countArgv(const struct Values &_values, const std::vector<std::string> &_file_names)
-{
-	int cnt = 0;
+int countArgv(const struct Values &_values, const std::vector<std::string> &_file_names) {
+    int cnt = 0;
 
-	if(_values.help)
-		cnt++;
+    if (_values.help) {
+        cnt++;
+    }
 
-	if(_values.weak)
-		cnt++;
+    if (_values.weak) {
+        cnt++;
+    }
 
-	if(_values.strict)
-		cnt++;
+    if (_values.strict) {
+        cnt++;
+    }
 
-	if(_values.advanced)
-		cnt++;
+    if (_values.advanced) {
+        cnt++;
+    }
 
-	if(_values.verbose)
-		cnt++;
+    if (_values.verbose) {
+        cnt++;
+    }
 
-	if(_values.debug)
-		cnt++;
+    if (_values.debug) {
+        cnt++;
+    }
 
-	if(_values.tracing)
-		cnt++;
+    if (_values.tracing) {
+        cnt++;
+    }
 
-	if(_values.thread)
-		cnt++;
+    if (_values.thread) {
+        cnt++;
+    }
 
-	if(_values.prolog)
-		cnt++;
+    if (_values.prolog) {
+        cnt++;
+    }
 
 
-	if(_values.analysis)
-		cnt++;
+    if (_values.analysis) {
+        cnt++;
+    }
 
-	cnt += _file_names.size();
+    cnt += _file_names.size();
 
-	return cnt;
+    return cnt;
 }
 
 TEST_CASE("Argument parser", "[Argparse]") {
 
-	struct Values val{1,1,0,0,0,0,0,1,1,1, "out"};
-	std::vector<std::string> file_names {"filename1"};
+    struct Values val {
+        1, 1, 0, 0, 0, 0, 0, 1, 1, 1, "out"
+    };
+    std::vector<std::string> file_names {"filename1"};
 
-	int argc = countArgv(val, file_names);
+    int argc = countArgv(val, file_names);
 
-	(void) argc;
+    (void) argc;
 
-	std::string argv = createArgv(val, file_names);
+    std::string argv = createArgv(val, file_names);
 
-	// Params p(argc, (char**)cnt);
+    // Params p(argc, (char**)cnt);
 }

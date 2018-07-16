@@ -31,17 +31,17 @@ namespace st2se {
         inserter = [](std::vector<Argument> &to, const std::vector<Argument> &in) {
             for (auto &item : in) {
 
-                if (item.value_type == Value_type::STRUCTURE ||
-                    item.value_type == Value_type::ARRAY ||
-                    item.value_type == Value_type::STRING
+                if (item.valueType == ValueType::STRUCTURE ||
+                    item.valueType == ValueType::ARRAY ||
+                    item.valueType == ValueType::STRING
                 ) {
                     to.emplace_back();
                     continue;
                 }
 
                 Argument tmp;
-                tmp.value_type = item.value_type;
-                tmp.value_format = item.value_format;
+                tmp.valueType = item.valueType;
+                tmp.valueFormat = item.valueFormat;
                 tmp.value = item.value;
                 to.push_back(tmp);
             }

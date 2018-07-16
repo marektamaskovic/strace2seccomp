@@ -115,11 +115,13 @@ namespace st2se {
 
         if (!sc.next.empty()) {
             unsigned pos {0};
+
             for (auto &item : sc.next) {
                 rule_start = getRuleProlog(sc);
                 generateRules(item, sc.clustered, pos++);
             }
-            if(sc.clustered) {
+
+            if (sc.clustered) {
                 writeRule();
                 batch.clear();
             }
@@ -130,10 +132,10 @@ namespace st2se {
     }
 
     void outputCPP::generateRules(Argument &arg, bool clustered, unsigned pos) {
-        if(!clustered) { // unclustered branch
+        if (!clustered) { // unclustered branch
             __genConditions(arg, /*pos=*/0);
         }
-        else if(allowOnlySc) {
+        else if (allowOnlySc) {
             return;
         }
         else { // clustered branch
@@ -143,112 +145,139 @@ namespace st2se {
 
     void outputCPP::__genConditions(Argument &arg, unsigned pos) {
         std::string condition = getCondition(arg, pos);
-        if(condition.compare(""))
-            batch.push_back(condition);
 
-        if(arg.next.empty()){
+        if (condition.compare("")) {
+            batch.push_back(condition);
+        }
+
+        if (arg.next.empty()) {
             writeRule();
         }
-        else{
-            for(auto &item : arg.next) {
-                __genConditions(item, pos+1);
+        else {
+            for (auto &item : arg.next) {
+                __genConditions(item, pos + 1);
             }
         }
 
-        if(condition.compare(""))
+        if (condition.compare("")) {
             batch.pop_back();
+        }
     }
 
     void outputCPP::__genCluseteredConditions(Argument &cluster, unsigned pos) {
         std::string condition = getClusteredCond(cluster, pos);
-        if(condition.compare(""))
+
+        if (condition.compare("")) {
             batch.push_back(condition);
+        }
     }
 
     std::string outputCPP::getCondition(Argument &arg, unsigned pos) {
 
-        if(arg.value_format == Value_format::EMPTY){
+        if (arg.valueFormat == ValueFormat::EMPTY) {
             return std::string {""};
         }
 
         std::string ret = fmt::format(",\n{}{}SCMP_A{}(", indent, opt_indent, pos);
 
-        switch(arg.value_type){
-            case Value_type::INTEGER:
-                ret += fmt::format("SCMP_CMP_EQ, {})", arg2str(arg));
-                break;
-            case Value_type::CONSTANT:
-                ret += fmt::format("SCMP_CMP_EQ, {})", arg2str(arg));
-                break;
-            case Value_type::BITFIELD:
-                ret += fmt::format("SCMP_CMP_MASKED_EQ, {0}, {0}", arg2str(arg));
+        switch (arg.valueType) {
+        case ValueType::INTEGER:
+            switch (arg.numbervalues) {
+            case NumberValues::VALUE:
+                ret += fmt::format("SCMP_CMP_EQ, {0})", arg2str(arg));
                 break;
 
-            default:
-                ret = "";
+            case NumberValues::RANGE:
+                ret += fmt::format("SCMP_CMP_IN_RANGE, {0})", arg2str(arg));
                 break;
+
+            case NumberValues::VALUES:
+            case NumberValues::VALUES_INTERVAL:
+            default:
+                break;
+            }
+
+            break;
+
+        case ValueType::CONSTANT:
+            ret += fmt::format("SCMP_CMP_EQ, {0})", arg2str(arg));
+            break;
+
+        case ValueType::BITFIELD:
+            ret += fmt::format("SCMP_CMP_MASKED_EQ, {0}, {0}", arg2str(arg));
+            break;
+
+        default:
+            ret = "";
+            break;
         }
+
         return ret;
     }
 
 
-    std::string outputCPP::getClusteredCond(Argument &cluster, unsigned pos){
+    std::string outputCPP::getClusteredCond(Argument &cluster, unsigned pos) {
 
-        if(cluster.next.empty()){
+        if (cluster.next.empty()) {
             return std::string {""};
         }
 
         std::string ret = fmt::format(",\n{}{}SCMP_A{}(", indent, opt_indent, pos);
 
-        switch(cluster.next.front().value_type){
-            case Value_type::INTEGER:
-                if(cluster.next.size() >= 2){
-                    ret += fmt::format(
+        switch (cluster.next.front().valueType) {
+        case ValueType::INTEGER:
+            if (cluster.next.size() >= 2) {
+                ret += fmt::format(
                         "SCMP_CMP_IN_RANGE, {1}u, {0}u)",
                         arg2str(cluster.next.front()),
                         arg2str(cluster.next.back())
-                        );
-                    break;
-                }
-                if(cluster.next.size() == 1){
-                    ret += fmt::format(
+                    );
+                break;
+            }
+
+            if (cluster.next.size() == 1) {
+                ret += fmt::format(
                         "SCMP_CMP_EQ, {})",
                         arg2str(cluster.next.front())
                     );
-                    break;
-                }
-                // if(cluster.next.size() > 2){
-                //     ret += "WHOOA TOO BIG: " + std::to_string(cluster.next.size());
-                // }
                 break;
-            case Value_type::CONSTANT:
-                ret += fmt::format(
+            }
+
+            // if(cluster.next.size() > 2){
+            //     ret += "WHOOA TOO BIG: " + std::to_string(cluster.next.size());
+            // }
+            break;
+
+        case ValueType::CONSTANT:
+            ret += fmt::format(
                     "SCMP_CMP_EQ, {})",
                     arg2str(cluster.next.front())
                 );
-                break;
-            case Value_type::BITFIELD:
-                ret += fmt::format(
+            break;
+
+        case ValueType::BITFIELD:
+            ret += fmt::format(
                     "SCMP_CMP_MASKED_EQ, {0}, {0})",
                     arg2str(cluster.next.front())
                 );
-                break;
-            default:
-                ret = "";
-                break;
+            break;
+
+        default:
+            ret = "";
+            break;
         }
 
         return ret;
     }
 
-    std::string outputCPP::getRuleProlog(Syscall &sc){
+    std::string outputCPP::getRuleProlog(Syscall &sc) {
         std::string ret {""};
 
         ret = fmt::format(
-            "{0}ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS({1})",
-            opt_indent,
-            sc.name
-        );
+                "{0}ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS({1})",
+                opt_indent,
+                sc.name
+            );
 
         return ret;
     }
@@ -259,13 +288,14 @@ namespace st2se {
 
         buffer += fmt::format("{0}, {1}", rule_start, batch.size());
 
-        if(!batch.empty()) {
-            for(auto &item : batch) {
+        if (!batch.empty()) {
+            for (auto &item : batch) {
                 buffer += fmt::format("{}", item);
             }
+
             buffer += fmt::format("\n{0});\n", opt_indent);
         }
-        else{
+        else {
             buffer += fmt::format(");\n");
         }
 
@@ -278,8 +308,9 @@ namespace st2se {
         auto end = std::unique(ready2Print.begin(), ready2Print.end());
         ready2Print.erase(end, ready2Print.end());
 
-        for(auto &item : ready2Print)
+        for (auto &item : ready2Print) {
             output_source << item;
+        }
 
         ready2Print.clear();
 

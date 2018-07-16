@@ -29,7 +29,7 @@ namespace st2se {
     }
 
     void Output::setAllowOnlySc(bool b) {
-    	allowOnlySc = b;
+        allowOnlySc = b;
     }
 
 } // namespace st2se

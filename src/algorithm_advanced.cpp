@@ -121,8 +121,8 @@ namespace st2se {
             std::cout << clustered_v.size() << " items long" << std::endl;
             std::cout << "\t\tclusters: " << clusters << std::endl;
 
-            out.data[sc.name].next.emplace_back(Value_format::EMPTY,
-                Value_type::CLUSTERS,
+            out.data[sc.name].next.emplace_back(ValueFormat::EMPTY,
+                ValueType::CLUSTERS,
                 clustered_v
             );
 
@@ -406,21 +406,21 @@ namespace st2se {
         double ret_val {-1.0};
 
         std::cout << "\n\n\n";
-        // DEBUGprint("value_type:" << left.value_type << std::endl);
-        // DEBUGprint("value_type:" << right.value_type << std::endl);
+        // DEBUGprint("valueType:" << left.valueType << std::endl);
+        // DEBUGprint("valueType:" << right.valueType << std::endl);
         // DEBUGprint("left:" << arg2str(left) << "\n");
         // DEBUGprint("right:" << arg2str(right) << "\n");
 
         // constant is the same as bitfield but constant has no `|` operator
         if (
             (
-                (left.value_type == Value_type::BITFIELD) ||
-                (left.value_type == Value_type::CONSTANT)
+                (left.valueType == ValueType::BITFIELD) ||
+                (left.valueType == ValueType::CONSTANT)
             )
             ||
             (
-                (right.value_type == Value_type::BITFIELD) ||
-                (right.value_type == Value_type::CONSTANT)
+                (right.valueType == ValueType::BITFIELD) ||
+                (right.valueType == ValueType::CONSTANT)
             )
         ) {
             // compute distance between bitfields
@@ -430,8 +430,8 @@ namespace st2se {
             ret_val = bitfieldDistance(a, b);
         }
         else if (
-            left.value_type == Value_type::POINTER ||
-            left.value_type == Value_type::INTEGER
+            left.valueType == ValueType::POINTER ||
+            left.valueType == ValueType::INTEGER
         ) {
             // number distance ???
             unsigned long a = *std::get_if<unsigned long>(&(left.value));
