@@ -204,7 +204,7 @@ namespace st2se {
             break;
 
         case ValueType::BITFIELD:
-            ret += fmt::format("SCMP_CMP_MASKED_EQ, {0}, {0}", arg2str(arg));
+            ret += fmt::format("SCMP_CMP_MASKED_EQ, {0}, {0})", arg2str(arg));
             break;
 
         default:
