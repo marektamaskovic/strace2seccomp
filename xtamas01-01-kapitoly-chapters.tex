@@ -388,6 +388,7 @@ We will require from the application to fulfill the following requirements:
 	\end{enumerate}
 \item Policy will be generated with libseccomp \cite{libseccomp_git} syntax as C language \cite{ISO9899} code.
 \end{enumerate}
+\pagebreak
 
 \section{Architecture}
 The architecture of this application is based on architectural patterns.
@@ -745,7 +746,7 @@ The one of the many problems with right to left parsing algorithm is that it com
 Other inconvenience is that we must carefully determine the order in which the results for a particular column are computed.
 \textit{Packrat parsing} is a lazy derivation of a tabular algorithm that solves both of these problems.
 It computes results only when they are needed, in the same order as the original recursive descent parser would.
-
+\todo{REWRITE}
 
 \begin{table}[h]
 	\begin{center}
@@ -760,16 +761,15 @@ It computes results only when they are needed, in the same order as the original
   \label{fig:pegtl:example}
 \end{table}
 
-
-
-% \section{Translator}
-% This part is responsible for translation of IDS output to libseccomp.
-
-
-
 \chapter{Development of strace2seccomp}
-%code should be using libseccomp to be secure.
-%test it with some fuzzer
+In this chapter, we will briefly describe some implementation details, and we
+will show the reader how to get the strace logs that are used as input for
+strace2seccomp tool. Next, we will take a look at what programs were used during
+the development phase. The whole project is written in C++ and standard was
+chosen as the latest C++17. The whole project is compiled with GNU compiler.
+However, the compiler can be easily switched in build system for clang. As well
+in this chapter, we will describe the class hierarchy, and at the end, we will
+describe how to run the strace2seccomp tool.
 
 \section{Input}
 \label{strace_params}
@@ -811,6 +811,14 @@ The strace2seccomp tool is generating a source code for C/C++.
 In the source code is used seccomp library to provide system call blocking.
 The example of a generated source code is in Appendix \ref{lst:example1}
 
+The source code can be generated in multiple ways. The basic settings are that
+it will create only function calls with arguments. The extension to this it can
+add a function prolog and a function epilog. This option is useful when you want
+to copy and paste the output of strace2seccomp into your source code. The last
+thing which can be added into output is multithread or multiprocess support.
+When this option is set up, in the output code will be located part which turns
+on filter synchronization among threads or processes.
+
 \section{Class Hierarchy}
 This section provides information about class hierarchy in this project. The
 color of classes in figures does not mean anything it is there only for better
@@ -828,14 +836,6 @@ At the beginning is the \texttt{Params} class as we can see in Figure
 getopt library to acquire a runtime arguments. The omitted arguments are then
 saved in class variables. By this variables the whole tool is instrumented.
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/class/arg_sc.pdf}
-	\caption{IDS representation in class diagram}
-	\label{fig:class:ids}
-\end{figure}
-\pagebreak
-
 The next class diagram in Figure \ref{fig:class:ids} show us an Intermediate
 Data Structure (IDS). The IDS is handled with multiple components in this
 project, i.e., parser saves information there, etc., description is in Section
@@ -844,8 +844,10 @@ constructors.  Here could be used design pattern factory however there are only
 two different cases of creating an object so it was not needed. The
 \texttt{Argument} class contains individual data about argument, e.g., the
 format value says if the argument is in 'key=value' or 'value' form. The actual
-value is stored in container \texttt{std::variant}. This is the C++17 equivalent
-of enumeration in C language.
+value is stored in container \texttt{std::variant} that can contain two types,
+\texttt{unsigned long} or \texttt{std::string}. This is the C++17 equivalent of
+enumeration in C language.
+
 
 \texttt{Syscall} class in Figure \ref{fig:class:ids} is dependant  on the
 \texttt{Argument}. This class contains information about syscall, e.g.,
@@ -858,14 +860,6 @@ Syscall>} wich hold syscall data. This means that \texttt{Ids} class is
 dependant on class \texttt{Syscall}. The \texttt{Ids} class includes methods,
 e.g., for structuralised print of whole class, or syscall only. It has
 implemented method for inserting new Syscall object into the map.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.95\linewidth]{obrazky-figures/class/algo.pdf}
-	\caption{Class hierarchy that demostrate relationship among algorithms and optimizer}
-	\label{fig:class:algo}
-\end{figure}
-\pagebreak
 
 The Figure \ref{fig:class:algo} ilustrate dependency and generalization in class
 hierarchy in optimizer. As you can see the \texttt{Optimizer} is dependant on
@@ -883,15 +877,7 @@ algorithms in current solution. Every algorithm includes supportive methods for
 the optimization, e.g., \texttt{Algo\_weak} has implemented method
 , e.g., \texttt{getMinMax}.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.65\linewidth]{obrazky-figures/class/output.pdf}
-	\caption{output}
-	\label{fig:class:output}
-\end{figure}
-\pagebreak
-
-Inthe  Policy generator is used the same approach as in the optimizer. The
+Inthe Policy generator is used the same approach as in the optimizer. The
 hierarchy among classes in policy generator shows the Figure
 \ref{fig:class:output}. As we can see there is \texttt{Generator} class which is using
 d-pointer pattern. \texttt{Generator} class contains a pointer to the \texttt{Output} class which
@@ -906,6 +892,27 @@ unclustered IDS. Here are located filenames of a template for C/C++ function
 wrapper of the generated filter. The output file can be changed with a
 \texttt{setOutput} method. The printing into a file is implemented in batches.
 It means that multiple rules for one syscall are printed at once.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.65\textwidth]{obrazky-figures/class/arg_sc.pdf}
+	\caption{IDS representation in class diagram}
+	\label{fig:class:ids}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{obrazky-figures/class/algo.pdf}
+	\caption{Class hierarchy that demostrate relationship among algorithms and optimizer}
+	\label{fig:class:algo}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.65\linewidth]{obrazky-figures/class/output.pdf}
+	\caption{output}
+	\label{fig:class:output}
+\end{figure}
 
 \section{Used software}
 In this section, I want to mention which software I used to develop a strace2seccomp tool.
@@ -923,6 +930,8 @@ used. The reason for using implementation from LLVM project was that in the GNU
 implementation, there was a bug which affected a C++17
 functionality\footnote{\url{https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=877838}}
 \footnote{\url{https://gcc.gnu.org/viewcvs/gcc?view=revision&revision=258854}}.
+However, during the later development phase was the bug fixed and both implementation
+of the library can be used.
 
 \paragraph{GNU Compiler Collection.}GNU Compiler Collection is a part of the GNU project.
 It aims to improve compiler used in the GNU ecosystem.
@@ -1002,53 +1011,182 @@ This tool uses line coverage technique and it is the poorest coverage from the c
 
 
 \section{Usage}
-The usage of the tool is straightforward.
+
+% Usage:
+% 	st2se [OPTION] filename ...
+%
+
+\begin{table}[h]
+\centering
+	\begin{tabular}{||l|l|p{6cm}||}
+	\hline
+	\multicolumn{3}{||l||}{\textbf{General options}}              \\ \hline\hline
+	short format & long format         & description \\ \hline
+	\texttt{-h}           & \texttt{----help}              & print this message \\
+	\texttt{-v}           & \texttt{----verbose}           & turn on verbose mode \\
+	\texttt{-d}           & \texttt{----debug}             & turn on debug mode \\
+	\texttt{-t}           & \texttt{----tracing}           & turn on tracing mode \\
+	\texttt{-A}           & \texttt{----analyze-grammar} & analyze grammar \\
+	\texttt{-o=FILE}      & \texttt{----output=FILE}       &  set output file \\ \hline
+	\end{tabular}
+	\caption{General options overview}
+	\label{my-label}
+\end{table}
+
+\begin{table}[h]
+\centering
+	\begin{tabular}{||l|l|p{6cm}||}
+	\hline
+	\multicolumn{3}{||l||}{\textbf{Configuration options}}              \\ \hline\hline
+	short format & long format         & description \\ \hline
+	\texttt{-w}           & \texttt{----weak}         & use weak algotirthm \\
+	\texttt{-s}           & \texttt{----strict}       & use strict algotirthm \\
+	\texttt{-a}           & \texttt{----advanced}     & use advanced algotirthm \\
+	                      & \texttt{----thread}       & generate function prolog \\
+	                      & \texttt{----prolog}       & add filter synchronization among threads/processes \\ \hline
+	\end{tabular}
+	\caption{Configuration options overview}
+	\label{my-label}
+\end{table}
 
 
+\paragraph{Examples} \hspace{0pt} \\
+
+In Figure \ref{exec/run1}, we can see that verbose mode is turned on and minimax
+algorithm was chosen for the optimizer. The output of the program will be stored
+in source.cpp. Files filename1 and filename2 will be used as input.
+
+\begin{figure}[h]
+	\lstset{style=npl}
+\begin{lstlisting}
+> ./st2se -v -w --output=source.cpp filename1 filename2
+\end{lstlisting}
+	\caption{Example no. 1}
+	\label{exec/run1}
+\end{figure}
+
+The command in Figure \ref{exec/run2} diverges only in the output format. The
+\texttt{--thread} will generate support for multithread or multiprocess applications and
+\texttt{--prolog} switch ensures that the filter will be located in function. This
+behavior is helpful for copy \& paste output into an existing program.
+
+\begin{figure}[h]
+	\lstset{style=npl}
+\begin{lstlisting}
+> ./st2se -w --output=source.cpp filename --thread --prolog
+\end{lstlisting}
+	\caption{Example no. 2}
+	\label{exec/run2}
+\end{figure}
+
+When we want to check if the grammar in the parser is correct, we can use a
+built-in tool in parser library. This tool of the parser can be turned on with
+switch \texttt{-A}. Afterwards on standard output will be printed number of
+found issues. This behaviour we can see in Figure \ref{exec/run3}
+
+\begin{figure}[h]
+	\lstset{style=npl}
+\begin{lstlisting}
+> ./st2se -A
+\end{lstlisting}
+	\caption{Example no. 3}
+	\label{exec/run3}
+\end{figure}
 
 \chapter{Software Verification}
 This chapter will describe activities used to assure quality control of the
 developed tool. First, I want to introduce on which aspects we will focus. One
 of the aspects is \textit{module testing}. The main purpose of module testing is
-to detect errors in submodules, in communication among them, in passing data
+to detect errors in submodules, in communication among them and in passing data
 through data structures. Another aspect of verification is \textit{system
-testing} merged with \textit{acceptance testing}. In this type of testing we
+testing} merged with \textit{acceptance testing}. In this type of testing, we
 will check if the strace2seccomp tool has a valid architectural design. Next we
 will check code with \textit{static analysis} tool and get information about
 errors in code. Static analysis is type of testing which does not require to run
 the program but requires a source code of the tool. The static analyzer will
-analyse the source codes with different heuristics and produces an list of
+analyse the source codes with different heuristics and produces a list of
 detected errors.
 
 
 \section{Module Testing}
-Module testing is part of whole quality control process.
+Module testing is a part of the whole quality control process.
 This testing can provide us how functional are particular components and if they meet the requirements.
 Table \ref{table:moduletesting} shows us the description of module's test suits.
 
 \begin{table}[h]
 	\centering
-	\begin{tabular}{|l|p{10cm}|}
+	\begin{tabular}{||l|p{10cm}||}
 		\hline
 		\textbf{Module / Component}	&	\textbf{Test descriptiom} \\ \hline \hline
-		Params 						& Validity of recognized runtime arguments \\ \hline
-		StraceParser				& Syntax testing, correct error handling \\ \hline
+		Argparse					& Validity of recognized runtime arguments \\ \hline
+		Generator					& Check methods functionality \\ \hline
+		IDS							& Validity of constructors and class methods \\ \hline
 		Output                      & Check the validity of generated policy \\ \hline
+		States						& Check the getters and setter of states \\ \hline
+		StraceParser				& Validity of all parser states by fuzzing \\ \hline
 	\end{tabular}
 	\caption{Test plan}
 	\label{table:moduletesting}
 \end{table}
 
-\subsection{Params Testing}
-Params testing was done manualy which is ment by systematicaly picking border values
-or some invalid ones and providing them as runtime arguments for strace2seccomp tool.
-It was automated with handmande script.
+For module testing was chosen Catch\footnote{\url{https://github.com/catchorg/Catch2}}
+framework. This framework was chosen for its essential features which are:
+\begin{itemize}
+	\item one header library,
+	\item no external dependencies,
+	\item only one core assertion macro,
+	\item tests can be tagged, and you can run only selected groups of tests,
+	\item supports BDD\footnote{Behaviour Driven Development} and
+	TDD\footnote{Test Driven Development} which can be used for next development
+	cycle.
+\end{itemize}
+
+\paragraph{Params Testing}
+Testing of the parameters was done manually which means by systematically
+picking border values or some invalid ones and providing them as runtime
+arguments for the strace2seccomp tool. It was automated with a handmande script.
+
+\paragraph{Generator}
+This test insists on setting class variables with class methods. The only reason
+for this is that this class is used as abstract and thus we check only setters.
+
+\paragraph{IDS}
+This module test has multiple test cases. Here are tested constructors for
+\texttt{argument\_t} structure, it has tree constructors. Next, there are tested
+comparison operators for \texttt{argument\_t} class. After that, there is a test
+for insertion into \texttt{ids\_t}. Another test case consists of support
+functions of IDS module.
+
+\paragraph{Output}
+The output module test checks if the generated output is the same as expected
+output. This test is considered as complicated because it depends on insertion
+arguments into IDS, reading data from IDS and setting up the output generator.
+This module test includes a test for setting class variables as well as the
+module tests mentioned above.
+
+\paragraph{States}
+This module is crucial for the parser, so it is essential to have good module
+test. In this test, we are checking the constructor, setters and getters and
+class methods.
+
+\paragraph{Module tests execution}
+In Figure \ref{exec/unit_tests} you can see how to run module tests from project
+root directory.
+
+\begin{figure}[h]
+	\lstset{style=npl}
+\begin{lstlisting}
+> make check_unit
+\end{lstlisting}
+	\caption{Example of running module tests from project root directory.}
+	\label{exec/unit_tests}
+\end{figure}
 
 \subsection{StraceParser Testing}
-StraceParser module is responsible for parsing the strace output and translates
-it to intermediate data structure. Testing of this module can be done with
+StraceParser module is responsible for parsing the strace output and translating
+it into an intermediate data structure. Testing of this module can be done with
 various techniques. First one which is used is fuzzy testing or fuzzing
-described in section below \ref{fuzzing}.
+described in the section below \ref{fuzzing}.
 
 \subsubsection{Fuzzing}
 \label{fuzzing}
@@ -1056,14 +1194,15 @@ The term fuzzing was first used by professor Barton Miller who used fuzzing to
 test robustness of UNIX applications in 1989 \cite{Takanen:2008:FSS:1404500,
 Marhefka2013}. Fuzzing is a testing method which generates an unexpected input
 on tested software and then is observing if the software crashes. The whole
-process is typicaly automated or semiautomated that involves repeatedly
-manipulating and supplying input data to targeted program. Some modern fuzzers
-(programs that generates a stochastic input), record every crash or halt of a
-tested program. The stochastic data are in most cases invalid to observer how
-application handles invalid states and boundary conditions. "The name comes from
-modern applications tendency to fail due to random input caused by line noise on
-'fuzzy' telephon lines."\cite{Takanen:2008:FSS:1404500, N2LYDLnqzEFYp0wM,
-takanen2009fuzzing} In other literature fuzzing can be named by these terms:
+process is typically automated or semiautomated which involves repeatedly
+manipulating and supplying input data to the targeted program. Some modern
+fuzzers (programs that generates a stochastic input) record every crash or halt
+of a tested program. The stochastic data are in the most cases invalid to
+observer thus he can see how application handles invalid states and boundary
+conditions. The name comes from modern applications tendency to fail due to
+random input caused by line noise on 'fuzzy' telephon
+lines.\cite{Takanen:2008:FSS:1404500, N2LYDLnqzEFYp0wM, takanen2009fuzzing} In
+other literature, fuzzing can be named by these terms:
 \begin{itemize}
 	\item Negative testing
 	\item Syntax testing
@@ -1083,8 +1222,8 @@ Fuzzers can be divided into two large groups:
 	The mutated test case is then provided to a tested program.
 \end{itemize}
 
-For us is interresting \emph{Mutation-based} group because is easier to setup and
-is more availible in open source comunity. There are many options to choose so here is
+For us \emph{Mutation-based} group is interesting because it is easier to setup and
+is more available in open source community. There are many options to choose so here is
 a little comparison of most popular fuzzers:
 
 \begin{itemize}
@@ -1094,7 +1233,7 @@ a little comparison of most popular fuzzers:
 	Those hooks enable the fuzzer to trace the program, and can provide real-time feedback. This architecture provides a possibility
 	to considerably improve coverage of testing process. The injection of the hooks
 	needs to be done by the compiler scripts.
-	This fuzzer  subset of American Fuzzy Lop. This project is now deprecated.
+	This fuzzer subset of American Fuzzy Lop. This project is now deprecated.
 
 	\item \textbf{American Fuzzy Lop}\footnote{\url{http://lcamtuf.coredump.cx/afl/}}
 	is a security oriented fuzzer that add compile-time instrumentation. It is
@@ -1105,33 +1244,33 @@ a little comparison of most popular fuzzers:
 	of the tool is that it needs to be executed multiple times to achieve
 	multiprocess or multithread fuzzing.
 
-	\item \textbf{Honggfuzz}\footnote{\url{http://honggfuzz.com/}} us a evolutionary, security oriented, easy to use fuzzer with analysis options.
+	\item \textbf{Honggfuzz}\footnote{\url{http://honggfuzz.com/}} is a evolutionary, security oriented, easy to use fuzzer with analysis options.
 	The main advantage of this mutation based fuzzer is that it is multi-process and multi-threded without need to run multiple copies of fuzzer.
 	The file corpus is automatically shared and improved among the processes / threads.
-	Authors of the fuzzer says that it is ''blazing fast when it works in persistent fuzzing mode''.
-	For monitoring of target (process under test) it uses low-level interface (e.g ptrace in Linux).
+	Authors of the fuzzer says that it is blazing fast when it works in persistent fuzzing mode'.
+	For monitoring of target (process under test) it uses {\textcolor{red}{a}} low-level interface (e.g ptrace in Linux).
 	It supports several hardware based (Intel BTS, Intel PT) and software based fuzzing methods.
 
 	\item \textbf{Radamsa} is fuzzing tool\footnote{\url{https://github.com/aoh/radamsa}} developed at the Oulu university.
 	The motivation for building this fuzzer was to make robustness testing accessible to independent developers.
-	Existing tool were considered hard to use and to customize to fit the project.
-	The fuzzer is command line tool, on input it expects multiple files (samples), and generates mutated files.
+	The existing tools were considered hard to use and to customize to fit the project.
+	The fuzzer is a command line tool, on input it expects multiple files (samples), and generates mutated files.
 	So by the output Radamsa is considered as a mutation-based fuzzer.
 	The tool includes feature aiding in automatizing test runs.
 	This is achieved by specifying number of wanted test runs with unique mutated files.
-	Another parameter that can be set is random seed for mutation.
-	On the other hand the tool does not provide a option to monitor target (program under test).
-	Radamsa is multiplatform so it is built for Windows and Linux.\cite{radamsaThesis}
+	Another parameter that can be set is a random seed for mutation.
+	On the other hand, the tool does not provide a option to monitor target (program under test).
+	Radamsa is a multiplatform so it is built for Windows and Linux.\cite{radamsaThesis}
 
 	\item \textbf{Oss-fuzz} is a complex project developed by Google.\footnote{\url{https://github.com/google/oss-fuzz}}
 	The architecture of this project is that the ClusterFuzz (fuzzer tools)
 	automatically pulls the newest source code from repository and it will starts
 	fuzzers and sanitizers \footnote{Dynamic testing tool that can detect bugs and
-	faults during the execution. Typicall sanitizers are \textit{ASan},
-	\textit{DFSan}, \ldots}. When some bug or fault occurs it is automaticaly
+	faults during the execution. Typical sanitizers are \textit{ASan},
+	\textit{DFSan}, \ldots}. When some bug or fault occurs it is automatically
 	reported to the OSS-fuzz issue tracker. Project owners are then notified with
-	email about the issue. When the fix is submitted ClusterFuzz automaticaly
-	verifies the fix adds a comment to issue tracker and closes the issue.
+	an email about the issue. When the fix is submitted ClusterFuzz automatically
+	verifies the fix, adds a comment to issue tracker and closes the issue.
 
 \end{itemize}
 
@@ -1140,10 +1279,10 @@ a little comparison of most popular fuzzers:
 The chosen fuzzer was AFL for its ability of fast deployment and easy of use.
 The opposite example is Oss-fuzz which is the whole infrastructure for fuzzing and bug hunting.
 
-In fuzzed program was enabled only parsin every other module was turned off.
+In fuzzed program, only parsing was enabled every other module was turned off.
 The fuzzer run straight twenty one days and during this time it was discovered
-three false positive hangs and no crashes. Fuzzing run in four threads on Intel
-Core i7-4810MQ. Overall was the fuzzed program executed 3,567,228,619 times.
+three false positive hangs and no crashes. Fuzzing runs in four threads on Intel
+Core i7-4810MQ. Overall the fuzzed program was executed 3,567,228,619 times.
 
 The number of execution per second was not stable on master thread because it
 was necessary to instrument other three processes. This instability can be
@@ -1249,8 +1388,8 @@ and \ref{fuz:result4a}.
 
 \section{System and Acceptance Testing}
 \label{acceptance_testing}
-In the book of ''Software Acceptance Testing'' is acceptance testing defined as:
-\emph{''Acceptance testing is the formal testing activity that presents the
+In the book of Software Acceptance Testing, acceptance testing is defined as:
+''Acceptance testing is the formal testing activity that presents the
 product to the customer by enterprise (many times it includes stakeholders as
 well). This activity represents demonstration of a software product and shows to
 the customer that the requirements fulfilled its obligations. By this activity
@@ -1258,32 +1397,31 @@ you can decide if the product is ready for deployment. The software items must
 be examined to ensure that the provided product is complete i.e. the
 architecture must be audited to check if it accurate reflects the software
 configuration. The test results are audited by functional configuration audit to
-certify that the software product satisfies its specification etc.''}
-\cite{Schmidt2013335}
+certify that the software product satisfies its specification etc.''
+\cite{Schmidt2013335}.
 
-In this case, the acceptance testing is combined with module testing. This
-combination means that it will be tested together. Testing will consist of
-multiple steps as generate policies, i.e., a whitelist of system calls from
-strace of given program and applying the whitelist into carefully picked
-programs. Afterwards, we run the testsuite provided for that program and by this
-way we can immediately see if the generated whitelist works correctly.
+Acceptance testing will consist of steps as generate policies, i.e., a whitelist
+of system calls from strace of given program and applying the whitelist into
+carefully picked programs. Afterwards, we run the testsuite provided for that
+program and by this way we can immediately see if the generated whitelist works
+correctly.
 
 \subsection{Testing on real programs}
-For this testing was picked four programs. RedHat Inc. demands one, and that is
-USBGuard\footnote{\url{https://usbguard.github.io/}}. USBGuard is open source
-project developed under GNU GPL v2.0 licence. It is implementing USB device
-authorization which can be set up locally or with centralised
-management\cite{usbguardCentralized}. USBGuard has a sophisticated architecture
+For this testing four programs was picked. RedHat Inc. demands one, and that is
+USBGuard\footnote{\url{https://usbguard.github.io/}}. USBGuard is an open source
+project developed under GNU GPL v2.0 licence. It implements USB device
+authorization which can be set up locally or with centralized
+management \cite{usbguardCentralized}. USBGuard has a sophisticated architecture
 which is complicated enough for use in this testing. Another advantage of
 USBGuard is that it has large enough testsuite which will be helpful in the
 evaluation of generated policies by \texttt{strace2seccomp}. In this project, we
-will focus only on daemon because it is most involved in the whole project.
+will focus only on a daemon because it is most involved in the whole project.
 
 Next program is called \emph{cp} which is part of a GNU project called
 \emph{coreutils}\footnote{\url{https://www.gnu.org/software/coreutils/coreutils.html}} .
-The \emph{cp} is a program used for copying files across filesystem typicaly on
+The \emph{cp} is a program used for copying files across filesystem typically on
 POSIX operating systems. One of the advantages of this project is that it has a
-relatively big testsuite. The drawback of this program is that it is part of a
+relatively big testsuite. The drawback of this program is that it is a part of a
 big project and is though to acquire strace logs from testsuite. This problem I
 solved by manually patching the Makefile which was responsible for running
 tests. The patch will add strace command with appropriate flags before the
@@ -1292,13 +1430,13 @@ invocation of \emph{cp}.
 Another program is \emph{find} from GNU project called
 \emph{findutils}\footnote{\url{https://www.gnu.org/software/findutils/}} . The
 \emph{find} is a program used to locate files or directories in filesystem. It
-is specific for GNU Linux as well as cp. This program has good testsuite as
-\emph{coreutils} project does. The drawback of project complexity is similar to
+is specific for GNU Linux as well as cp. This program has good testsuite as a
+\emph{coreutils} project does. The drawback of the project complexity is similar to
 \emph{coreutils}. In \emph{find} is a high number of system calls that differ
-only in provided arguments a thus it will test the robustness of clustering in
+only in provided arguments thus it will test the robustness of clustering in the
 \texttt{strace2seccomp} tool.
 
-The last program is school project from \emph{Network Applications} class called
+The last program is a school project from \emph{Network Applications} class called
 \emph{testovac}\footnote{\url{https://github.com/tammar96/ISA-testovac}} . This
 project was chosen for its multithreaded architecture. With this program, we can
 test if the filter is successfully distributed on other threads. The
@@ -1314,7 +1452,7 @@ The script has multiple subcommands:
 \begin{itemize}
 	\item \texttt{prep} will download, extract and configure tested programs
 		(\emph{coreutils}, \emph{findutils}, USBGuard, \emph{testovac})
-	\item \texttt{applyPolicy} will patch sourcecodes with generated policies
+	\item \texttt{applyPolicy} will patch source codes with generated policies
 	\item \texttt{make} will run make for all tested programs
 	\item \texttt{tests} will run testsuits
 	\item \texttt{clean} will clean the testing folder
@@ -1340,14 +1478,14 @@ Requirements for the testing are:
 	machine with x86 architecture.
 \end{enumerate}
 
-\subsection{Results} During testing phase was discovered two significant issues.
-The first issue is caused by the libseccomp library which is not supporting
-intervals (ranges) in any way. The libseccomp architecture specifies that in one
-function \texttt{seccomp\_rule\_add} is logical and among partial expressions.
-Among the functions \texttt{seccomp\_rule\_add} is logical or. Moreover, in one
-function \texttt{seccomp\_rule\_add} can be mentioned argument position only
-once which means that it is not possible to write intervals as shown in Figure
-\ref{libseccomp_native}.
+\subsection{Results} During testing phase, one significant issue and one smaller issue was
+discovered. The first issue is caused by the libseccomp library which is not
+supporting intervals (ranges) in any way. The libseccomp architecture specifies
+that in one function \texttt{seccomp\_rule\_add} is logical and among partial
+expressions. Among the functions \texttt{seccomp\_rule\_add} is logical or.
+Moreover, in one function \texttt{seccomp\_rule\_add} argument position can be
+mentioned only once which means that it is not possible to write intervals as
+shown in Figure \ref{libseccomp_native}.
 
 \begin{figure}[h]
 	\label{libseccomp_native}
@@ -1367,9 +1505,9 @@ seccomp_rule_add(
 This issue was partially solved in this pull
 request\footnote{\url{https://github.com/seccomp/libseccomp/issues/94}}. The
 problem with this pull request is that it is not confirmed if it will be merged
-into libseccomp. Because of that in this thesis is used a downstream version of
-libseccomp which has to be manually installed on the system. In the downstream
-version can be interval expressed as shown in Figure \ref{libseccomp_in_range}.
+into libseccomp. Because of that, in this thesis a downstream version of
+libseccomp which has to be manually installed on the system is used. In the downstream
+version, interval can be expressed as shown in Figure \ref{libseccomp_in_range}.
 
 \begin{figure}[h]
 	\label{libseccomp_in_range}
@@ -1387,23 +1525,22 @@ seccomp_rule_add(
 \end{figure}
 
 Another issue is that the libseccomp operators as
-\texttt{SCMP\_CMP\_GT/GE/LT/LE} are not work\-ing correctly when negative system
-call arguments are provided. This issue is as well reported to the libseccomp
+\texttt{SCMP\_CMP\_GT/GE/LT/LE} are not designed to work with negative values
+provided to system calls. This issue is as well reported to the libseccomp
 project\footnote{\url{https://github.com/seccomp/libseccomp/issues/69}}. Luckily
-this problem is planned to be fixed in the next libseccomp release. However, in
-the time of writing this thesis, the fix still doesn’t exist.
+this problem is not as critical as the previously stated one. In the end the
+the kernel is passing the arguments as unsigned and the interpretation of these values
+is on the implementation of system call.
 
-The problem of negative values provided into system call is triaged as critical
-because in any software is used at least one system call with negative number
-provided in arguments. Very often it is a \texttt{mmap} or \texttt{llseek}. The
-problem is nicely visible on the x86\_64 / amd64 architecture. The system call
+This situation we can see in particular cases. Very often it is a \texttt{mmap}
+or \texttt{llseek}. The problem is nicely visible on the x86\_64 / amd64 architecture. The system call
 numbers are 64bits wide numbers, and BPF used in the kernel uses only 32bits
 wide registers. Libseccomp is generating a comparison of 64-bit number as a two
 32-bits unsigned numbers. We can prove this with libseccomp code or by
 disassembling BPF instructions generated by libseccomp.
 
 Imagine that we have a clear filter so every system call would be killed. We add
-only one rule which is shown In Figure \ref{libseccomp_rule}. This rule means
+only one rule which is shown in Figure \ref{libseccomp_rule}. This rule means
 that fifth argument must be in the range $[-2, 3]$ including border values.
 
 \begin{figure}[h]
@@ -1417,11 +1554,11 @@ ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 1,
 	\caption{Only rule we are adding into a libseccomp filter}
 \end{figure}
 
-In Figure \ref{BPF_rule} we can see the generated BPF code. The interesting part
-begins on~line~5. Here we can see that begins the rule which we specified in
-C/C++ code. On~line~6 we store upper 32 bits of a number in accumulator.
-On~line~7 we are comparing accumulator with value \texttt{0xffffffff} and then
-on~line~8 with zero. This behavior is invalid and should be fixed.
+In Figure \ref{BPF_rule}, we can see the generated BPF code. The interesting part
+begins on~line~5. Here we can see that the rule  which we specified in
+C/C++ code begins. On~line~6, we store upper 32 bits of a number in accumulator.
+On~line~7 begins we are comparing accumulator with value \texttt{0xffffffff} and then
+on~line~8 with zero. This behavior is invalid and should be mentioned in documentation.
 
 \begin{figure}[h]
 	\label{BPF_rule}
@@ -1447,9 +1584,20 @@ line | CODE | JT | JF | K
 	\caption{Disassembled BPF filter on amd64 machine}
 \end{figure}
 
-These two problems are critical for the correct functionality of libseccomp, and
-as a result we can not test it. This leads us to the conclusion of our test. Only
-metric for the correctness of output on the is manually review output.
+As development continued, we discovered another issue that prevents from correct
+functionality. This issue is occurring when we try to load seccomp filter in a
+multithread application, and we want to synchronize it across threads or
+processes. Already stated issue is mentioned in libseccomp issue
+tracker\footnote{\url{https://github.com/seccomp/libseccomp/issues/93}} and
+there is a working solution to this issue. However, there were many conflicts in
+code when applying those patches, and even if we applied those patches, it was
+in conflict with a previously applied patch that was the workaround for ranges.
+Thus we decided to stick with range patch (it is more important then thread
+support), and not with the multithread patches. In the end, there is still
+implemented the multithread support in the developed tool without regard to
+functionality in libseccomp. As we can notice, one of the involved programs for
+complex testing, testovac, cannot be tested.
+
 
 \chapter{Conclusion}
 
