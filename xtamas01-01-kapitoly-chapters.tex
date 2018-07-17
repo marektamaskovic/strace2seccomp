@@ -1009,7 +1009,7 @@ LCOV implements to GCOV following additional functionality:
 LCOV was designed like Git to support Linux kernel, but works as well on standard user space applications.
 This tool uses line coverage technique and it is the poorest coverage from the coverage types point of view.
 
-
+\pagebreak
 \section{Usage}
 
 % Usage:
@@ -1056,7 +1056,7 @@ In Figure \ref{exec/run1}, we can see that verbose mode is turned on and minimax
 algorithm was chosen for the optimizer. The output of the program will be stored
 in source.cpp. Files filename1 and filename2 will be used as input.
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\lstset{style=npl}
 \begin{lstlisting}
 > ./st2se -v -w --output=source.cpp filename1 filename2
@@ -1070,7 +1070,7 @@ The command in Figure \ref{exec/run2} diverges only in the output format. The
 \texttt{--prolog} switch ensures that the filter will be located in function. This
 behavior is helpful for copy \& paste output into an existing program.
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\lstset{style=npl}
 \begin{lstlisting}
 > ./st2se -w --output=source.cpp filename --thread --prolog
@@ -1084,7 +1084,7 @@ built-in tool in parser library. This tool of the parser can be turned on with
 switch \texttt{-A}. Afterwards on standard output will be printed number of
 found issues. This behaviour we can see in Figure \ref{exec/run3}
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\lstset{style=npl}
 \begin{lstlisting}
 > ./st2se -A
