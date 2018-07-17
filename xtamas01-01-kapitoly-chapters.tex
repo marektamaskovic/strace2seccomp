@@ -839,23 +839,23 @@ saved in class variables. By this variables the whole tool is instrumented.
 The next class diagram in Figure \ref{fig:class:ids} show us an Intermediate
 Data Structure (IDS). The IDS is handled with multiple components in this
 project, i.e., parser saves information there, etc., description is in Section
-\ref{ids:description}. As you can see the \texttt{\_argument\_t} class has three
+\ref{ids:description}. As you can see the \texttt{Argument} class has three
 constructors.  Here could be used design pattern factory however there are only
 two different cases of creating an object so it was not needed. The
-\texttt{\_argument\_t} class contains individual data about argument, e.g., the
+\texttt{Argument} class contains individual data about argument, e.g., the
 format value says if the argument is in 'key=value' or 'value' form. The actual
 value is stored in container \texttt{std::variant}. This is the C++17 equivalent
 of enumeration in C language.
 
-\texttt{Syscall\_t} class in Figure \ref{fig:class:ids} is dependant  on the
-\texttt{\_argument\_t}. This class contains information about syscall, e.g.,
+\texttt{Syscall} class in Figure \ref{fig:class:ids} is dependant  on the
+\texttt{Argument}. This class contains information about syscall, e.g.,
 name, number of arguments, and actual arguments. In this class is defined
 \texttt{print()} method that can print structurised data from syscall.
 
 Class \texttt{Ids} in Figure \ref{fig:class:ids} describes the whole IDS. In
 this class is located class variable of type \texttt{std::map<std::string,
-Syscall\_t>} wich hold syscall data. This means that \texttt{Ids} class is
-dependant on class \texttt{Syscall\_t}. The \texttt{Ids} class includes methods,
+Syscall>} wich hold syscall data. This means that \texttt{Ids} class is
+dependant on class \texttt{Syscall}. The \texttt{Ids} class includes methods,
 e.g., for structuralised print of whole class, or syscall only. It has
 implemented method for inserting new Syscall object into the map.
 
@@ -876,11 +876,12 @@ specific algorithms, e.g., \texttt{Algo\_strict} class or
 in optimizer and keep the logical structure. It contains methods for
 initializing and removing algorithm from an object. The algorithms has to
 override the \texttt{optimize} method in \texttt{Algorithm} class thus is pure
-virtual in the base class. Because of that the compiler requests the optimize
-method in new class that inherits from \texttt{Algorithm} class. The
-generalization is used for simple extension of algorithms in current solution.
-Every algorithm includes supportive methods for the optimization, e.g.,
-\texttt{Algo\_weak} has implemented method \texttt{findMinMax}.
+virtual in the base class. Because of that the compiler requests the
+implementation of optimize method in a new class that inherits from
+\texttt{Algorithm} class. The generalization is used for simple extension of
+algorithms in current solution. Every algorithm includes supportive methods for
+the optimization, e.g., \texttt{Algo\_weak} has implemented method
+, e.g., \texttt{getMinMax}.
 
 \begin{figure}[H]
 	\centering
@@ -890,9 +891,21 @@ Every algorithm includes supportive methods for the optimization, e.g.,
 \end{figure}
 \pagebreak
 
-In Policy generator is used the same approach as in the optimizer. The hierarchy
-among classes in policy generator shows the Figure \ref{fig:class:output}.
-\todo{finish this after final decision in src}
+Inthe  Policy generator is used the same approach as in the optimizer. The
+hierarchy among classes in policy generator shows the Figure
+\ref{fig:class:output}. As we can see there is \texttt{Generator} class which is using
+d-pointer pattern. \texttt{Generator} class contains a pointer to the \texttt{Output} class which
+implements the specific output generator. This design supports a natural
+expansion of generator implementations for other languages as well, e.g., Go or
+Python.
+
+In our case, we created support for C/C++ language and this support is
+implemented in a class named \texttt{outputCPP}. This class contains multiple
+methods, some of them are used for clustered IDS, and some of them are used for
+unclustered IDS. Here are located filenames of a template for C/C++ function
+wrapper of the generated filter. The output file can be changed with a
+\texttt{setOutput} method. The printing into a file is implemented in batches.
+It means that multiple rules for one syscall are printed at once.
 
 \section{Used software}
 In this section, I want to mention which software I used to develop a strace2seccomp tool.
