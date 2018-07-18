@@ -41,6 +41,7 @@ std::ostream &operator<< (std::ostream &os, const Params &a) {
         << "\n--prolog: " << a.prolog
         << "\n--thread: " << a.thread
         << "\n--scOnly: " << a.scOnly
+        << "\n--progress: " << a.showProgress
         << "\nErr flag: " << param_error
         << "\n" << acc;
 }
@@ -59,6 +60,7 @@ void Params::printHelp() {
     std::cout << s4 << "-t [--tracing]\t\t: turn on tracing mode\n";
     std::cout << s4 << "-A [--analyze-grammar] \t: analyze grammar\n";
     std::cout << s4 << "-o FILE [--output=FILE]\t: set output file\n";
+    std::cout << s4 << "--status\t\t\t: show progress\n";
 
     std::cout << "Configuration options:\n";
     std::cout << s4 << "-w [--weak]\t\t\t: use weak algorithm\n";
@@ -87,6 +89,7 @@ Params::Params(int argc, char *argv[]) {
             {"thread",           no_argument, &this->thread,   1},
             {"prolog",           no_argument, &this->prolog,   1},
             {"scOnly",           no_argument, &this->scOnly,   1},
+            {"status",           no_argument, &this->showProgress, 1},
             {"output",     optional_argument, nullptr,       'o'},
             {"help",       optional_argument, nullptr,       'h'},
             {nullptr,                      0, nullptr,         0}

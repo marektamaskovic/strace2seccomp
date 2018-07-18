@@ -337,7 +337,7 @@ namespace st2se {
         );
 
         if(arg.numbervalues == NumberValues::RANGE){
-            ret += ", " + std::visit(
+            ret += "u, " + std::visit(
                 [pointer](auto &&val) -> std::string {
                     using T = std::decay_t<decltype(val)>;
 
@@ -362,6 +362,7 @@ namespace st2se {
                 },
                 arg.value_b
             );
+            ret += "u";
         }
 
         return ret;

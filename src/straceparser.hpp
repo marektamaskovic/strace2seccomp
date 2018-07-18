@@ -32,6 +32,9 @@
 #include "tao/pegtl/contrib/tracer.hpp"
 #include "tao/pegtl/analyze.hpp"
 
+#include "fmt/core.h"
+#include "fmt/format.h"
+
 #include "straceparser_actions.hpp"
 #include "ids.hpp"
 
@@ -87,5 +90,13 @@ namespace st2se {
     };
 
 } // namespace st2se
+
+/**
+ * Countes line in a file
+ * @param filename a file that we want to process
+ * @return number of lines
+ */
+unsigned long long countLines(std::string filename);
+
 
 #endif

@@ -50,6 +50,7 @@ class Params {
     int thread {0};                         /**< print thread support switch*/
     int prolog {0};                         /**< print function wrapper around filter in output switch*/
     int scOnly {0};                         /**< syscall only output switch*/
+    int showProgress {0};                   /**< syscall only output switch*/
     std::string output {};                  /**< output file name */
     std::vector<std::string> file_names {}; /**< input filenames */
 

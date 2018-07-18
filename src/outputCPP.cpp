@@ -184,7 +184,7 @@ namespace st2se {
         case ValueType::INTEGER:
             switch (arg.numbervalues) {
             case NumberValues::VALUE:
-                ret += fmt::format("SCMP_CMP_EQ, {0})", arg2str(arg));
+                ret += fmt::format("SCMP_CMP_EQ, {0}u)", arg2str(arg));
                 break;
 
             case NumberValues::RANGE:
