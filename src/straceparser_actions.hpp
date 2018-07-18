@@ -337,17 +337,20 @@ namespace st2se::grammar {
                     }
                 }
             }
+
             // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
             // WARNING
             // this should be removed when you want to cluster addresses or
             // structures
-            switch(states.get_val_type()){
-                case ValueType::POINTER:
-                case ValueType::STRUCTURE:
-                    states.value = 0;
-                default:
-                    break;
+            switch (states.get_val_type()) {
+            case ValueType::POINTER:
+            case ValueType::STRUCTURE:
+                states.value = 0;
+
+            default:
+                break;
             }
+
             // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
             if (params.debug) {
