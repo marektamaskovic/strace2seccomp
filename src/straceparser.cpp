@@ -46,8 +46,9 @@ namespace st2se {
         for (std::string line; std::getline(input_file, line); position++) {
 
             // show progress
-            if(params.showProgress)
+            if (params.showProgress) {
                 fmt::print("\r Parsed: {0}/{1} lines", position, linesCount);
+            }
 
             tao::pegtl::string_input<> in (line, _filename);
             bool return_val;
@@ -100,12 +101,12 @@ namespace st2se {
 
 } // namespace st2se
 
-unsigned long long countLines(std::string filename){
+unsigned long long countLines(std::string filename) {
 
     unsigned long long ret {0};
     std::fstream input_file {filename, std::ios_base::in};
 
-    for(std::string line; std::getline(input_file, line); ret++);
+    for (std::string line; std::getline(input_file, line); ret++);
 
     input_file.close();
     return ret;
