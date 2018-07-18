@@ -58,17 +58,17 @@ switch `-A`. On standard output will be printed number of found issues.
 ## Compilation
 Here will be shown how to compile the project
 ### Dependencies
-- [boost](https://www.boost.org/)
- - c++ library
- - You can install this library almost on any Linux Distro. The package is mainly named `boost` or `boost-devel`, e.g., `$ pacman -S boost`.
+1. [boost](https://www.boost.org/)
+  * C++ library
+  * You can install this library almost on any Linux Distro. The package is mainly named `boost` or `boost-devel`, e.g., `$ pacman -S boost`.
 
-- [pegtl](https://github.com/taocpp/PEGTL/)
- - c++ parser library
- - _This library is already bundled in project._
+2. [pegtl](https://github.com/taocpp/PEGTL/)
+  * C++ parser library
+  * _This library is already bundled in project._
 
-- [fmtlib](https://github.com/fmtlib/fmt)
- - c++ formating library
- - _This library is already bundled in project._
+3. [fmtlib](https://github.com/fmtlib/fmt)
+  * C++ formating library
+  * _This library is already bundled in project._
 
 ### Compilation
 
