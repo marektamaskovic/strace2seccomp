@@ -1,4 +1,11 @@
 
+	// For threading support we need to initialize filter with value
+	// SECCOMP_RET_KILL_PROCESS. Thus we need to release previously initialized
+	// filter and initialize it again with other behavior. After that we
+	// synchronize the filter among threads / processes.
+    seccomp_release(ctx);
+    ctx = seccomp_init(SECCOMP_RET_KILL_PROCESS);
+
     // Turn on filter synchronization among threads
     ret = seccomp_attr_set(ctx, SCMP_FLTATR_CTL_TSYNC, 1);
     if (ret < 0)

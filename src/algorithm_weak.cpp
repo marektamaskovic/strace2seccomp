@@ -101,6 +101,7 @@ namespace st2se {
                 arg.value = item.value;
                 arg.key = item.key;
                 arg.next = item.next;
+                arg.numbervalues = NumberValues::VALUE;
                 ret_vec.push_back(arg);
             }
         }

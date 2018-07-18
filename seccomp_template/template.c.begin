@@ -14,13 +14,7 @@
 
 int setup_seccomp_whitelist(){
 
-<<<<<<< HEAD
-    scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_ALLOW);
-    
-=======
     scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_KILL);
-
->>>>>>> testbranch
     int ret = 0;
 
 

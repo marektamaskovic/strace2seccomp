@@ -37,11 +37,17 @@ namespace st2se {
 
     bool StraceParser::parse(const std::string &_filename, st2se::Ids &_output, Params &params, States &states) {
 
+        unsigned long long linesCount = countLines(_filename);
+        unsigned long long position {0};
         std::fstream input_file {_filename, std::ios_base::in};
-
         std::vector<std::string> bad_lines_str {};
 
-        for (std::string line; std::getline(input_file, line);) {
+        // iterate over lines in file
+        for (std::string line; std::getline(input_file, line); position++) {
+
+            // show progress
+            if(params.showProgress)
+                fmt::print("\r Parsed: {0}/{1} lines", position, linesCount);
 
             tao::pegtl::string_input<> in (line, _filename);
             bool return_val;
@@ -61,6 +67,7 @@ namespace st2se {
                 return_val = false;
             }
 
+            // increment statistics
             if (return_val) {
                 good_lines++;
             }
@@ -70,6 +77,8 @@ namespace st2se {
             }
         }
 
+        // if there are some lines that cannot be parsed
+        // then they will be stored in unpersed_lines file
         if (!bad_lines_str.empty()) {
             std::ofstream unparsed_lines {"unparsed_lines.st2se", std::ios_base::out | std::ios_base::trunc};
 
@@ -78,6 +87,7 @@ namespace st2se {
             }
         }
 
+        // print statistics
         std::cout << "statistics: + " << good_lines << " - " << bad_lines << std::endl;
         std::cout << "sc:" << ::syscalls << std::endl;
         return true;
@@ -86,4 +96,17 @@ namespace st2se {
     std::size_t StraceParser::AnalyzeGrammar() {
         return tao::pegtl::analyze< st2se::grammar::strace_line >();
     }
+
+
 } // namespace st2se
+
+unsigned long long countLines(std::string filename){
+
+    unsigned long long ret {0};
+    std::fstream input_file {filename, std::ios_base::in};
+
+    for(std::string line; std::getline(input_file, line); ret++);
+
+    input_file.close();
+    return ret;
+}
