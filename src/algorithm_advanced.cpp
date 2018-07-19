@@ -25,6 +25,7 @@ namespace st2se {
 
         for (const auto &item : in.data) {
             no++;
+            #ifndef NDEBUG
             std::cout << "\n\n\n\n";
             std::cout << "=======================================" << std::endl;
             std::cout << "\tProcessing: (";
@@ -35,6 +36,7 @@ namespace st2se {
             std::cout << item.first;
             std::cout << std::endl;
             std::cout << "=======================================" << std::endl;
+            #endif
             this->processSyscall(item.second, out);
         }
 
@@ -79,17 +81,17 @@ namespace st2se {
 
         for (unsigned arg_pos = 0; arg_pos < depth; arg_pos++) {
             std::vector<Argument> v;
-            std::cout << "arg_pos: " << arg_pos << std::endl;
+            // std::cout << "arg_pos: " << arg_pos << std::endl;
             v = getArguemntsFromPos(sc.next, arg_pos);
 
             if (!v.empty()) {
-                std::cout << "v.size()" << v.size() << std::endl;
+                // std::cout << "v.size()" << v.size() << std::endl;
 
-                for (auto &item : v) {
-                    std::cout << arg2str(item) << " ";
-                }
+                // for (auto &item : v) {
+                //     std::cout << arg2str(item) << " ";
+                // }
 
-                std::cout << std::endl;
+                // std::cout << std::endl;
 
                 // *INDENT-OFF*
                 std::sort(v.begin(), v.end(),
@@ -113,25 +115,33 @@ namespace st2se {
             // Clustering:
             std::vector<Argument> clustered_v {};
 
-            unsigned clusters = this->cluster(v, clustered_v);
 
-            std::cout << "arg_pos: " << arg_pos << " v:" << std::endl;
-
-            std::cout << "\targ no." << arg_pos << " is ";
-            std::cout << clustered_v.size() << " items long" << std::endl;
-            std::cout << "\t\tclusters: " << clusters << std::endl;
+            #ifndef NDEBUG
+                unsigned clusters = this->cluster(v, clustered_v);
+                std::cout << "arg_pos: " << arg_pos << " v:" << std::endl;
+                std::cout << "\targ no." << arg_pos << " is ";
+                std::cout << clustered_v.size() << " items long" << std::endl;
+                std::cout << "\t\tclusters: " << clusters << std::endl;
+            #else
+                this->cluster(v, clustered_v);
+            #endif
 
             out.data[sc.name].next.emplace_back(ValueFormat::EMPTY,
                 ValueType::CLUSTERS,
                 clustered_v
             );
 
-            std::cout << "out...next.size()" << out.data[sc.name].next.size() << std::endl;
             out.data[sc.name].clustered = true;
-            std::cout << "\n" << std::endl;
+
+            #ifndef NDEBUG
+                std::cout << "out...next.size()" << out.data[sc.name].next.size() << std::endl;
+                std::cout << "\n" << std::endl;
+            #endif
         }
 
-        std::cout << "\n\n" << std::endl;
+        #ifndef NDEBUG
+            std::cout << "\n\n" << std::endl;
+        #endif
 
     }
 
@@ -190,7 +200,7 @@ namespace st2se {
         // DEBUGprint("to_check is:");
         // DEBUGprintArgumentSet(to_check);
 
-        std::cout << "---------------------------------------\n\n" << std::endl;
+        // std::cout << "---------------------------------------\n\n" << std::endl;
 
         while (true) {
             // Debug info:
@@ -405,7 +415,7 @@ namespace st2se {
     double Algo_advanced::distance(Argument &left, Argument &right) {
         double ret_val {-1.0};
 
-        std::cout << "\n\n\n";
+        // std::cout << "\n\n\n";
         // DEBUGprint("valueType:" << left.valueType << std::endl);
         // DEBUGprint("valueType:" << right.valueType << std::endl);
         // DEBUGprint("left:" << arg2str(left) << "\n");
@@ -433,9 +443,19 @@ namespace st2se {
             left.valueType == ValueType::POINTER ||
             left.valueType == ValueType::INTEGER
         ) {
-            // number distance ???
-            unsigned long a = *std::get_if<unsigned long>(&(left.value));
-            unsigned long b = *std::get_if<unsigned long>(&(right.value));
+            // written this way for null pointer check 'cus get_if is
+            // non-throwing function
+            auto _a = std::get_if<unsigned long>(&(left.value));
+            auto _b = std::get_if<unsigned long>(&(right.value));
+            unsigned long a {0};
+            unsigned long b {0};
+            if(_a != nullptr && _b != nullptr){
+                a = *_a;
+                b = *_b;
+            }
+            else{
+                return ret_val;
+            }
 
             if (a > b) {
                 ret_val = a - b;

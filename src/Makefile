@@ -36,6 +36,7 @@ BIN_TEST=module_tests
 LINK.o = $(LINK.cpp)
 DATASET=../testdata/dataset.reduced
 CXXFLAGS:=-Wall -Wextra -Wsuggest-override  -Wnull-dereference -Wshadow -Wold-style-cast -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
+# CXXFLAGS:=-Wall -Wextra -Wsuggest-override -Wshadow -Wold-style-cast -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
 
 
 # Recipes
@@ -44,7 +45,7 @@ all: CXXFLAGS += -g3 -fsanitize=address,undefined -fno-omit-frame-pointer
 # all: CXXFLAGS += -g3
 all: st2se
 
-release: CXXFLAGS += -Ofast -march=native -flto
+release: CXXFLAGS += -Ofast -march=native -flto -DNDEBUG
 release: st2se
 
 coverage: CXXFLAGS += -fprofile-arcs -ftest-coverage
