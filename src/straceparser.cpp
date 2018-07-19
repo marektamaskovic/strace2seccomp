@@ -90,7 +90,6 @@ namespace st2se {
 
         // print statistics
         std::cout << "statistics: + " << good_lines << " - " << bad_lines << std::endl;
-        std::cout << "sc:" << ::syscalls << std::endl;
         return true;
     }
 
