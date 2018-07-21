@@ -528,33 +528,19 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 	Every minor change in system call will kill the process.
 	% This strict way means for optimizer that it is turned off.
 
-	\begin{algorithm}[H]
-		\SetKwData{syscall}{sc}
-		\SetKwData{ids}{IDS}
-		\SetKwData{argument}{arg}
-		\SetKwData{level}{lvl}
-		\SetKwData{numArgs}{num\_arg}
-		\SetKwData{intervals}{intervals}
-		\SetKwData{rules}{rules}
+	\begin{figure}
+		\begin{algorithm}[H]
+			\SetKwData{ids}{IDS}
 
-		\SetKwFunction{GetNumArgs}{get\_num\_args}
-		\SetKwFunction{Append}{append}
-		\SetKwFunction{getMinMax}{get\_minmax}
+			\KwIn{intermediate data structure}
+			\KwOut{intermediate data structure}
 
-		\KwIn{intermediate data structure \ids}
-		\KwOut{list of rules \rules}
-
-		\caption{Weak optimization}\label{algo:weak}
-		\ForEach{syscall \syscall in the \ids}{
-		  \ForEach{argument \argument in the syscall \syscall}{
-			\numArgs $\leftarrow$ \GetNumArgs{p}\;
-			\For{$\level \leftarrow 0$ \KwTo \numArgs}{
-			  \intervals.\Append{\getMinMax{\argument, \level}}\;
-			}
-			\rules.\Append{\syscall, \intervals}\;
-		  }
-		}
-	\end{algorithm}
+			\caption{Strict optimization}
+			$output$ $\leftarrow$ $input$
+		\end{algorithm}
+		\caption{Strict algorithm}
+		\label{alog:strict}
+	\end{figure}
 
 	\paragraph{Minmax optimization.}
 	Minmax optimization is the most basic one of this set of optimizations.
@@ -572,33 +558,74 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 		\item Go to number 1.
 	\end{enumerate}
 
-	\begin{algorithm}[H]
-		\SetKwData{syscall}{sc}
-		\SetKwData{ids}{IDS}
-		\SetKwData{argument}{arg}
-		\SetKwData{level}{lvl}
-		\SetKwData{numArgs}{num\_arg}
-		\SetKwData{intervals}{intervals}
-		\SetKwData{rules}{rules}
+	\begin{figure}
+		\begin{algorithm}[H]
+			\SetKwData{syscall}{syscall}
+			\SetKwData{ids}{IDS}
+			\SetKwArray{data}{data}
+			\SetKwFunction{bar}{bar}
 
-		\SetKwFunction{GetNumArgs}{get\_num\_args}
-		\SetKwFunction{Append}{append}
-		\SetKwFunction{getMinMax}{get\_minmax}
+			\KwIn{intermediate data structure}
+			\KwOut{intermediate data structure}
 
-		\KwIn{intermediate data structure \ids}
-		\KwOut{list of rules \rules}
-
-		\caption{Weak optimization}\label{algo:weak}
-		\ForEach{syscall \syscall in the \ids}{
-		  \ForEach{argument \argument in the syscall \syscall}{
-			\numArgs $\leftarrow$ \GetNumArgs{p}\;
-			\For{$\level \leftarrow 0$ \KwTo \numArgs}{
-			  \intervals.\Append{\getMinMax{\argument, \level}}\;
+			\caption{Weak optimization - main loop}
+			\For{$syscall \in input$}{
+				$output$.\data{$syscall$.name} $\leftarrow$ $syscall$\;
+				$output$.\data{$syscall$.name}.clustered $\leftarrow$ $false$\;
+				$output$.\data{$syscall$.name}.next $\leftarrow$ \bar{$syscall$.next}\;
 			}
-			\rules.\Append{\syscall, \intervals}\;
-		  }
-		}
-	\end{algorithm}
+		\end{algorithm}
+		\begin{algorithm}[H]
+			\SetKwData{argument}{Argument}
+			\SetKwFunction{foo}{empty}
+			\SetKwFunction{getMin}{getMin}
+			\SetKwFunction{getMax}{getMax}
+			\SetKwFunction{front}{front}
+			\SetKwFunction{pushBack}{push\_back}
+			\SetKwProg{Fn}{Function}{ is}{end}
+
+			\Fn{bar(vec :\&std::vector<Argument>) : std::vector<Argument>}{
+				\ForEach{argument in the vec}{
+					\If{argument.next.\foo{} $\neq$ $true$}{
+						$argument.next$ $\leftarrow$ \bar{argument.next}\;
+					}
+				}
+				\eIf{vec type is INTEGER}{
+					arg:\argument\;
+					arg.valueFormat $\leftarrow$ vec.\front{}.valueFormat\;
+					arg.valueType $\leftarrow$ vec.\front{}.valueType\;
+					arg.key $\leftarrow$ vec.\front{}.key\;
+
+					\eIf{vec size $>$ 1}{
+						arg.value $\leftarrow$ \getMin{vec}\;
+						arg.value\_b $\leftarrow$ \getMax{vec}\;
+						arg.numberType $\leftarrow$ RANGE\;
+					}{
+						arg.value $\leftarrow$ vec.\front{}.value\;
+						arg.numberType $\leftarrow$ VALUE\;
+					}
+					$ret\_vec$.\pushBack{arg}\;
+				}{
+					\ForEach{item in the vec}{
+						arg:\argument\;
+						arg.valueFormat $\leftarrow$ item.valueFormat\;
+						arg.valueType $\leftarrow$ item.valueType\;
+						arg.key $\leftarrow$ item.key\;
+						arg.value $\leftarrow$ iitem.value\;
+						arg.next $\leftarrow$ item.next\;
+						arg.numberType $\leftarrow$ VALUE\;
+						$ret\_vec$.\pushBack{arg}\;
+					}
+				}
+				\Return $ret\_vec$\;
+			}
+
+
+			\caption{Weak optimization - bar}
+		\end{algorithm}
+		\caption{Weak algorithm}
+		\label{alog:wek}
+	\end{figure}
 
 	\paragraph{Clustering.}
 	Clustering is learning algoritm from a family of unsupervised machine
@@ -728,25 +755,28 @@ begins and ends with null termination. \cite{ISO9899}
 For this reason seccomp can not operate with strings and we will skip string arguments as well.
 
 \section{Parsing Expression Grammar}
-Parsing expression grammar was introduced by Ford in 2004. \cite{Ford:PEG}
-PEG is a type of analytic formal grammar which describes a formal language in terms of a set of rules for recognizing strings in the language.
-This type of grammar is really similar to a top-down parsing languages.
-As well it looks very similar to context-free grammars.
+Parsing expression grammar was introduced by Ford in 2004.
+PEG is a type of formal analytic grammar which describes a formal language
+regarding a set of rules for recognizing strings in the language. This type of
+grammar is similar to top-down parsing languages or context-free grammars.
 
-Parser that parses the PEG is named a packrat parser.
-Packrat parser can be easily constructed for any language described by an LL($k$) or LR($k$) grammar, as well as for many languages that require unlimited lookahead and therefore are not LR.
-Packrat parsers are also much simpler to construct than bottom-up LR parsers, making it practical to build them by hand.
-It can directly and efficiently implement common disambiguation rules such as \textit{longest-match}, \textit{followed-by}, and \textit{not-followed-by}, which are difficult to express unambiguously in a context-free grammar or implement in conventional linear-time.
-Finally, both lexical and hierarchical analysis can be seamlessly integrated into a single unified packrat parser.
+Easily constructed packrat parser can parse any language described by LLk or LRk
+grammar. This parser can parse language that requires unlimited lookahead as
+well. The packrat parser can be constructed easier than bottom-up LR parsers,
+and that design can be quickly built by hand. Already stated parser, can
+efficiently solve common disambiguation rules, e.g., longest-match, followed-by,
+and not-followed-by. These rules are challenging to express in context-free
+grammar in linear-time.
 
-The main disadvantage of packrat parsing is memory consumption.
-The worst case asymptotic computational complexity is very similar to the conventional algorithms (linear in the size of the input).
-
-The one of the many problems with right to left parsing algorithm is that it computes many results that are never needed.
-Other inconvenience is that we must carefully determine the order in which the results for a particular column are computed.
-\textit{Packrat parsing} is a lazy derivation of a tabular algorithm that solves both of these problems.
-It computes results only when they are needed, in the same order as the original recursive descent parser would.
-\todo{REWRITE}
+The main advantage is that we can integrate lexical and hierarchical analysis
+into one unified packrat parser. On the other hand, the main disadvantage is
+memory consumption. The packrat parser has a similar worst-case asymptotic
+complexity to the conventional algorithms (linear in the size of the input).
+Another disadvantage of the parser is its algorithm which computes many results
+that are never needed. And because of this, the order in which the results are
+computed should be carefully determined. And thus the packrat parser can be
+labeled as a lazy derivation of a tabular algorithm that solves both of these
+problems.
 
 \begin{table}[h]
 	\begin{center}
@@ -1165,11 +1195,19 @@ root directory.
 \begin{figure}[h]
 	\lstset{style=npl}
 \begin{lstlisting}
-> make check_unit
+> make check
 \end{lstlisting}
 	\caption{Example of running module tests from project root directory.}
 	\label{exec/unit_tests}
 \end{figure}
+
+\paragraph{Results}
+For module testing was implemented eleven test cases. In these test cases were
+tested almost every class method and other functions in modules. Some test cases
+were small, and they were testing only small methods and the others were more
+complex and was designed to test the whole module. In conclusion, there were
+eleven test cases with forty-two assertions, and all of them were satisfied.
+
 
 \subsection{StraceParser Testing}
 StraceParser module is responsible for parsing the strace output and translating
@@ -1467,14 +1505,15 @@ Requirements for the testing are:
 	machine with x86 architecture.
 \end{enumerate}
 
-\subsection{Results} During testing phase, one significant issue and one smaller issue was
-discovered. The first issue is caused by the libseccomp library which is not
-supporting intervals (ranges) in any way. The libseccomp architecture specifies
-that in one function \texttt{seccomp\_rule\_add} is logical and among partial
-expressions. Among the functions \texttt{seccomp\_rule\_add} is logical or.
-Moreover, in one function \texttt{seccomp\_rule\_add} argument position can be
-mentioned only once which means that it is not possible to write intervals as
-shown in Figure \ref{libseccomp_native}.
+\subsection{Results}
+During testing phase, multiple issues was discovered. The first issue is caused
+by the libseccomp library which is not supporting intervals (ranges) in any way.
+The libseccomp architecture specifies that in one function
+\texttt{seccomp\_rule\_add} is logical and among partial expressions. Among the
+functions \texttt{seccomp\_rule\_add} is logical or. Moreover, in one function
+\texttt{seccomp\_rule\_add} argument position can be mentioned only once which
+means that it is not possible to write intervals as shown in Figure
+\ref{libseccomp_native}.
 
 \begin{figure}[h]
 	\label{libseccomp_native}
@@ -1587,6 +1626,117 @@ implemented the multithread support in the developed tool without regard to
 functionality in libseccomp. As we can notice, one of the involved programs for
 complex testing, testovac, cannot be tested.
 
+In the testing phase was discovered issues in the generated filter as well. We
+processed the strace logs for the \texttt{cp} command from coreutils projects
+and manually checked with strace logs, and it was correctly created. The
+troubles occurred when we tried to run the \texttt{cp}. Immediately after start,
+it was terminated with signal \texttt{SIGSYS} and error message 'bad system
+call' was emitted. We decided to troubleshoot where the problem occurs. When we
+run strace on \texttt{cp} without runtime arguments, it shows us in Figure
+\ref{cp_strace_error} that it was terminated when demanding system call
+\texttt{openat}.
+\begin{figure}[h]
+	\label{cp_strace_error}
+	\lstset{style=npl}
+	\begin{lstlisting}
+prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)  = 0
+seccomp(SECCOMP_SET_MODE_STRICT, 1, NULL) = -1 EINVAL (Invalid argument)
+seccomp(SECCOMP_SET_MODE_FILTER, 0, {len=281, filter=0x22fdaf0}) = 0
+openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = ?
++++ killed by SIGSYS (core dumped) +++
+[1]    1941 invalid system call (core dumped)  strace ./cp
+	\end{lstlisting}
+	\caption{Part of the strace log of cp command}
+\end{figure}
+
+The \texttt{openat} has three arguments which are constant, path, and bitfield.
+The path is not processed by our tool so we will aim for the other two
+arguments. The first one is \texttt{AT\_FDCWD} and it is defined in source file
+\texttt{'/include/uapi/linux/fcntl.h'} with value '-100'. The bitfield
+is located in file \texttt{'/include/uapi/asm-generic/fcntl.h'} and the macro
+\texttt{O\_RDONLY} has value '0', and the \texttt{O\_CLOEXEC} macro has value
+'02000000'. We dumped the bpf filter with libseccomp API and examined it. We
+tried to emulate the system call with the seccomp-tools project as shown in
+Figure \ref{emulation_cp}.
+
+\begin{figure}[h]
+	\lstset{style=npl}
+\begin{lstlisting}
+> seccomp-tools emu --arch amd64 ./seccomp_filter.bpf 257 18446744073709551516 0 02000000
+\end{lstlisting}
+	\caption{Seccomp-tools emulation of the \texttt{openat} syscall}
+	\label{emulation_cp}
+\end{figure}
+
+We will break down that command. The \texttt{emu --arch amd64}  arguments say
+that it will emulate an amd64 architecture, and after that is exported bpf
+filter. The four last numbers are syscall number and its arguments.
+The \texttt{openat} syscall has value 257, and the long number afterward is -100
+transformed in 64-bit unsigned number. The second argument is zero but can be
+any number because in the second position is the path and that is not processed
+in our filter, and the last one is our bitfield. When we run the emulation tool,
+and afterward we get the opposite result as we expected. The result is that the
+system call will be allowed, but that does not correspond with binary. Next, we
+should check the generated filter we put in the source code, shown in Figure
+\ref{cp_seccomp_rule}.
+
+\begin{figure}[h]
+	\lstset{style=c++}
+\begin{lstlisting}
+ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(openat), 2,
+    SCMP_A0(SCMP_CMP_EQ, AT_FDCWD),
+    SCMP_A2(SCMP_CMP_MASKED_EQ, O_RDONLY|O_CLOEXEC)
+);
+\end{lstlisting}
+	\caption{Rule in generated filter by \texttt{strace2seccomp}}
+	\label{cp_seccomp_rule}
+\end{figure}
+
+
+We can see that the filter has the rule for allowance that system call with that
+combination of arguments. When we edit that rule manually as shown in Figure
+\ref{cp_strace_error_2}, we can see that after running the cp command that it is
+stoped at another syscall. That system call is \texttt{mmap}. In generated
+filter (Figure \ref{cp_seccomp_rule_edit_1}) we can find that \texttt{mmap} is
+not allowed with that value. However, the value was not present in the strace
+logs, and when we change it, then our program is behaving correctly. We can
+continue this way to the point where we remove all issues with the generated
+filter. Those issues are not a product of the incorrect handling in
+\texttt{strace2seccomp} tool, but they are the product of the small testsuite
+provided by the project coreutils. The only thing that can be discussed is a
+problem when handling file descriptors. Sometimes the program opens the same
+file on a different file descriptor; thus it should not be processed.
+
+\begin{figure}[h]
+	\lstset{style=npl}
+\begin{lstlisting}
+prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)  = 0
+seccomp(SECCOMP_SET_MODE_STRICT, 1, NULL) = -1 EINVAL (Invalid argument)
+seccomp(SECCOMP_SET_MODE_FILTER, 0, {len=236, filter=0x23af210}) = 0
+openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=209526528, ...}) = 0
+mmap(NULL, 209526528, PROT_READ, MAP_PRIVATE, 3, 0) = ?
++++ killed by SIGSYS (core dumped) +++
+\end{lstlisting}
+	\caption{Part of the strace log of cp command}
+	\label{cp_strace_error_2}
+\end{figure}
+
+\begin{figure}[h]
+	\lstset{style=c++}
+\begin{lstlisting}
+ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 1,
+    SCMP_A1(SCMP_CMP_IN_RANGE, 16u, 3926752u)
+);
+\end{lstlisting}
+	\caption{Rule in generated filter by \texttt{strace2seccomp}}
+	\label{cp_seccomp_rule_edit_1}
+\end{figure}
+
+This analysis points to the conclusion that there is a reason to check the
+advanced algorithm DBSCAN because seccomp incorrectly interpreted even the
+minimax algorithm generated by strace2seccomp tool. There is no point even in
+testing the find tool because there would be the same problem.
 
 \chapter{Conclusion}
 
