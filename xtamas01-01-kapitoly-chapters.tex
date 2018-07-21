@@ -650,16 +650,23 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 
 	The clasification of raw data can be done in mulitple ways.
 	Some basic methods are:
-	\todo{mention some example algorithms}
 	\begin{itemize}
-		\item partitioning,
-		\item hierarchical,
+		\item Distribution models,
+		\begin{itemize}
+			\item Normal, Gaussian
+		\end{itemize}
+		\item centroid models,
+		\begin{itemize}
+			\item K-Means,
+		\end{itemize}
 		\item density based clustering,
 		\begin{itemize}
 			\item DBSCAN clustering,
 		\end{itemize}
-		\item fuzzy clustering,
-		\item model-based clustering.
+		\item soft clustering,
+		\begin{itemize}
+			\item fuzzy clustering,
+		\end{itemize}
 	\end{itemize}
 
 	\paragraph{Advanced optimization.}
@@ -708,11 +715,63 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 			is in $\epsilon$ radius of that core-point else assign it to noise.
 	\end{enumerate}
 
-	The whole algorithm is:\todo{rewrite it and add output}
+	The whole algorithm is shown in Figure \ref{dbscan_ilustration}
 	\nopagebreak
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=\linewidth]{obrazky-figures/algo_dbscan}
+	\begin{figure}
+		\begin{algorithm}[H]
+			\caption{Pseudocode of Original Sequential DBSCAN algorithm}
+
+			\SetKwComment{Comment}{//}{}
+
+			\SetKw{Continue}{continue}
+
+			\SetKwData{label}{$label$}
+
+			\SetKwFunction{RangeQuery}{RangeQuery}
+
+			\KwIn{$DB$: Database}
+			\KwIn{$symbol$: $\varepsilon$}
+			\KwIn{$minPts$: Density treshold}
+			\KwIn{$dist$: Distance function}
+			\KwData{$label$: Point labels, initiall $undefined$}
+
+			\ForEach(\hfill\texttt{// Iterate over every point}){point $p$ in database $DB$}{
+				\lIf(\hfill\texttt{// Skip processed points}){\label{$p$} $\neq$ $undefined$}{
+					\Continue
+				}
+
+			Neighbours $N$ $\leftarrow$ \RangeQuery{DB, dist, p, $\varepsilon$}\Comment*[f]{Find initial neighbors}
+
+			\If(\hfill\texttt{// Non-core points are noise}){$\left|N\right| < minPts$}{
+				\label{$p$} $\leftarrow$ Noise
+				\Continue
+			}
+
+			$c$ $\leftarrow$ next cluster label \Comment*[f]{Start a new cluster}
+
+			\label{$p$} $\leftarrow$ $c$
+
+			Seed set $S$ $\leftarrow$ $N$ $\backslash$ $\{p\}$ \Comment*[f]{Expand neighborhood}
+
+			\ForEach{$q$ in $S$}{
+				\lIf{\label{$q$} $\eq$ Noise}{
+					\label{$q$} $\leftarrow$ $c$
+				}
+				\lIf{\label{$q$} $\neq$ $undefined$}{
+					\Continue
+				}
+				Neighbours $N$ $\leftarrow$ \RangeQuery{DB, dist, q, $\varepsilon$}
+
+				\label{$q$} $\leftarrow$ $c$
+
+				\lIf(\hfill\texttt{// Core-point check}){$\left|N\right| < minPts$}{
+					\Continue
+				}
+				$S$ $\leftarrow$ $S$ $\cup$ $N$
+			}
+		}
+
+		\end{algorithm}
 		\caption{Illustration of DBSCAN cluster model}
 		\label{dbscan_ilustration}
 	\end{figure}
@@ -1327,35 +1386,33 @@ was necessary to instrument other three processes. This instability can be
 seen among Figures \ref{fuz:result1a}, \ref{fuz:result2a}, \ref{fuz:result3a}
 and \ref{fuz:result4a}.
 
-\todo{check the fuzzer output}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/master/exec_speed.pdf}
+	\caption{master/exec\_speed}
+	\label{fuz:result1a}
+\end{figure}
 
-% \begin{figure}[H]
-% 	\centering
-% 	\includegraphics[width=\linewidth]{obrazky-figures/master/exec_speed.pdf}
-% 	\caption{master/exec\_speed}
-% 	\label{fuz:result1a}
-% \end{figure}
-%
-% \begin{figure}[H]
-% 	\centering
-% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/exec_speed.pdf}
-% 	\caption{thread\_1/exec\_speed}
-% 	\label{fuz:result2a}
-% \end{figure}
-%
-% \begin{figure}[H]
-% 	\centering
-% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/exec_speed.pdf}
-% 	\caption{thread\_2/exec\_speed}
-% 	\label{fuz:result3a}
-% \end{figure}
-%
-% \begin{figure}[H]
-% 	\centering
-% 	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/exec_speed.pdf}
-% 	\caption{thread\_3/exec\_speed}
-% 	\label{fuz:result4a}
-% \end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/exec_speed.pdf}
+	\caption{thread\_1/exec\_speed}
+	\label{fuz:result2a}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/exec_speed.pdf}
+	\caption{thread\_2/exec\_speed}
+	\label{fuz:result3a}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/exec_speed.pdf}
+	\caption{thread\_3/exec\_speed}
+	\label{fuz:result4a}
+\end{figure}
 %
 % asdfasdfasf
 % asdfasdfasf
