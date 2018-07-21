@@ -29,7 +29,7 @@ TEST_CASE("Generator initialization", "[generator]") {
 
     void *gnrt = &a;
 
-    gen.initialize((st2se::Output *)gnrt);
+    gen.initialize(static_cast<st2se::Output *>(gnrt));
 
     REQUIRE(gen.isInitialized());
 
