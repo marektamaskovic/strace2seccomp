@@ -28,7 +28,7 @@ algorithm for clustering. The thesis can be found in another
 	Configuration options:
 	    -w [--weak]								: use weak algotirthm
 	    -s [--strict]							: use strict algotirthm
-	    -a [--advanaced]					: use advanced algotirthm
+	    -a [--advanced]					: use advanced algotirthm
 	    --prolog										: generate function prolog
 	    --thread										: add filter synchronization among threads/processes
     	--scOnly                                        : generate only syscall allowance
