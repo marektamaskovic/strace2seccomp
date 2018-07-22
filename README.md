@@ -28,7 +28,7 @@ algorithm for clustering. The thesis can be found in another
 	Configuration options:
 	    -w [--weak]								: use weak algotirthm
 	    -s [--strict]							: use strict algotirthm
-	    -a [--advanced]					: use advanced algotirthm
+	    -a [--advanced]						: use advanced algotirthm
 	    --prolog										: generate function prolog
 	    --thread										: add filter synchronization among threads/processes
     	--scOnly                                        : generate only syscall allowance
@@ -36,20 +36,20 @@ algorithm for clustering. The thesis can be found in another
 
 ## Examples
 
-	`$ ./st2se -v -w --output=source.cpp filename1 filename2`
+	$ ./st2se -v -w --output=source.cpp filename1 filename2
 
 In this case, we can see that verbose mode is turned on and minimax algorithm
 was chosen for the optimizer. The output of the program will be stored in
 `source.cpp`. Files `filename1` and `filename2` will be used as input.
 
-	`$ ./st2se -w --output=source.cpp filename --thread --prolog`
+	$ ./st2se -w --output=source.cpp filename --thread --prolog
 
 This command diverges only in the output format. The `--thread` will generate
 support for multithread or multiprocess applications and `--prolog` switch
 ensures that the filter will be located in function. This behavior is helpful
 for copy&paste output into an existing program.
 
-	`$ ./st2se -A`
+	$ ./st2se -A
 
 When we want to check if the grammar in the parser is correct, we can use a
 built-in tool in parser library. This tool of the parser can be turned on with
