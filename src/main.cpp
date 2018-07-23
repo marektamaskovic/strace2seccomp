@@ -40,6 +40,12 @@ int main(int argc, char *argv[]) {
         std::cout << params << std::endl;
     }
 
+    // print usage when no algorithm was emitted
+    if (!params.strict && !params.weak && !params.advanced){
+        params.printHelp();
+        exit(0);
+    }
+
     st2se::Ids in {};
     st2se::Ids out {};
     st2se::States states {};
