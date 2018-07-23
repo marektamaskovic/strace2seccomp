@@ -17,7 +17,7 @@ doxygen:
 	cd src/ && doxygen doxyfile
 
 xtamas01.tar.gz: doc/man/ src/ Makefile README.md testsuite/ Vagrantfile
-	tar tar cvzf $@ $^
+	tar cvzf $@ $^
 
 run:
 	$(BIN)
