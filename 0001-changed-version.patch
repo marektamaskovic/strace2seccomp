@@ -1,0 +1,25 @@
+From 585c5a210df761350b9a24a2d5bdf42d9f007183 Mon Sep 17 00:00:00 2001
+From: Marek Tamaskovic <mtamasko@redhat.com>
+Date: Mon, 23 Jul 2018 13:40:54 +0200
+Subject: [PATCH] changed version
+
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index c593caf..c49ee61 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -19,7 +19,7 @@ dnl #
+ dnl ####
+ dnl libseccomp defines
+ dnl ####
+-AC_INIT([libseccomp], [0.0.0])
++AC_INIT([libseccomp], [2.3.5])
+ 
+ dnl ####
+ dnl autoconf configuration
+-- 
+2.17.1
+
