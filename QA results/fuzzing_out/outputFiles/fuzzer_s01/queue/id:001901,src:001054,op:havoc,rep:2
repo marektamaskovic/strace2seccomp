@@ -1,17 +1,0 @@
-fcntl(10, F_C, 0)           = 11
-fbntl(11, F_GETFL)              = 0x2 ()
-fcntl(11, F_GETFL)                      = 0x802 (flagsCK)
-fcntl(11, F_SETFD, FOEXEC)          = 0
-fcntl(11, F_SE)   = 0
-fcntl(13, F_GETFL)       = 0x2 (flags 
-fcntl(13, F_SETFD, LOEXE‹) 
-fcntl(13, F_SETFL, O_R_SETFL, O_RDONLY|O_NOXEC, N__________________FL)                      = 0 = 0
-fcntl(11, F_SETFL,ETFL, O_RDWR|O_NONBLOCK)   = 0
-fcntl(15, F_GETFL)                R)
-fcntl(15, F_SETFL, O_R_SETFL,ETFL, O_RDWR|O_NONBLOC8, F_GETFL)               = 0x2 (fDWR)
-fcntl(1_SETFL, K)   = 0
-fcntl(19, FEC, 0)          = 20
-fcntl(19, FFD,XEC)          = 0
-fcntl(5, F_GETFL)                       = 0x2 (flaR)
-fcntl(5, F_SETFL, O_RDWR|O_NONBLOCK)    = 0
-fcntl(7, \FL) (flags O_RDWR)

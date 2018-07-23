@@ -8,7 +8,7 @@ all:
 	mkdir -p bin && mv ./src/$(BIN) ./bin/
 	@echo -e "\033[1;37m" "Binary is located in" "\033[1;32m" "[project_root]/bin/" "\033[0m"
 clean:
-	-rm $(BIN)
+	-rm $(BIN) $(NAME).*
 	@cd src/ && $(MAKE) clean
 
 check:
