@@ -24,6 +24,22 @@
 
 namespace st2se {
 
+    std::vector<std::string> string_to_vector(std::string str, char delimeter) {
+        std::vector<std::string> strings;
+        if (str.empty()) {
+            return strings;
+        }
+
+        std::stringstream list_str{str};
+        std::string s;
+
+        while (std::getline(list_str, s, delimeter)) {
+            strings.push_back(s);
+        }
+
+        return strings;
+    }
+
     bool Algo_weak::optimize(Ids &in, Ids &out) {
         std::cout << "Algo_weak optimize emitted." << std::endl;
 
@@ -149,9 +165,7 @@ namespace st2se {
         text.resize(text.size() - 1);
 
         //split
-        boost::split(results, text, [](char c) {
-            return c == '|';
-        });
+        results = string_to_vector(text, '|');
 
         // uniq
         std::sort(results.begin(), results.end());
