@@ -1,4 +1,4 @@
-# strace2seccomp - Bachelor thesis
+# strace2seccomp - Bachelor's thesis
 
 
 
