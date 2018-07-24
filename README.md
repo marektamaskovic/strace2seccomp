@@ -3,7 +3,7 @@
 
 
 ## About
-This bachelor thesis is focused on an automatic generation of seccomp rules from
+This bachelor's thesis is focused on an automatic generation of seccomp rules from
 strace logs. The output is generated in C/C++ syntax. Input can be optimized
 with three optimization algorithms. One is called strict, and it will produce
 1:1 output compared to input. Another one is called minimax or weak. This
