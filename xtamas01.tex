@@ -125,11 +125,34 @@
   supervisor.title.p={Ing.},   %titul před jménem (nepovinné) / title before the name (optional)
   %supervisor.title.a={Ph.D.},    %titul za jménem (nepovinné) / title after the name (optional)
   % Klíčová slova / keywords
-  keywords.cs={seccomp, libseccomp, strace, optimalizátor, zhlukovanie C++, generátor politík, systémové volania, obmedzenie spustiteľných súborov, catch2, american fuzzy lop, fuzzying}, % klíčová slova v českém či slovenském jazyce / keywords in czech or slovak language
+  keywords.cs={seccomp, libseccomp, strace, optimalizátor, zhlukovanie, C++, generátor politík, systémové volania, obmedzenie spustiteľných súborov, catch2, american fuzzy lop, fuzzying}, % klíčová slova v českém či slovenském jazyce / keywords in czech or slovak language
   keywords.en={seccomp, libseccomp, strace, optimizer, clustering, C++, policy generator, system calls, executable binaries limitations, catch2, american fuzzy lop, fuzzying}, % klíčová slova v anglickém jazyce / keywords in english
   % Abstrakt / Abstract
-  abstract.cs={Táto práca sa zaoberá generovaním bezpečnostných politík, ktoré obmedzujú systémové volania v rámci operačného systému Linux. Výstupom tejto práce je nástroj ktorý vie transformovať zoznam systémových volaní do bezpečnostnej politiky. V tejto práci sú definované požiadavky, navrhnutá architektúra programu a popísaná testovacia metodika.}, % abstrakt v českém či slovenském jazyce / abstract in czech or slovak language
-  abstract.en={This thesis deals with creation of security policy that limits usage of system calls in Linux. The output of this thesis is a program that transform strace output into a security policy in libseccomp. In this thesis is defined software requirements, designed architecture of the program and described testing methods. }, % abstrakt v anglickém jazyce / abstract in english
+  abstract.cs={
+  Táto práca sa zaoberá návrhom a implementáciou nástroju na preklad zoznamu
+  systémových volaní do politiky obmedzujúcej systémové volania v rámci
+  operačného systému GNU Linux. Motivácia pre takýto nástoj je automatizovať
+  tvorbu bezpečnostných politík. V práci je riešený spôsob interpretovania
+  zoznamu systémových volaní v programe. Taktiež spôsob ako optimalizovať a
+  minimalizovať danú dátovú štruktúru. Na to boli použité tri algoritmy.
+  V jednom prípade bol použitý algoritmus minimax a v tom druhom bol použitý
+  zhlukovací algoritmus DBSCAN. V poslednej časti tejto práce je riešená
+  metodika testovania nástroja a to testovanie modulov či programu ako celku.
+  Počas testovania sa vyskytli komplikácie, ktoré bránili v komplexnom testovaní
+  vytvoreného nástroja.
+  }, % abstrakt v českém či slovenském jazyce / abstract in czech or slovak language
+  abstract.en={
+    This thesis deals with design and implementation of the tool which transform a
+    system call log into a policy that limits the system call usage in operating
+    system GNU Linux. The motivation raised as a need for automatic creation such
+    policies. In this thesis we dealt with the intermediate data structure that
+    represent the system call log. We dealt with simplification of the data
+    structure on which were used optimization algorithms. The first implemented
+    algorithm was minimax and the other was clustering algorithm DBSCAN. In the
+    last part of the thesis, the testing methods are described. We tested the
+    particular modules and the whole tool as an unit. During the testing, issues
+    that prevent from complex testing, arised.
+  }, % abstrakt v anglickém jazyce / abstract in english
   % Prohlášení (u anglicky psané práce anglicky, u slovensky psané práce slovensky) / Declaration (for thesis in english should be in english)
   declaration={Hereby I declare that this bachelor's thesis was prepared as an original author’s work under the supervision of Ms. Ing. Lenka Turoňová (FIT BUT) and by Mr. Bc. Daniek Kopecek (Red Hat, Inc.).
 The supplementary information was provided by Security Engineering team.
@@ -142,23 +165,85 @@ All the relevant information sources, which were used during preparation of this
   %acknowledgment={Here it is possible to express thanks to the supervisor and to the people which provided professional help
 %(external submitter, consultant, etc.).},
   % Rozšířený abstrakt (cca 3 normostrany) - lze definovat zde nebo níže / Extended abstract (approximately 3 standard pages) - can be defined here or below
-  extendedabstract={Táto práca sa zaoberá návrhom a implementáciou nástroju na preklad zoznamu volaných systémových volaní do politiky obmedzujúcej systémové volania v rámci operačného systému GNU Linux. Tieto bezpečnostné politiky sa týkajú obmedzení resp. povolení systémových volaní pre daný proces alebo program. Tieto opatrenia sú relevantné v prípade ak daný program môže byť zneužitý útočníkom na spustenie nežiadúceho kódu. V takomto prípade ak útočník použije systémové volanie, ktoré nespĺňa politiku programu, bude následne celý program alebo proces ukončený. V niektorých prípadoch však môže nastať aj nechcená terminácia procesu. Táto terminácia môže nastať ak je politika príliš striktná alebo bola zle nakonfigurovaná. 
+  extendedabstract={
+Táto práca sa zaoberá návrhom a implementáciou nástroju na preklad zoznamu
+volaných systémových volaní do politiky obmedzujúcej systémové volania v rámci
+operačného systému GNU Linux. Tieto bezpečnostné politiky sa týkajú obmedzení
+resp. povolení systémových volaní pre daný proces alebo program. Tieto opatrenia
+sú relevantné v prípade ak daný program môže byť zneužitý útočníkom na spustenie
+nežiadúceho kódu. V takomto prípade ak útočník použije systémové volanie, ktoré
+nespĺňa politiku programu, bude následne celý program alebo proces ukončený. V
+niektorých prípadoch však môže nastať aj nechcená terminácia procesu. Táto
+terminácia môže nastať ak je politika príliš striktná alebo bola zle
+nakonfigurovaná.
 
-Motivácia pre takýto nástroj je automatizovať tvorbu bezpečnostných politík.  Táto automatizácia môže byť implementovaná napríklad pri tvorbe kontajnerov, sledovaní tzv. ,,Honeypot-ov'' alebo pri zabezpečovaní spustiteľných binárnych súborov v podnikovej sfére, kde môže byť porušenie politiky reportované správcovi systému. 
+Motivácia pre takýto nástroj je automatizovať tvorbu bezpečnostných politík.
+Táto automatizácia môže byť implementovaná napríklad pri tvorbe kontajnerov,
+sledovaní tzv. ,,Honeypot-ov'' alebo pri zabezpečovaní spustiteľných binárnych
+súborov v podnikovej sfére, kde môže byť porušenie politiky reportované
+správcovi systému.
 
-V časti tejto práci sa nachádza analýza programy, ktoré by mohli byť potencionálne použité pri vývoji plánovaného nástroja. Tieto programy môžu byť použité pri generovaní vstupu kde bol zvolený nástroj strace alebo výstup nášho nástroja môže byť použitý ako vstup pre tieto programy, v našom prípade to je knižnica libseccomp. Taktiež sa tu nachádzajú programy, ktoré sú použité pri testovaní nástroja ako napr. ,,Fuzzer-y''. Z fuzzerov bol vybraný American Fuzzy Lop, ktorý generoval vstup pre parser a testoval jeho stabilitu. 
+Táto práca sa zaoberá analýzou programou, ktoré by mohli byť
+potencionálne použité pri vývoji plánovaného nástroja. Tieto programy môžu byť
+použité pri generovaní vstupu kde bol zvolený nástroj strace alebo výstup nášho
+nástroja môže byť použitý ako vstup pre tieto programy. V našom prípade to je
+knižnica libseccomp. Práca sa tiež zaoberá programami, ktoré sú použité pri
+testovaní nástroja ako napr. ,,Fuzzer-y''. Z fuzzerov bol vybraný American Fuzzy
+Lop, ktorý generoval vstup pre parser a testoval jeho stabilitu.
 
-Jedným z nástrojov, ktorý sa zaoberá obmedzením systémových politík je secure computing skrátene seccomp. Tento nástroj je implementovaný priamo v jadre operačného systému GNU Linux. Tento nástroj používa nerozšírený Berkley Packet Filter na filtrovanie systémových volaní. Písanie BPF nieje nič jednoduché a preto bola nad týmto nástrojom vytvorená obálka. Táto obálka je implementovaná ako knižnica s názvom libseccomp pre jazyky C/C++, Go a Python. V tejto knižnici je o dosť jednoduchšie a intuitívne písať zložité BPF. Preto bola zvolená ako formát výstupu pripravovaného nástroja. 
+Jedným z nástrojov, ktorý sa zaoberá obmedzením systémových politík, je secure
+computing skrátene seccomp. Tento nástroj je implementovaný priamo v jadre
+operačného systému GNU Linux. Tento nástroj používa nerozšírený Berkley Packet
+Filter na filtrovanie systémových volaní. Písanie BPF nieje nič jednoduché, a
+preto bola nad týmto nástrojom vytvorená obálka. Táto obálka je implementovaná
+ako knižnica s názvom libseccomp pre jazyky C/C++, Go a Python. Zvolili sme túto
+knižnicu ako formát výstupu pripravovaného nástroju, pretože je o mnoho
+jednoduchšie a intuitívne písať zložité BPF.
 
-Táto práca sa vo veľkej časti zaoberá návrhom a implementácie nástroju na preklad zoznamu systémových volaní do bezpečnostnej politiky. V návrhu sa rieši aké rozhrania budú mať jednotlivé komponenty. Ďalej sa venuje návrhu dátového modelu štruktúry kde sa budú ukladať informácie o systémových volaniach. Taktiež definuje vstupy a výstupy pre navrhovaný nástroj. Nechýbajú ani popisy algoritmov, ktoré sú použité na optimalizáciu vnútornej dátovej štruktúry.  
+Táto práca sa vo veľkej časti zaoberá návrhom a implementácie nástroju na
+preklad zoznamu systémových volaní do bezpečnostnej politiky. V návrhu sa rieši
+aké rozhrania budú mať jednotlivé komponenty. Ďalej sa venuje návrhu dátového
+modelu štruktúry, kde sa budú ukladať informácie o systémových volaniach.
+Taktiež definuje vstupy a výstupy pre navrhovaný nástroj. Nechýbajú ani popisy
+algoritmov, ktoré sú použité na optimalizáciu vnútornej dátovej štruktúry.
 
-Navrhované algoritmy sú tri. Prvý z nich je prevedenie vstupu na výstup v nezmenenej forme. Druhý algoritmus spočíva v nájdení extrémov na jednotlivých pozíciách argumentov a povoliť daný interval. Posledný navrhovaný algoritmus je implementácia zhľukovacieho algoritmu DBSCAN.  
+Navrhované algoritmy sú tri. Prvý z nich je prevedenie vstupu na výstup v
+nezmenenej forme. Druhý algoritmus spočíva v nájdení extrémov na jednotlivých
+pozíciách argumentov a povoliť daný interval. Posledný navrhovaný algoritmus je
+implementácia zhľukovacieho algoritmu DBSCAN.
 
-V poslednej časti tejto práci je popísaná metodika testovania a aké nástroje sú použité na testovanie vytvoreného nástroja.  Testovacia sada testuje jednotlivé moduly a taktiež program ako celok. Testy nie sú komplexné ale testujú základné prípady. 
+V poslednej časti tejto práci je popísaná metodika testovania a aké nástroje sú
+použité na testovanie vytvoreného nástroja. Testovacia sada testuje jednotlivé
+moduly a taktiež program ako celok, kedy sa generujú politiky pre už existujúce
+nástroje a vyhodnocuje sa či sú vôbec spustiteľné a či testovacie sady daných
+programov skončia úspešne. Testy programov nie sú komplexné, ale testujú
+základné prípady. Pre nás sú však dostatočné aby sme mohli komplexne otestovať
+náš vyvýjaný program.
 
-Počas tejto práce boli komunikované nedorozumenia, ktoré vznikli slabou dokumentáciou knižnice libseccomp. Tieto nedorozumenia boli zdokumentované v závere tejto práce. Taktiež bol vyvinutý tlak na autora knižnice na implementáciu nových funkcionalít, ktoré by boli použité pri rozšírení tohto nástroja. Niektoré by sa mohli objaviť už v ďalšej verzii tejto knižnice. 
+Testovacia fáza nám odhalila viaceré problémy, ktoré bránia v komplexnom
+testovaní programov. Jeden z problémov sa objavil počas testovania vytvorenej
+politiky slabým algoritmom. Knižnica libseccomp nemá implementovanú možnosť
+povoliť interval hodnôt a preto je náročné testovať danú politiku. Projekt
+libseccomp avšak má vytvorené rozšírenie, ktoré pridáva túto funkcionalitu.
+Ďalší problém knižnice libseccomp je zlé ukončenie procesu v multiprocesnej
+aplikácii v prípade ak proces poruší politiku. Tento problém bránil v testovaní
+paralélnych aplikácií. V neposlednom rade sme našli nedostatok v interpretácii
+politiky seccomp-om. Spočíva to v zabití programu aj v prípade, ktorý sme
+explicitne povolili.
 
-V tejto práci boli taktiež navrhnuté rozšírenia pre tento projekt. Niektoré z nich sa týkajú rozšírenia tvorby výstupu aj do iných jazykov ako je napríklad Go alebo Python. Ďalej je to rozšírenie algoritmov na optimalizáciu vnútornej štruktúry. Diskutované bolo aj rozšírenie, ktoré by podporovalo spracovávať aj adresy použité medzi parametrami v prípade kedy je vypnutá technológia ASLR v operačnom systéme. },
+Počas tejto práce boli komunikované nedorozumenia, ktoré vznikli slabou
+dokumentáciou knižnice libseccomp. Tieto nedorozumenia boli zdokumentované v
+závere tejto práce. Taktiež bol vyvinutý tlak na autora knižnice na
+implementáciu nových funkcionalít, ktoré by boli použité pri rozšírení tohto
+nástroja (povolenie intervalov, správne ukončenie procesov v multiprocesnej
+aplikácii). Niektoré by sa mohli objaviť už v ďalšej verzii tejto knižnice.
+
+V tejto práci boli taktiež navrhnuté rozšírenia pre tento projekt. Niektoré z
+nich sa týkajú rozšírenia tvorby výstupu aj do iných jazykov ako je napríklad Go
+alebo Python. Ďalej je to rozšírenie algoritmov na optimalizáciu vnútornej
+štruktúry. Diskutované bolo aj rozšírenie, ktoré by podporovalo spracovávať aj
+adresy použité medzi parametrami v prípade, kedy je vypnutá technológia ASLR v
+operačnom systéme. },
   %faculty={FIT}, % FIT/FEKT/FSI/FA/FCH/FP/FAST/FAVU/USI/DEF
   faculty.cs={Fakulta informačních technologií}, % Fakulta v češtině - pro využití této položky výše zvolte fakultu DEF / Faculty in Czech - for use of this entry select DEF above
   faculty.en={Faculty of Information Technology}, % Fakulta v angličtině - pro využití této položky výše zvolte fakultu DEF / Faculty in English - for use of this entry select DEF above

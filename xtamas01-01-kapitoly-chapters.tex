@@ -209,13 +209,19 @@ In the output, there is specified who and when executed the syscall, current wor
 Above specified functionality is useful for server administrators but not for our work.
 
 Entry example in a log file:\\
-\noindent
-\texttt{type=SYSCALL msg=audit(1434371271.277:135496): arch=c000003e syscall=2}\linebreak
-\texttt{success=yes exit=3 a0=7fff0054e929 a1=0 a2=1fffffffffff0000 a3=7fff0054c390 }\linebreak
-\texttt{items=1 ppid=6265pid=6266 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 }\linebreak
-\texttt{egid=0 sgid=0 fsgid=0 tty=pts0 ses=113 comm="cat" }\linebreak
-\texttt{exe="/usr/bin/cat" key="sshconfigchange"}
 
+\begin{figure}[H]
+	\lstset{style=npl}
+\begin{lstlisting}
+type=SYSCALL msg=audit(1434371271.277:135496): arch=c000003e syscall=2
+success=yes exit=3 a0=7fff0054e929 a1=0 a2=1fffffffffff0000 a3=7fff0054c390
+items=1 ppid=6265pid=6266 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0
+egid=0 sgid=0 fsgid=0 tty=pts0 ses=113 comm="cat"
+exe="/usr/bin/cat" key="sshconfigchange"
+\end{lstlisting}
+	\caption{Example of the log that can provide autrace}
+	\label{autrace_log}
+\end{figure}
 
 \chapter{Security Facilities in Linux}
 \label{chap:third}
@@ -796,9 +802,15 @@ a system call make no sense. You can not know on which offset any segment will b
 
 ASLR is by now implemented in many modern OS (MS Windows, GNU/Linux, NetBSD, OpenBSD, MacOS).
 In Linux, this feature is enabled by a kernel. You can get information if ASLR is enabled in file e.g.:
-\begin{center}
-	\texttt{cat /proc/sys/kernel/randomize\_va\_space}
-\end{center}
+
+\begin{figure}[H]
+	\lstset{style=npl}
+\begin{lstlisting}
+> cat /proc/sys/kernel/randomize\_va\_space
+\end{lstlisting}
+	\caption{Reading the ASLR value that tells us what kind of level is turned on.}
+	\label{ASLR_getValue}
+\end{figure}
 
 Value description:
 \begin{itemize}
@@ -863,20 +875,27 @@ describe how to run the strace2seccomp tool.
 \section{Input}
 \label{strace_params}
 As I mentioned earlier strace tool was chosen because it is easy to use system
-call monitoring tool. It can monitor what observed program demanded from kernel.
-With strace tool it is possible to trace child processes. The main advantage of
-strace tool is that is does not need any of the source code files, program is not
-compiled with extra flags or withount any library or it does not have to be
-statically linked. This were the reasons why I chose the strace tool as an input
-for the strace2seccomp.
+call monitoring tool. It can monitor what observed program demanded from a
+kernel. With strace tool it is possible to trace child processes. The main
+advantage of strace tool is that is does not need any of the source code files,
+program is not compiled with extra flags or withount any library or it does not
+have to be statically linked. This were the reasons why I chose the strace tool
+as an input for the strace2seccomp.
 
 The output from strace tool has to be normalized before procesing with strace2seccomp.
 The normalization is done by providing a few runtime arguments to the strace tool.
 Example:
 
-\texttt{\$ strace -s 0 -xx -o dataset -ff nautilus }
-\\
-I would like to describe what they are doing in the first place.\cite{strace_man}
+\begin{figure}[H]
+	\lstset{style=npl}
+\begin{lstlisting}
+> strace -s 0 -xx -o dataset -ff nautilus
+\end{lstlisting}
+	\caption{Example of running strace on nautilus program}
+	\label{strace_example}
+\end{figure}
+
+I would like to describe what they are doing in the first place\cite{strace_man}.
 
 \paragraph{-s} is a string size. We are setting a string size to zero because
 the libseccomp does not have the ability to work with strings. It does not know
@@ -897,8 +916,8 @@ filename in option \texttt{-o} and PID is a process id.
 
 \section{Output}
 The strace2seccomp tool is generating a source code for C/C++.
-In the source code is used seccomp library to provide system call blocking.
-The example of a generated source code is in Appendix \ref{lst:example1}
+In the source code seccomp library to provide system call blocking is used.
+The example of a generated source code is in Appendix \ref{lst:example1}.
 
 The source code can be generated in multiple ways. The basic settings are that
 it will create only function calls with arguments. The extension to this it can
@@ -915,8 +934,9 @@ readability.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\linewidth]{obrazky-figures/class/params.pdf}
-	\caption{Class diagram that shows representation of runtime arguments}
+	\includegraphics[width=0.4\linewidth]{obrazky-figures/class/params.pdf}
+	\caption{Class diagram that shows inner representation of runtime arguments
+	in Params class.}
 	\label{fig:class:params}
 \end{figure}
 
@@ -937,10 +957,19 @@ value is stored in container \texttt{std::variant} that can contain two types,
 \texttt{unsigned long} or \texttt{std::string}. This is the C++17 equivalent of
 enumeration in C language.
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.45\textwidth]{obrazky-figures/class/arg_sc.pdf}
+	\caption{Here we can see the intermediate data structure represented in
+	class diagram. The whole IDS class contains list of syscalls, and syscalls
+	contains arguments represented as a tree structure described in chapter
+	earlier.}
+	\label{fig:class:ids}
+\end{figure}
 
 \texttt{Syscall} class in Figure \ref{fig:class:ids} is dependant  on the
 \texttt{Argument}. This class contains information about syscall, e.g.,
-name, number of arguments, and actual arguments. In this class is defined
+name, number of arguments, and actual arguments. There is defined
 \texttt{print()} method that can print structurised data from syscall.
 
 Class \texttt{Ids} in Figure \ref{fig:class:ids} describes the whole IDS. In
@@ -951,22 +980,34 @@ e.g., for structuralised print of whole class, or syscall only. It has
 implemented method for inserting new Syscall object into the map.
 
 The Figure \ref{fig:class:algo} ilustrate dependency and generalization in class
-hierarchy in optimizer. As you can see the \texttt{Optimizer} is dependant on
-\texttt{Algorithm} class. The \texttt{Algorithm} class is generalized by
+hierarchy in the optimizer. As you can see the \texttt{Optimizer} is dependant
+on \texttt{Algorithm} class. The \texttt{Algorithm} class is generalized by
 specific algorithms, e.g., \texttt{Algo\_strict} class or
 \texttt{Algo\_advanced} class. The optimizer contains a pointer to the
-\texttt{Algorithm}. By this mechanism is really simple to change the algorithm
-in optimizer and keep the logical structure. It contains methods for
-initializing and removing algorithm from an object. The algorithms has to
-override the \texttt{optimize} method in \texttt{Algorithm} class thus is pure
-virtual in the base class. Because of that the compiler requests the
+\texttt{Algorithm}. By this mechanism, it is really simple to change the
+algorithm in the optimizer and keep the logical structure. It contains methods
+for initializing and removing algorithm from an object. The algorithms has to
+override the \texttt{optimize} method in \texttt{Algorithm} class thus it is
+pure virtual in the base class. Because of that the compiler requests the
 implementation of optimize method in a new class that inherits from
 \texttt{Algorithm} class. The generalization is used for simple extension of
-algorithms in current solution. Every algorithm includes supportive methods for
-the optimization, e.g., \texttt{Algo\_weak} has implemented method
-, e.g., \texttt{getMinMax}.
+algorithms in the current solution. Every algorithm includes supportive methods
+for the optimization, e.g., \texttt{Algo\_weak} has implemented method , e.g.,
+\texttt{getMinMax}.
 
-Inthe Policy generator is used the same approach as in the optimizer. The
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{obrazky-figures/class/algo.pdf}
+	\caption{In this picture we can see a class diagram that describes
+	a relationship among algorithms and optimizer. The optimizer contains pointer
+	to the Algorithm class. The Algorithm class is used as an interface for
+	the specific implementations. The implementations of algorithms, e.g, weak
+	inherits the interface from Algorithm class and thus the optimizer can
+	optimize with different algorithm implementations.}
+	\label{fig:class:algo}
+\end{figure}
+
+In the Policy generator is used the same approach as in the optimizer. The
 hierarchy among classes in policy generator shows the Figure
 \ref{fig:class:output}. As we can see there is \texttt{Generator} class which is using
 d-pointer pattern. \texttt{Generator} class contains a pointer to the \texttt{Output} class which
@@ -984,22 +1025,11 @@ It means that multiple rules for one syscall are printed at once.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.65\textwidth]{obrazky-figures/class/arg_sc.pdf}
-	\caption{IDS representation in class diagram}
-	\label{fig:class:ids}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\textwidth]{obrazky-figures/class/algo.pdf}
-	\caption{Class hierarchy that demostrate relationship among algorithms and optimizer}
-	\label{fig:class:algo}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.65\linewidth]{obrazky-figures/class/output.pdf}
-	\caption{output}
+	\includegraphics[width=0.45\linewidth]{obrazky-figures/class/output.pdf}
+	\caption{In this Figure we can see relationship between generator and output
+	implementation. Here is used the same approach as in the optimizer.
+	The Generator contains pointer to the Output class which is interface for
+	policy. In our case we implemented the policy generator for the C/C++.}
 	\label{fig:class:output}
 \end{figure}
 
@@ -1055,10 +1085,12 @@ It is part of the both compilers mentioned above in Subsection \ref{subsec:compi
 
 Usage of ASan is very straightforward. You have to only add compiler arguments:\\
 \begin{center}
-	\texttt{-fsanitize=address -fno-omit-frame-pointer}
+	\texttt{-fsanitize=address,undefined -fno-omit-frame-pointer}
 \end{center}
-The first parameter turns on the ASan and the second one prints a nicer stack trace in error messages.
-It is adviced by developers to use optimization, e.g., \texttt{-O1}, to get reasonable performance.
+The first parameter turns on the ASan and sanitizer for undefined behavior. The
+second one prints a nicer stack trace in error messages. It is adviced by
+developers to use optimization, e.g., \texttt{-O1}, to get reasonable
+performance.
 
 \subsection{Miscellaneous}
 This section describe miscellaneous software used in the project, e.g., Artistic Style, \ldots
@@ -1078,13 +1110,14 @@ Git was built to work with Linux kernel, that means it can effectively handle la
 The st2se used repository hosting on GitHub.
 
 \paragraph{Artistic Style}
-Astyle\footnote{\url{http://astyle.sourceforge.net/}} is a source code formatter and beautifuller.
-Works with C, C++ Objective-C, C\# and Java programming languages.
-The motivation to use this tool is to have uniform code style.
-Some of the editors by default insert spaces instead of tabs when pressing a key.
-Other editors have the abillity to insert space before tab lines to ''pretty up'' the code (Emacs).
-The solution to this problem is to use Artistic Style formatter.
-It can normalise the source code by rules defined in a configuration file provided by a developer of the project.
+Astyle\footnote{\url{http://astyle.sourceforge.net/}} is a source code formatter
+and beautifuller. Works with C, C++ Objective-C, C\# and Java programming
+languages. The motivation to use this tool is to have uniform code style. Some
+of the editors by default insert spaces instead of tabs when pressing a key.
+Other editors have the abillity to insert space before tab lines to visualy
+enhance the code (Emacs). The solution to this problem is to use Artistic Style
+formatter. It can normalise the source code by rules defined in a configuration
+file provided by a developer of the project.
 
 \paragraph{LCOV and GCOV}
 LCOV\footnote{\url{http://ltp.sourceforge.net/coverage/lcov.php}} is an extension to GCOV, a GNU tool which can determine what parts of a program was executed while running particular testcase.
@@ -1101,9 +1134,8 @@ This tool uses line coverage technique and it is the poorest coverage from the c
 \pagebreak
 \section{Usage}
 
-% Usage:
-% 	st2se [OPTION] filename ...
-%
+This section describes how to run the strace2seccomp tool, what runtime arguments
+it has and how to turn on different optimization algorithms.
 
 \begin{table}[h]
 \centering
@@ -1115,7 +1147,7 @@ This tool uses line coverage technique and it is the poorest coverage from the c
 	\texttt{-v}           & \texttt{----verbose}           & turn on verbose mode \\
 	\texttt{-d}           & \texttt{----debug}             & turn on debug mode \\
 	\texttt{-t}           & \texttt{----tracing}           & turn on tracing mode \\
-	\texttt{-A}           & \texttt{----analyze-grammar} & analyze grammar \\
+	\texttt{-A}           & \texttt{----analyze-grammar}   & analyze grammar \\
 	\texttt{-o=FILE}      & \texttt{----output=FILE}       &  set output file \\ \hline
 	\end{tabular}
 	\caption{General options overview}
@@ -1150,21 +1182,29 @@ in source.cpp. Files filename1 and filename2 will be used as input.
 \begin{lstlisting}
 > ./st2se -v -w --output=source.cpp filename1 filename2
 \end{lstlisting}
-	\caption{Example no. 1}
+	\caption{Running st2se with verbose mode, weak optimization, policy
+	will be printed into \texttt{source.cpp} file, and input will read from
+	\texttt{filename1} and \texttt{filename2}.}
 	\label{exec/run1}
 \end{figure}
 
-The command in Figure \ref{exec/run2} diverges only in the output format. The
-\texttt{--thread} will generate support for multithread or multiprocess applications and
-\texttt{--prolog} switch ensures that the filter will be located in function. This
-behavior is helpful for copy \& paste output into an existing program.
+The command in Figure \ref{exec/run2} diverges only in the output format and
+used optimization algorithm. The \texttt{--thread} will generate support for
+multithread or multiprocess applications and \texttt{--prolog} switch ensures
+that the filter will be located in function. This behavior is helpful for copy \&
+paste output into an existing program. The \texttt{-a} turns on the advanced
+algorithm for IDS optimization.
 
 \begin{figure}[H]
 	\lstset{style=npl}
 \begin{lstlisting}
-> ./st2se -w --output=source.cpp filename --thread --prolog
+> ./st2se -a --output=source.cpp filename --thread --prolog
 \end{lstlisting}
-	\caption{Example no. 2}
+	\caption{Running st2se with advanced optimization algorithm, output will be
+	printed into a \texttt{source.cpp} file, \texttt{filename} will be used as
+	input file, \texttt{----thread} switch will enables the synchronization of
+	the policy 	among threads, \texttt{----prolog} switch will generate function
+	wrapper for copy and paste policy into the code.}
 	\label{exec/run2}
 \end{figure}
 
@@ -1178,7 +1218,10 @@ found issues. This behaviour we can see in Figure \ref{exec/run3}
 \begin{lstlisting}
 > ./st2se -A
 \end{lstlisting}
-	\caption{Example no. 3}
+	\caption{Example of running st2se with option \texttt{-A} which turns on
+	a grammar analysis. This functionality is provided from the parser library
+	and is useful when we want to edit the parsing grammar and check for errors
+	in it.}
 	\label{exec/run3}
 \end{figure}
 
@@ -1241,9 +1284,9 @@ for this is that this class is used as abstract and thus we check only setters.
 
 \paragraph{IDS}
 This module test has multiple test cases. Here are tested constructors for
-\texttt{argument\_t} structure, it has tree constructors. Next, there are tested
-comparison operators for \texttt{argument\_t} class. After that, there is a test
-for insertion into \texttt{ids\_t}. Another test case consists of support
+\texttt{Argument} structure, it has tree constructors. Next, there are tested
+comparison operators for \texttt{Argument} class. After that, there is a test
+for insertion into \texttt{Ids}. Another test case consists of support
 functions of IDS module.
 
 \paragraph{Output}
@@ -1259,7 +1302,7 @@ test. In this test, we are checking the constructor, setters and getters and
 class methods.
 
 \paragraph{Module tests execution}
-In Figure \ref{exec/unit_tests} you can see how to run module tests from project
+In Figure \ref{exec/unit_tests}, you can see how to run module tests from project
 root directory.
 
 \begin{figure}[h]
@@ -1297,9 +1340,9 @@ fuzzers (programs that generates a stochastic input) record every crash or halt
 of a tested program. The stochastic data are in the most cases invalid to
 observer thus he can see how application handles invalid states and boundary
 conditions. The name comes from modern applications tendency to fail due to
-random input caused by line noise on 'fuzzy' telephon
-lines.\cite{Takanen:2008:FSS:1404500, N2LYDLnqzEFYp0wM, takanen2009fuzzing} In
-other literature, fuzzing can be named by these terms:
+random input caused by line noise on \emph{fuzzy} telephon lines
+\cite{Takanen:2008:FSS:1404500, N2LYDLnqzEFYp0wM, takanen2009fuzzing}. In other
+literature, fuzzing can be named by these terms:
 \begin{itemize}
 	\item Negative testing
 	\item Syntax testing
@@ -1357,9 +1400,9 @@ a little comparison of most popular fuzzers:
 	This is achieved by specifying number of wanted test runs with unique mutated files.
 	Another parameter that can be set is a random seed for mutation.
 	On the other hand, the tool does not provide a option to monitor target (program under test).
-	Radamsa is a multiplatform so it is built for Windows and Linux.\cite{radamsaThesis}
+	Radamsa is a multiplatform so it is built for Windows and Linux \cite{radamsaThesis}.
 
-	\item \textbf{Oss-fuzz} is a complex project developed by Google.\footnote{\url{https://github.com/google/oss-fuzz}}
+	\item \textbf{Oss-fuzz} is a complex project developed by Google\footnote{\url{https://github.com/google/oss-fuzz}}.
 	The architecture of this project is that the ClusterFuzz (fuzzer tools)
 	automatically pulls the newest source code from repository and it will starts
 	fuzzers and sanitizers \footnote{Dynamic testing tool that can detect bugs and
@@ -1388,29 +1431,33 @@ and \ref{fuz:result4a}.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/master/exec_speed.pdf}
-	\caption{master/exec\_speed}
+	\includegraphics[width=0.8\linewidth]{obrazky-figures/master/exec_speed.pdf}
+	\caption{Execution speed on thread no.1. As we can see, the executin speed
+	is not constant, but it oscilates due to instrumentation of other threads. }
 	\label{fuz:result1a}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_1/exec_speed.pdf}
-	\caption{thread\_1/exec\_speed}
+	\includegraphics[width=0.8\linewidth]{obrazky-figures/thread_1/exec_speed.pdf}
+	\caption{Execution speed on thread no.2. We can see that the execution speed
+	is constant.}
 	\label{fuz:result2a}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_2/exec_speed.pdf}
-	\caption{thread\_2/exec\_speed}
+	\includegraphics[width=0.8\linewidth]{obrazky-figures/thread_2/exec_speed.pdf}
+	\caption{Execution speed on thread no.3. We can see that the execution speed
+	is constant.}
 	\label{fuz:result3a}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\linewidth]{obrazky-figures/thread_3/exec_speed.pdf}
-	\caption{thread\_3/exec\_speed}
+	\includegraphics[width=0.8\linewidth]{obrazky-figures/thread_3/exec_speed.pdf}
+	\caption{Execution speed on thread no.4. We can see that the execution speed
+	is constant.}
 	\label{fuz:result4a}
 \end{figure}
 %
@@ -1489,7 +1536,7 @@ product to the customer by enterprise (many times it includes stakeholders as
 well). This activity represents demonstration of a software product and shows to
 the customer that the requirements fulfilled its obligations. By this activity
 you can decide if the product is ready for deployment. The software items must
-be examined to ensure that the provided product is complete i.e. the
+be examined to ensure that the provided product is complete, i.e., the
 architecture must be audited to check if it accurate reflects the software
 configuration. The test results are audited by functional configuration audit to
 certify that the software product satisfies its specification etc.''
@@ -1513,7 +1560,7 @@ evaluation of generated policies by \texttt{strace2seccomp}. In this project, we
 will focus only on a daemon because it is most involved in the whole project.
 
 Next program is called \emph{cp} which is part of a GNU project called
-\emph{coreutils}\footnote{\url{https://www.gnu.org/software/coreutils/coreutils.html}} .
+\emph{coreutils}\footnote{\url{https://www.gnu.org/software/coreutils/coreutils.html}}.
 The \emph{cp} is a program used for copying files across filesystem typically on
 POSIX operating systems. One of the advantages of this project is that it has a
 relatively big testsuite. The drawback of this program is that it is a part of a
@@ -1523,7 +1570,7 @@ tests. The patch will add strace command with appropriate flags before the
 invocation of \emph{cp}.
 
 Another program is \emph{find} from GNU project called
-\emph{findutils}\footnote{\url{https://www.gnu.org/software/findutils/}} . The
+\emph{findutils}\footnote{\url{https://www.gnu.org/software/findutils/}}. The
 \emph{find} is a program used to locate files or directories in filesystem. It
 is specific for GNU Linux as well as cp. This program has good testsuite as a
 \emph{coreutils} project does. The drawback of the project complexity is similar to
@@ -1532,7 +1579,7 @@ only in provided arguments thus it will test the robustness of clustering in the
 \texttt{strace2seccomp} tool.
 
 The last program is a school project from \emph{Network Applications} class called
-\emph{testovac}\footnote{\url{https://github.com/tammar96/ISA-testovac}} . This
+\emph{testovac}\footnote{\url{https://github.com/tammar96/ISA-testovac}}. This
 project was chosen for its multithreaded architecture. With this program, we can
 test if the filter is successfully distributed on other threads. The
 \emph{testovac} does not have a good testsuite thus we only run it in one
@@ -1595,7 +1642,7 @@ seccomp_rule_add(
 	SCMP_A0(SCMP_CMP_GE, 1), SCMP_A0(SCMP_CMP_LE, 5) // interval
 );
 	\end{lstlisting}
-	\caption{Possible interval expression}
+	\caption{Possible range expression}
 \end{figure}
 
 This issue was partially solved in this pull
@@ -1807,30 +1854,38 @@ minimax algorithm generated by strace2seccomp tool. There is no point even in
 testing the find tool because there would be the same problem.
 
 \chapter{Conclusion}
-Nowadays if we want to block malicious software we can use some software that
+Nowadays, if we want to block malicious software we can use some software that
 will terminate the process based on its behavior in system or we can use
 in-compiled policy that will terminate the program when it starts calling system
 call which was not allowed. This is done by seccomp by manually creating such
 policies.
 
-The goal of this thesis was to automate this process by translating strace to
-seccomp. This thesis is divided into multiple parts such as designing and
-implementing the intermediate data structure (IDS), used to represent system
-call in this tool. Another was to design and implement optimization algorithms
-for IDS. There were implemented three of them (strict, weak and advanced). The
-implementation was designed with design patterns to be easily extended with new
-optimization algorithms. Another part was to implement a policy generator from
-IDS. We decided to implement the policy generator into C/C++. In the end of the
-thesis, we evaluated the created policy. Multiple issues were found which
-were not caused by faulty implementation, but they were caused by the
-interpretation in seccomp. We analyzed this issue in the last part of this
-thesis.
+As a result of this thesis a program was created that can translate a strace log
+into the libseccomp policy. To achieve the translation we had to solve multiple
+problems. First of them was to create a simple inner data structure which will
+represent the whole strace log without duplicit information. The other problem
+we faced was to parse the strace log. In our case we used PEGTL library which
+was not the fastest solution but it was simple to prototype grammar with it.
+Another issue was to optimize and simplify the data structure. We implemented
+three algorithms (strict, weak, advanced). The implementation was designed with
+design patterns to be easily extended with new optimization algorithms. The last
+problem of development phase was to create policy generator. We implemented the
+same design pattern as in the optimizer, to provide extensibility of policy
+generator for other languages. We decided to implement the policy generator that
+creates policy in C/C++.
 
-This thesis can be extended with an interactive tool that generates a
-filter, runs the testsuite for a specific program with that filter and
-interactively edits issues found in the generated policy. Other extensions can be
-an implementation of other clustering algorithms or output into other languages
-as Go or Python that can be done as another dedicated thesis.
+The most interesting part of this thesis is the testing phase. During this phase
+we discovered multiple issues that prevent from correct policy interpretation.
+One of them is that the libseccomp library does not provide \emph{in range}
+operator yet. This operator prevents the correct policy generation for weak
+algorithm. The other discovered problem was the interpretation of the policy by
+seccomp. The seccomp terminated system call even if the policy contained the
+rule that allows the syscall. These issues were preventing us from
+complex testing of the developed tool.
+
+This thesis can be extended with another optimization algorithms or different
+implementations of policy generator, i.e, add support for other languages (Go).
+These extensions can be done as another dedicated thesis.
 
 
 %=========================================================================
