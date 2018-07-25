@@ -1860,19 +1860,19 @@ in-compiled policy that will terminate the program when it starts calling system
 call which was not allowed. This is done by seccomp by manually creating such
 policies.
 
-As a result of this thesis a program was created that can translate a strace log
-into the libseccomp policy. To achieve the translation we had to solve multiple
-problems. First of them was to create a simple inner data structure which will
-represent the whole strace log without duplicit information. The other problem
-we faced was to parse the strace log. In our case we used PEGTL library which
-was not the fastest solution but it was simple to prototype grammar with it.
-Another issue was to optimize and simplify the data structure. We implemented
-three algorithms (strict, weak, advanced). The implementation was designed with
-design patterns to be easily extended with new optimization algorithms. The last
-problem of development phase was to create policy generator. We implemented the
-same design pattern as in the optimizer, to provide extensibility of policy
-generator for other languages. We decided to implement the policy generator that
-creates policy in C/C++.
+Within this thesis, We succesfully designed and implemented a tool that can
+translate a strace log into the libseccomp policy. To achieve the translation we
+had to solve multiple problems. First of them was to create a simple inner data
+structure which will represent the whole strace log without duplicit
+information. The other problem we faced was to parse the strace log. In our
+case, we used PEGTL library which was not the fastest solution but it was simple
+to prototype grammar with it. Another issue was to optimize and simplify the
+data structure. We implemented three algorithms (strict, weak, advanced). The
+implementation was designed with design patterns to be easily extended with new
+optimization algorithms. The last problem of development phase was to create
+policy generator. We implemented the same design pattern as in the optimizer, to
+provide extensibility of policy generator for other languages. We decided to
+implement the policy generator that creates policy in C/C++.
 
 The most interesting part of this thesis is the testing phase. During this phase
 we discovered multiple issues that prevent from correct policy interpretation.
