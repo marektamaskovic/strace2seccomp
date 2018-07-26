@@ -6,9 +6,9 @@
 % \listoftodos
 
 \chapter{Introduction}
-Nowadays, when malicious code or malware is becoming more and more sophisticated and pressing security risk, it is really needed to control a program behaviour and monitor what the program is doing in a system.
-Monitoring program behaviour can be done in many ways and one of the easiest ways is to use Intrusion Detection System (IDS).
-IDS is an out-of-the-box solution which can monitor i.e. where program wrote or read something and it is not allowed.
+Nowadays, when malicious code or malware is becoming more and more sophisticated and pressing security risk, it is really needed to control a program behavior and monitor what the program is doing in a system.
+Monitoring program behavior can be done in many ways and one of the easiest ways is to use Intrusion Detection System (IDS).
+IDS is an out-of-the-box solution which can monitor i.e. where program wrote or read something, and it is not allowed.
 After that, IDS is reporting this violation.
 
 Another way is to monitor and block system calls (syscalls).
@@ -43,7 +43,7 @@ The system call appears to a standard developer as a C function call.
 This design is typical for monolithic kernels.
 We can find them on every UNIX system.
 The system call can be called on Linux/i86 multiple ways. One of them is to call interruption no. \texttt{0x80} with value of syscall in register \texttt{eax}.
-The seccond and third one is by calling system calls \texttt{syscall()} or \texttt{sysenter()} and these syscalls are handled by the kernel in a privileged mode.
+The second and third one is by calling system calls \texttt{syscall()} or \texttt{sysenter()} and these syscalls are handled by the kernel in a privileged mode.
 When a user invokes a system call, an execution flow is as follows:
 \begin{itemize}
 	\item Each syscall is vectored through a stub in libc.
@@ -57,7 +57,7 @@ When a user invokes a system call, an execution flow is as follows:
 	\item Control is transferred to the syscall service.
 	\item Syscall returns a value to the register \texttt{EAX} on a 32-bit architecture or \texttt{RAX} on a 64-bit architecture.
 	\item At the end of the syscall, \texttt{\_ret\_from\_sys\_call\(\)} is called.
-    	  This call is done before returning to userspace.
+    	  This call is done before returning to user space.
           It checks if the scheduler should be run, and if so, it calls it.
 	\item Immediately after return from the system call to interrupt handler, \texttt{syscallX()} macro checks for a negative return value from the syscall, if so it puts a positive copy of a return value to a global variable \texttt{\_errno}, for accessing from code like \texttt{perror()}.
 \end{itemize}
@@ -86,7 +86,7 @@ Strace \cite{strace_man} is a easy to use diagnostic, instructional and debuggin
 You can monitor every syscall or signal made by the program you are tracking.
 Using this tool it is possible to log what the observed program demanded from the kernel.
 The individual recorded operations can be, e.g., an attempt to open a file or delete a content of CPU caches.
-This tool also shows arguments for the called syscall and it can show data strcutures with their elements, etc.
+This tool also shows arguments for the called syscall and it can show data structures with their elements, etc.
 The developer can perform a fault injection for the specified set of syscalls as well, to simulate the program in faulty test cases.
 Another feature is that the Strace can trace child processes of the observing program.
 The log on the output will contain the system calls from the primary process and its child processes.
@@ -175,8 +175,8 @@ You need to write some scripts to define which syscalls you want to be informed 
 \paragraph{SystemTap}
 SystemTap \cite{systemtap} is a tracing and probing tool that allows to gather information from probes injected into the kernel.
 It is similar to Dtrace.
-It started as a clone of Dtrace because it has uncompatible licence for using in GNU Linux.
-One of the common thing with Dtrace is that both tools use some type of scripting language.
+It started as a clone of Dtrace because it has incompatible license for using in GNU Linux.
+One of the common things with Dtrace is that both tools use some type of scripting language.
 In this case it is named SystemTap.
 With this language you can specify what happens when some event occurs in the kernel.
 
@@ -186,17 +186,17 @@ It is done in a few steps.
 At first it runs semantic analysis on the script.
 After that, stap tries to translate it into a C code.
 The next step is to compile it as a kernel module and load it into the kernel.
-After load it is working and doing the useful part.
+After loading it is working and doing the useful part.
 When you send a signal to terminate the stap program it will unload the kernel module and stop working.
 
 Similar as Dtrace the SystemTap is too complicated to work as system call monitor and it is not flawless.
-The Systemtap can not dereference the pointer address in the system call but the strace tool can.
+The Systemtap cannot dereference the pointer address in the system call but the strace tool can.
 
 
 \paragraph{Autrace}
 The Linux Auditing System helps system administrators to create an audit trail.
 Every action on workstation or server is logged into a log file.
-This tool can track security-relevant events, record the events and detect misuses or unauthorised activities by inspecting the audit log.
+This tool can track security-relevant events, record the events and detect misuses or unauthorized activities by inspecting the audit log.
 You can also set which actions should or should not be reported.
 
 Audit System is composed of two main parts.
@@ -226,7 +226,7 @@ exe="/usr/bin/cat" key="sshconfigchange"
 \chapter{Security Facilities in Linux}
 \label{chap:third}
 This chapter describes security facilities in GNU Linux operating system.
-First we mention an old tool named Systrace \cite{systrace_web}.
+First, we mention an old tool named Systrace \cite{systrace_web}.
 Later we will mention a secure computing module named Seccomp \cite{seccomp_sandbox}.
 The next topic will be Berkley Packet Filter (BPF) because it is used in seccomp-bpf.
 The seccomp-bpf is an extension to basic seccomp.
@@ -349,15 +349,15 @@ As you can see in the figure, there are 5 parts that are opcode (operation code)
 
 \section{Libseccomp}
 Libseccomp \cite{libseccomp_git} is easy to use library which provides a platform-independent interface to the Linux Kernel's syscall filtering.
-The libseccomp API is designed to abstract an user from underlying BPF based syscall filtering and present a more conventional function-call based filtering interface.
+The libseccomp API is designed to abstract a user from underlying BPF based syscall filtering and present a more conventional function-call based filtering interface.
 The interface should be more familiar to and quickly adopted by application developers.
 The comparison of libseccomp and raw BPF filter is shown in Appendix \ref{lst:raw_bpf} and \ref{lst:libseccomp}.
 
-The library accept on input a set of rules which are later transformed into a BPF format used in seccomp.
-One of the advantages of a libseccomp is that you can write a function call based filter.
+The library accepts on input a set of rules which are later transformed into a BPF format used in seccomp.
+One of the advantages of a libseccomp is that you can write a function call-based filter.
 This filter is then translated to BPF and after that it is loaded into seccomp as filter.
 This method is not transitive from function call filter to BPF.
-There are some differences but they are on so small-scale that they can be ignored.
+There are some differences, but they are on so small-scale that they can be ignored.
 
 Another advantages of seccomp is that it has a permissive mode in which every syscall violation is reported to the user.
 This feature can be helpful if you want to obtain information which syscalls was called.
@@ -408,7 +408,7 @@ adding components and reduces duplicit code. But in this case, this pattern is
 slightly modified. The data in the pipeline is processed as the whole batch.
 
 The similar components with compilers. They have got a parser, optimizer and
-output generator as well and every component is dependent on a precendent
+output generator as well and every component is dependent on a precedent
 component. There are two main cases as shown in Figure
 \ref{fig:tikz:architecture}.
 
@@ -428,22 +428,22 @@ libseccomp commands. This pipeline is shown in Figure
 \ref{fig:tikz:architecture})}. There are no optimizations when optimizer is
 turned off.
 
-The main problem of not using a optimizer is that a system call filter does not
+The main problem of not using an optimizer is that a system call filter does not
 properly work. There is a possibility that any minor change in system call
 parameters can results into a program termination. In complex program, there is
-no way to be definitely sure wheather every syscall was caught. That can be a
+no way to be definitely sure whether every syscall was caught. That can be a
 big problem in programs which use seccomp. That is the main reason why this
 option is not recommended.
 
-However there are some users which may not want to optimize the strace. The
+However, there are some users which may not want to optimize the strace. The
 reason for not running the optimizer is that their application does not have
-variable parameteres in system calls. Every syscall is the same on any running
+variable parameters in system calls. Every syscall is the same on any running
 instance of the application. Attentive reader may notice that this option can be
 used only in small applications which have some limited functionality.
 
 The main disadvantage of this solution is that it is too robust to place it in a
 code and is very strict. It can kill a program even in a false positive case
-when an user changes some of the parameters that was not covered in strace input
+when a user changes some of the parameters that was not covered in strace input
 files.
 
 \paragraph{With Optimizer.}
@@ -452,10 +452,10 @@ In this case when optimizer is turned on \textit{(path: a. I. II. b. in Figure
 want. As mentioned in Section \ref{sec:requirements}, there are two variants of
 optimization. Those variants can be switched with runtime arguments in CLI.
 
-The pitfalls of this case is allowing program to continue even in inappropriate
+The pitfalls of this case are allowing program to continue even in inappropriate
 circumstances. Invalid circumstances can be defined as a bad syscall argument
 treated as a valid. It can happen when you allow a set of arguments for specific
-syscall. This is not secure however it is more suitable for work than the case
+syscall. This is not secure however, it is more suitable for work than the case
 without optimizer.
 
 You can minimize these pitfalls by providing a lot of strace input files. The
@@ -465,7 +465,7 @@ best case is when you provide strace files from every major complex test case
 \subsection{Parser}
 The parser is crucial part of the whole application because
 it will put everything in an IR (intermediate representation). Input to the
-parser is a output from the \texttt{Strace} tool. The output was described in
+parser is an output from the \texttt{Strace} tool. The output was described in
 Section \ref{sec:strace} and correct configuration of strace to generate valid
 output for \texttt{strace2seccomp} will be described in Section
 \ref{sec:strace_config}. As you can see the output is in a structured form and
@@ -478,7 +478,7 @@ can print structured parsed data.
 
 \subsection{Intermediate Data Structure}
 \label{ids:description}
-One of the main part of strace2seccomp is an intermediate data structure (IDS) in
+One of the main parts of strace2seccomp is an intermediate data structure (IDS) in
 which the individual system calls are stored. The main idea of this abstract
 data type (ADT) is to be simple and readable with smallest redundancy possible.
 This can be done only with good abstraction and good design.
@@ -551,11 +551,11 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 	\paragraph{Minmax optimization.}
 	Minmax optimization is the most basic one of this set of optimizations.
 	The main idea is to find minimum and maximum for each argument of each syscall.
-	The model uses a simple  techniques to find extremes on every position of the system call.
-	Firstly it serialize the arguments from $n$-th position. Then the serialization
+	The model uses a simple  technique to find extremes on every position of the system call.
+	Firstly, it serialize the arguments from $n$-th position. Then the serialization
 	searches for extremes.
 
-	The abstracted algoritm follows as this:
+	The abstracted algorithm follows as this:
 	\begin{enumerate}
 		\item Serialize $n$-th argument position of a system call.
 		\item Search for extremes in serialization.
@@ -636,12 +636,12 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 	\paragraph{Clustering.}
 	Clustering is learning algoritm from a family of unsupervised machine
 	learning. It is a bunch of numerous operations focused on decomposition of
-	informations. When we decompose information then we can clasify it by
-	clasificators. One of them is clustering. Clustering has many definitions,
+	informations. When we decompose information then we can classify it by
+	classificators. One of them is clustering. Clustering has many definitions,
 	e.g. in book about data mining from Carlo Vercellis
 	\cite{doi:10.1002/9780470753866.ch12} is clustering defined as
 	''\emph{Clustering models is to subdivide the records of a dataset into homo-
-	geneous groups of observations, called clusters , so that observations
+	geneous groups of observations, called clusters, so that observations
 	belonging to one group are similar to one another and dissimilar from
 	observations included in other groups.}''.
 
@@ -654,7 +654,7 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 	dissimilarities both should have the potential to be examined in a clear and
 	meaningful way.}''.
 
-	The clasification of raw data can be done in mulitple ways.
+	The classification of raw data can be done in multiple ways.
 	Some basic methods are:
 	\begin{itemize}
 		\item Distribution models,
@@ -678,18 +678,18 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 	\paragraph{Advanced optimization.}
 	Advanced optimization is defined as combination of both strict and weak
 	optimizations. In some specific cases, it will use only the exact values and in
-	other cases, it will use weak optimizations. This combination should be more
-	strict than the weak optimization and weaker than the strict optimization.
+	other cases, it will use weak optimizations. This combination should be
+	stricter than the weak optimization and weaker than the strict optimization.
 
 	In this case, DBSCAN clustering method is used
 	\cite{Schubert:2017:DRR:3129336.3068335}. The model introduced by DBSCAN uses
-	a simple minimum density level estimation. It defines a treshold for the
+	a simple minimum density level estimation. It defines a threshold for the
 	number of neighbors (minPts) within the radius $\epsilon$. Objects with more
-	than treshold neighbors within $\epsilon$ are treated as core points. The
+	than threshold neighbors within $\epsilon$ are treated as core points. The
 	intention of DBSCAN is to find all areas, which satisfy at least the minimum
 	density separated by areas with lower density (noise). Every point in
 	$\epsilon$ radius is a part of the same cluster as a core point. If any
-	neighbour is again a core point, their neighbourhoods are transitively
+	neighbor is again a core point, their neighborhoods are transitively
 	included to a core point. This is very simple and basic algorithm as you can
 	see later in this section. The strength and weakness of DBSCAN clustering is
 	that it does not require a number of output clusters.
@@ -715,7 +715,7 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 	The abstracted algorithm is:\nopagebreak
 	\begin{enumerate}
 			\item Find neighbors in $\epsilon$ radius of every point, and find core
-			points with more that minimum neigthnours (minPts).
+			points with more that minimum neighbors (minPts).
 			\item Find connected core points on the graph and merge them into clusters.
 			\item Assign every non-core point to a core point. If the non-core point
 			is in $\epsilon$ radius of that core-point else assign it to noise.
@@ -737,7 +737,7 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 
 			\KwIn{$DB$: Database}
 			\KwIn{$symbol$: $\varepsilon$}
-			\KwIn{$minPts$: Density treshold}
+			\KwIn{$minPts$: Density threshold}
 			\KwIn{$dist$: Distance function}
 			\KwData{$label$: Point labels, initiall $undefined$}
 
@@ -746,7 +746,7 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 					\Continue
 				}
 
-			Neighbours $N$ $\leftarrow$ \RangeQuery{DB, dist, p, $\varepsilon$}\Comment*[f]{Find initial neighbors}
+			neighbors $N$ $\leftarrow$ \RangeQuery{DB, dist, p, $\varepsilon$}\Comment*[f]{Find initial neighbors}
 
 			\If(\hfill\texttt{// Non-core points are noise}){$\left|N\right| < minPts$}{
 				\label{$p$} $\leftarrow$ Noise
@@ -766,7 +766,7 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 				\lIf{\label{$q$} $\neq$ $undefined$}{
 					\Continue
 				}
-				Neighbours $N$ $\leftarrow$ \RangeQuery{DB, dist, q, $\varepsilon$}
+				neighbors $N$ $\leftarrow$ \RangeQuery{DB, dist, q, $\varepsilon$}
 
 				\label{$q$} $\leftarrow$ $c$
 
@@ -785,7 +785,7 @@ There are three approaches to reducing IDS (strict, advanced and minmax).
 
 \subsection{Pitfalls of Clustering}
 The clustering of the arguments of system call has some pitfalls.
-Some of them are described bellow.
+Some of them are described below.
 
 \paragraph{Address space layout randomization.}
 ASLR was introduced in 2001 by Page EXec (PaX) team to defense over buffer
@@ -796,9 +796,9 @@ attacked software.
 
 The idea behind ASLR is that the memory segments (stack, heap, libraries, ...)
 are located on different offsets during the runtime. With this technique you can
-achieve that exploits can not know where exactly is located, e.g., a stack
-segment in the memory. When ASLR is enabled, the analysis of the addresess in
-a system call make no sense. You can not know on which offset any segment will be.
+achieve that exploits cannot know where exactly is located, e.g., a stack
+segment in the memory. When ASLR is enabled, the analysis of the addresses in
+a system call make no sense. You cannot know on which offset any segment will be.
 
 ASLR is by now implemented in many modern OS (MS Windows, GNU/Linux, NetBSD, OpenBSD, MacOS).
 In Linux, this feature is enabled by a kernel. You can get information if ASLR is enabled in file e.g.:
@@ -823,7 +823,7 @@ Value description:
 \paragraph{String represented in memory}
 The strings are represented in memory as an offset where the string
 begins and ends with null termination. \cite{ISO9899}
-For this reason seccomp can not operate with strings and we will skip string arguments as well.
+For this reason seccomp cannot operate with strings and we will skip string arguments as well.
 
 \section{Parsing Expression Grammar}
 Parsing expression grammar was introduced by Ford in 2004.
@@ -878,11 +878,11 @@ As I mentioned earlier strace tool was chosen because it is easy to use system
 call monitoring tool. It can monitor what observed program demanded from a
 kernel. With strace tool it is possible to trace child processes. The main
 advantage of strace tool is that is does not need any of the source code files,
-program is not compiled with extra flags or withount any library or it does not
+program is not compiled with extra flags or without any library or it does not
 have to be statically linked. This were the reasons why I chose the strace tool
 as an input for the strace2seccomp.
 
-The output from strace tool has to be normalized before procesing with strace2seccomp.
+The output from strace tool has to be normalized before processing with strace2seccomp.
 The normalization is done by providing a few runtime arguments to the strace tool.
 Example:
 
@@ -899,12 +899,12 @@ I would like to describe what they are doing in the first place\cite{strace_man}
 
 \paragraph{-s} is a string size. We are setting a string size to zero because
 the libseccomp does not have the ability to work with strings. It does not know
-how long is the string or if it is really a string. By this option the filenames
+how long the string is or if it is really a string. By this option the filenames
 are not affected. They are printed in full length.
 
 \paragraph{-xx} this option will switch the format of strings to a hexadecimal format.
 It is much easier to parse strings in this format. It affects the filename as well.
-This option is used because sometimes a non ASCII (UTF--8) character can occure in filename.
+This option is used because sometimes a non ASCII (UTF--8) character can occur in filename.
 
 \paragraph{-f} traces children processes.
 
@@ -949,7 +949,7 @@ The next class diagram in Figure \ref{fig:class:ids} show us an Intermediate
 Data Structure (IDS). The IDS is handled with multiple components in this
 project, i.e., parser saves information there, etc., description is in Section
 \ref{ids:description}. As you can see the \texttt{Argument} class has three
-constructors.  Here could be used design pattern factory however there are only
+constructors.  Here could be used design pattern factory however, there are only
 two different cases of creating an object so it was not needed. The
 \texttt{Argument} class contains individual data about argument, e.g., the
 format value says if the argument is in 'key=value' or 'value' form. The actual
@@ -970,23 +970,23 @@ enumeration in C language.
 \texttt{Syscall} class in Figure \ref{fig:class:ids} is dependant  on the
 \texttt{Argument}. This class contains information about syscall, e.g.,
 name, number of arguments, and actual arguments. There is defined
-\texttt{print()} method that can print structurised data from syscall.
+\texttt{print()} method that can print structurized data from syscall.
 
 Class \texttt{Ids} in Figure \ref{fig:class:ids} describes the whole IDS. In
 this class is located class variable of type \texttt{std::map<std::string,
 Syscall>} wich hold syscall data. This means that \texttt{Ids} class is
 dependant on class \texttt{Syscall}. The \texttt{Ids} class includes methods,
-e.g., for structuralised print of whole class, or syscall only. It has
+e.g., for structuralized print of whole class, or syscall only. It has
 implemented method for inserting new Syscall object into the map.
 
-The Figure \ref{fig:class:algo} ilustrate dependency and generalization in class
-hierarchy in the optimizer. As you can see the \texttt{Optimizer} is dependant
+The Figure \ref{fig:class:algo} illustrate dependency and generalization in class
+hierarchy in the optimizer. As you can see the \texttt{Optimizer} is dependent
 on \texttt{Algorithm} class. The \texttt{Algorithm} class is generalized by
 specific algorithms, e.g., \texttt{Algo\_strict} class or
 \texttt{Algo\_advanced} class. The optimizer contains a pointer to the
 \texttt{Algorithm}. By this mechanism, it is really simple to change the
 algorithm in the optimizer and keep the logical structure. It contains methods
-for initializing and removing algorithm from an object. The algorithms has to
+for initializing and removing algorithm from an object. The algorithms have to
 override the \texttt{optimize} method in \texttt{Algorithm} class thus it is
 pure virtual in the base class. Because of that the compiler requests the
 implementation of optimize method in a new class that inherits from
@@ -1041,7 +1041,7 @@ Firstly, I mention compilers used in this project and after that valuable tools 
 \label{subsec:compilers}
 In this project, I used two compilers. The reason is simple.
 Every compiler can detect a different set of errors and warnings during the compilation.
-And at the time of doing project one of the reason of compiling with two compilers
+And at the time of doing project one of the reasons of compiling with two compilers
 was to compare the execution times with optimizations turned on.
 
 In the project, \texttt{libc++} and \texttt{libc++ ABI} from LLVM project was
@@ -1061,11 +1061,11 @@ The compiler collection is released under the GPL license, other components, e.g
 
 \paragraph{LLVM/Clang.}
 The goal of Clang\footnote{\url{https://clang.llvm.org/}} project is to provide a new C based language front-end (C, C++, Objective-C,) for the LLVM\footnote{\url{http://www.llvm.org/}} compiler.
-It is released under NCSA Open Source Licence. Clang is designed to be highly compatible with GCC.
+It is released under NCSA Open Source license. Clang is designed to be highly compatible with GCC.
 It supports most of the GCC compilation flags and unofficial language extensions\footnote{\url{https://clang.llvm.org/docs/LanguageExtensions.html}}.
 
 \subsection{Dynamic and Static Code Analysis}
-For correct development is necessary to find as many bugs as possible during the this phase.
+For correct development is necessary to find as many bugs as possible during this phase.
 This goal was achieved by ussing dynamic and static analysis tools.
 For static analysis was used an LLVM project named clang-tidy and for
 
@@ -1074,7 +1074,7 @@ Clang-tidy is a clang-based ''linter'' tool\footnote{\url{http://clang.llvm.org/
 Its purpose is to diagnose and fix typical programming errors,
 like interface misuse, style violation, or bugs that can be deduced via static analysis.
 Clang-tidy diagnostics are designed to assert code that has invalid coding standard or is otherwise problematic.
-It has options to diasable some false positive warnings (e.g. \texttt{\textbackslash\textbackslash NOLINT}).
+It has options to disable some false positive warnings (e.g. \texttt{\textbackslash\textbackslash NOLINT}).
 
 \paragraph{AddressSanitizer.}
 AddressSanitizer\footnote{\url{https://github.com/google/sanitizers/wiki/AddressSanitizer}} (ASan) is a memory error detector for C/C++ developed by Google.
@@ -1088,12 +1088,12 @@ Usage of ASan is very straightforward. You have to only add compiler arguments:\
 	\texttt{-fsanitize=address,undefined -fno-omit-frame-pointer}
 \end{center}
 The first parameter turns on the ASan and sanitizer for undefined behavior. The
-second one prints a nicer stack trace in error messages. It is adviced by
+second one prints a nicer stack trace in error messages. It is advised by
 developers to use optimization, e.g., \texttt{-O1}, to get reasonable
 performance.
 
 \subsection{Miscellaneous}
-This section describe miscellaneous software used in the project, e.g., Artistic Style, \ldots
+This section describes miscellaneous software used in the project, e.g., Artistic Style, \ldots
 \paragraph{Git}
 Git\footnote{\url{https://git-scm.com/about}} is a source code manager (SCM). It stands out of the group of SCMs by its branching model.
 Git allows and encourage you to have multiple local or remote branches that can be entirely independent.
@@ -1114,9 +1114,9 @@ Astyle\footnote{\url{http://astyle.sourceforge.net/}} is a source code formatter
 and beautifuller. Works with C, C++ Objective-C, C\# and Java programming
 languages. The motivation to use this tool is to have uniform code style. Some
 of the editors by default insert spaces instead of tabs when pressing a key.
-Other editors have the abillity to insert space before tab lines to visualy
+Other editors have the abillity to insert space before tab lines to visually
 enhance the code (Emacs). The solution to this problem is to use Artistic Style
-formatter. It can normalise the source code by rules defined in a configuration
+formatter. It can normalize the source code by rules defined in a configuration
 file provided by a developer of the project.
 
 \paragraph{LCOV and GCOV}
@@ -1202,7 +1202,7 @@ algorithm for IDS optimization.
 \end{lstlisting}
 	\caption{Running st2se with advanced optimization algorithm, output will be
 	printed into a \texttt{source.cpp} file, \texttt{filename} will be used as
-	input file, \texttt{----thread} switch will enables the synchronization of
+	input file, \texttt{----thread} switch will enable the synchronization of
 	the policy 	among threads, \texttt{----prolog} switch will generate function
 	wrapper for copy and paste policy into the code.}
 	\label{exec/run2}
@@ -1211,7 +1211,7 @@ algorithm for IDS optimization.
 When we want to check if the grammar in the parser is correct, we can use a
 built-in tool in parser library. This tool of the parser can be turned on with
 switch \texttt{-A}. Afterwards on standard output will be printed number of
-found issues. This behaviour we can see in Figure \ref{exec/run3}
+found issues. This behavior we can see in Figure \ref{exec/run3}
 
 \begin{figure}[H]
 	\lstset{style=npl}
@@ -1232,11 +1232,11 @@ of the aspects is \textit{module testing}. The main purpose of module testing is
 to detect errors in submodules, in communication among them and in passing data
 through data structures. Another aspect of verification is \textit{system
 testing} merged with \textit{acceptance testing}. In this type of testing, we
-will check if the strace2seccomp tool has a valid architectural design. Next we
+will check if the strace2seccomp tool has a valid architectural design. Next, we
 will check code with \textit{static analysis} tool and get information about
 errors in code. Static analysis is type of testing which does not require to run
 the program but requires a source code of the tool. The static analyzer will
-analyse the source codes with different heuristics and produces a list of
+analyze the source codes with different heuristics and produces a list of
 detected errors.
 
 
@@ -1268,7 +1268,7 @@ framework. This framework was chosen for its essential features which are:
 	\item no external dependencies,
 	\item only one core assertion macro,
 	\item tests can be tagged, and you can run only selected groups of tests,
-	\item supports BDD\footnote{Behaviour Driven Development} and
+	\item supports BDD\footnote{behavior Driven Development} and
 	TDD\footnote{Test Driven Development} which can be used for next development
 	cycle.
 \end{itemize}
@@ -1276,7 +1276,7 @@ framework. This framework was chosen for its essential features which are:
 \paragraph{Params Testing}
 Testing of the parameters was done manually which means by systematically
 picking border values or some invalid ones and providing them as runtime
-arguments for the strace2seccomp tool. It was automated with a handmande script.
+arguments for the strace2seccomp tool. It was automated with a handmade script.
 
 \paragraph{Generator}
 This test insists on setting class variables with class methods. The only reason
@@ -1340,14 +1340,14 @@ fuzzers (programs that generates a stochastic input) record every crash or halt
 of a tested program. The stochastic data are in the most cases invalid to
 observer thus he can see how application handles invalid states and boundary
 conditions. The name comes from modern applications tendency to fail due to
-random input caused by line noise on \emph{fuzzy} telephon lines
+random input caused by line noise on \emph{fuzzy} telephone lines
 \cite{Takanen:2008:FSS:1404500, N2LYDLnqzEFYp0wM, takanen2009fuzzing}. In other
 literature, fuzzing can be named by these terms:
 \begin{itemize}
 	\item Negative testing
 	\item Syntax testing
 	\item Dirty testing
-	\item Rubustness testing
+	\item Robustness testing
 	\item Protocol mutation
 	\item Fault injection
 \end{itemize}
@@ -1384,7 +1384,7 @@ a little comparison of most popular fuzzers:
 	of the tool is that it needs to be executed multiple times to achieve
 	multiprocess or multithread fuzzing.
 
-	\item \textbf{Honggfuzz}\footnote{\url{http://honggfuzz.com/}} is a evolutionary, security oriented, easy to use fuzzer with analysis options.
+	\item \textbf{Honggfuzz}\footnote{\url{http://honggfuzz.com/}} is an evolutionary, security oriented, easy to use fuzzer with analysis options.
 	The main advantage of this mutation based fuzzer is that it is multi-process and multi-threded without need to run multiple copies of fuzzer.
 	The file corpus is automatically shared and improved among the processes / threads.
 	Authors of the fuzzer says that it is blazing fast when it works in persistent fuzzing mode'.
@@ -1395,11 +1395,11 @@ a little comparison of most popular fuzzers:
 	The motivation for building this fuzzer was to make robustness testing accessible to independent developers.
 	The existing tools were considered hard to use and to customize to fit the project.
 	The fuzzer is a command line tool, on input it expects multiple files (samples), and generates mutated files.
-	So by the output Radamsa is considered as a mutation-based fuzzer.
+	So, by the output Radamsa is considered as a mutation-based fuzzer.
 	The tool includes feature aiding in automatizing test runs.
 	This is achieved by specifying number of wanted test runs with unique mutated files.
 	Another parameter that can be set is a random seed for mutation.
-	On the other hand, the tool does not provide a option to monitor target (program under test).
+	On the other hand, the tool does not provide an option to monitor target (program under test).
 	Radamsa is a multiplatform so it is built for Windows and Linux \cite{radamsaThesis}.
 
 	\item \textbf{Oss-fuzz} is a complex project developed by Google\footnote{\url{https://github.com/google/oss-fuzz}}.
@@ -1407,7 +1407,7 @@ a little comparison of most popular fuzzers:
 	automatically pulls the newest source code from repository and it will starts
 	fuzzers and sanitizers \footnote{Dynamic testing tool that can detect bugs and
 	faults during the execution. Typical sanitizers are \textit{ASan},
-	\textit{DFSan}, \ldots}. When some bug or fault occurs it is automatically
+	\textit{DFSan}, \ldots}. When some bug or fault occurs, it is automatically
 	reported to the OSS-fuzz issue tracker. Project owners are then notified with
 	an email about the issue. When the fix is submitted ClusterFuzz automatically
 	verifies the fix, adds a comment to issue tracker and closes the issue.
@@ -1420,11 +1420,11 @@ The chosen fuzzer was AFL for its ability of fast deployment and easy of use.
 The opposite example is Oss-fuzz which is the whole infrastructure for fuzzing and bug hunting.
 
 In fuzzed program, only parsing was enabled every other module was turned off.
-The fuzzer run straight twenty one days and during this time it was discovered
+The fuzzer run straight twenty-one days and during this time it was discovered
 three false positive hangs and no crashes. Fuzzing runs in four threads on Intel
 Core i7-4810MQ. Overall the fuzzed program was executed 3,567,228,619 times.
 
-The number of execution per second was not stable on master thread because it
+The number of executions per second was not stable on master thread because it
 was necessary to instrument other three processes. This instability can be
 seen among Figures \ref{fuz:result1a}, \ref{fuz:result2a}, \ref{fuz:result3a}
 and \ref{fuz:result4a}.
@@ -1432,7 +1432,7 @@ and \ref{fuz:result4a}.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\linewidth]{obrazky-figures/master/exec_speed.pdf}
-	\caption{Execution speed on thread no.1. As we can see, the executin speed
+	\caption{Execution speed on thread no.1. As we can see, the execution speed
 	is not constant, but it oscilates due to instrumentation of other threads. }
 	\label{fuz:result1a}
 \end{figure}
@@ -1551,7 +1551,7 @@ correctly.
 \subsection{Testing on real programs}
 For this testing four programs was picked. RedHat Inc. demands one, and that is
 USBGuard\footnote{\url{https://usbguard.github.io/}}. USBGuard is an open source
-project developed under GNU GPL v2.0 licence. It implements USB device
+project developed under GNU GPL v2.0 license. It implements USB device
 authorization which can be set up locally or with centralized
 management \cite{usbguardCentralized}. USBGuard has a sophisticated architecture
 which is complicated enough for use in this testing. Another advantage of
@@ -1564,7 +1564,7 @@ Next program is called \emph{cp} which is part of a GNU project called
 The \emph{cp} is a program used for copying files across filesystem typically on
 POSIX operating systems. One of the advantages of this project is that it has a
 relatively big testsuite. The drawback of this program is that it is a part of a
-big project and is though to acquire strace logs from testsuite. This problem I
+big project and is tough to acquire strace logs from testsuite. This problem I
 solved by manually patching the Makefile which was responsible for running
 tests. The patch will add strace command with appropriate flags before the
 invocation of \emph{cp}.
@@ -1599,8 +1599,8 @@ The script has multiple subcommands:
 	\item \texttt{tests} will run testsuits
 	\item \texttt{clean} will clean the testing folder
 	\item \texttt{revertPatches} will revertPatches
-	\item \texttt{straceON} will turn on strace output while runing testsuite
-	\item \texttt{straceOFF} will turn off strace output while runing testsuite
+	\item \texttt{straceON} will turn on strace output while running testsuite
+	\item \texttt{straceOFF} will turn off strace output while running testsuite
 \end{itemize}
 
 \begin{figure}[H]
@@ -1615,7 +1615,8 @@ The script has multiple subcommands:
 \subsection{Test Requirements}
 Requirements for the testing are:
 \begin{enumerate}
-	\item Internet connection - used for download tested software.
+	\item Internet connection - used for download tested software (findutils,
+	coreutils, usbguard).
 	\item Computer with x86 architecture - For testing purpose was chosen
 	machine with x86 architecture.
 \end{enumerate}
@@ -1735,10 +1736,10 @@ tracker\footnote{\url{https://github.com/seccomp/libseccomp/issues/93}} and
 there is a working solution to this issue. However, there were many conflicts in
 code when applying those patches, and even if we applied those patches, it was
 in conflict with a previously applied patch that was the workaround for ranges.
-Thus we decided to stick with range patch (it is more important then thread
+Thus we decided to stick with range patch (it is more important than thread
 support), and not with the multithread patches. In the end, there is still
 implemented the multithread support in the developed tool without regard to
-functionality in libseccomp. As we can notice, one of the involved programs for
+functionality in libseccomp. As we cannotice, one of the involved programs for
 complex testing, testovac, cannot be tested.
 
 In the testing phase was discovered issues in the generated filter as well. We
@@ -1765,7 +1766,7 @@ openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = ?
 \end{figure}
 
 The \texttt{openat} has three arguments which are constant, path, and bitfield.
-The path is not processed by our tool so we will aim for the other two
+The path is not processed by our tool, so we will aim for the other two
 arguments. The first one is \texttt{AT\_FDCWD} and it is defined in source file
 \texttt{'/include/uapi/linux/fcntl.h'} with value '-100'. The bitfield
 is located in file \texttt{'/include/uapi/asm-generic/fcntl.h'} and the macro
@@ -1861,11 +1862,11 @@ call which was not allowed. This is done by seccomp by manually creating such
 policies.
 
 Within this thesis, We succesfully designed and implemented a tool that can
-translate a strace log into the libseccomp policy. To achieve the translation we
+translate a strace log into the libseccomp policy. To achieve the translation, we
 had to solve multiple problems. First of them was to create a simple inner data
 structure which will represent the whole strace log without duplicit
 information. The other problem we faced was to parse the strace log. In our
-case, we used PEGTL library which was not the fastest solution but it was simple
+case, we used PEGTL library which was not the fastest solution, but it was simple
 to prototype grammar with it. Another issue was to optimize and simplify the
 data structure. We implemented three algorithms (strict, weak, advanced). The
 implementation was designed with design patterns to be easily extended with new
