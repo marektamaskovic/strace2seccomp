@@ -1,13 +1,34 @@
-\documentclass[10pt,xcolor=pdflatex]{beamer}
+\documentclass[10pt,xcolor=svgnames,pdflatex]{beamer}
 \usepackage{newcent}
 \usepackage[utf8]{inputenc}
 %\usepackage[czech]{babel}
 \usepackage{biblatex}
 \usepackage{hyperref}
 \usepackage{fancyvrb}
-\usepackage{tikz}
-\usepackage{tikz-qtree}
 \usepackage{float}
+
+\usepackage{tikz}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.geometric}
+
+\pgfdeclarelayer{edgelayer}
+\pgfdeclarelayer{nodelayer}
+\pgfsetlayers{edgelayer,nodelayer,main}
+
+\tikzstyle{none}=[inner sep=0pt]
+
+\tikzstyle{rn}=[circle,fill=Red,draw=Black,line width=0.8 pt]
+\tikzstyle{gn}=[circle,fill=Lime,draw=Black,line width=0.8 pt]
+\tikzstyle{yn}=[circle,fill=Yellow,draw=Black,line width=0.8 pt]
+
+\tikzstyle{simple}=[-,draw=black,line width=2.000]
+\tikzstyle{arrow}=[-,draw=black,postaction={decorate},decoration={markings,mark=at position .5 with {\arrow{>}}},line width=2.000]
+\tikzstyle{tick}=[-,draw=black,postaction={decorate},decoration={markings,mark=at position .5 with {\draw (0,-0.1) -- (0,0.1);}},line width=2.000]
+\tikzstyle{newstyle}=[->,draw=black,line width=2.000]
+
+\usepackage{tikz-qtree}
+
+
 \usetheme{FIT}
 
 \usetikzlibrary{arrows,backgrounds,shadows, positioning}
@@ -73,6 +94,16 @@ xtamas01@fit.vutbr.cz}
           \end{itemize}
         \end{column}
     \end{columns}
+    \vfill
+    \begin{figure}[]
+	  \centering
+	  % \includestandalone[]{obrazky-figures/mytikz}%     without .tex extension
+	  \resizebox {0.5\textwidth} {!} {
+	    \input{img/files.tikz}
+	  }
+	  \caption{Transforamtion}
+	  \label{fig:tikz:transformation}
+	\end{figure}
 \end{frame}
 
 \begin{frame}\frametitle{Architecture}
@@ -81,7 +112,7 @@ xtamas01@fit.vutbr.cz}
   \resizebox {\textwidth} {!} {
     \input{../obrazky-figures/architecture0}
   }
-  % \caption{Architecture of strace2seccomp}
+  \caption{Pipe\&Filter Architecture}
   \label{fig:tikz:architecture}
 \end{figure}
 \end{frame}
@@ -121,6 +152,7 @@ xtamas01@fit.vutbr.cz}
     	\end{itemize}
     	\item Created \emph{testsuite}
     	\item \textit{"It is on good way to appear in production"}
+    	\item $\sim$ 2.8K LOC\footnote{Lines of Code} + 
     \end{itemize}
 \end{frame}
 
