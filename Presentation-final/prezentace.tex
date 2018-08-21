@@ -45,7 +45,6 @@ xtamas01@fit.vutbr.cz}
        \item Ing. Lenka Turo\v{n}ov\'a
        \item Bc. Daniel Kope\v{c}ek
        \item Cooperation with RedHat Inc.\\
-       \item What is \emph{strace2seccomp}?
        \item Motivation?
      \end{itemize}
   \end{column}
@@ -63,13 +62,14 @@ xtamas01@fit.vutbr.cz}
         \begin{column}{0.5\textwidth}
           Input:
           \begin{itemize}
-            \item strace
+            \item \emph{strace} log
           \end{itemize}
         \end{column}
         \begin{column}{0.5\textwidth}
           Output:
           \begin{itemize}
-            \item C\textbackslash C++ code
+            \item C\textbackslash C++ code template
+            \item \emph{libseccomp}
           \end{itemize}
         \end{column}
     \end{columns}
@@ -122,36 +122,47 @@ xtamas01@fit.vutbr.cz}
 
   \begin{itemize}
     \item Three optimization levels
+     \begin{itemize}
+	    \item \emph{Strict}:
+	    \begin{itemize}
+	      \item 1:1
+	      \item input $\rightarrow$ output
+	    \end{itemize}
+	    \item \emph{MinMax}:
+	    \begin{itemize}
+	      \item allowed intervals
+	      \item border values are extremes
+	    \end{itemize}
+	    \item \emph{DBSCAN}\footnote{Density-based spatial clustering of applications with noise}:
+	    \begin{itemize}
+	      \item implemented DBSCAN\cite{Mahesh_Kumar2016, Schubert:2017:DRR:3129336.3068335}
+	    \end{itemize}
+	  \end{itemize}
   \end{itemize}
-  \vspace{1cm}
 
-  \begin{itemize}
-    \item Strict:
-    \begin{itemize}
-      \item 1:1
-      \item input $\rightarrow$ output
-    \end{itemize}
-    \item MinMax:
-    \begin{itemize}
-      \item allowed intervals
-      \item border values are extremes
-    \end{itemize}
-    \item DBSCAN:
-    \begin{itemize}
-      \item implemented DBSCAN\cite{Mahesh_Kumar2016, Schubert:2017:DRR:3129336.3068335}
-    \end{itemize}
-  \end{itemize}
+ 
 \end{frame}
 
 \begin{frame}\frametitle{What have I achieved?}
-    Example \emph{content}.
+    \begin{itemize}
+    	\item Designed program architecture
+    	\item Implemented:
+    	\begin{itemize}
+    		\item IDS\footnote{Intermediate Data Structure}
+    		\item 3 algorithms
+    	\end{itemize}
+    	\item Created testsuite
+    	\item \textit{"It is on good way to appear in production"}
+    \end{itemize}
 \end{frame}
 
 \begin{frame}\frametitle{Planed Extensions}
   \begin{itemize}
-    \item a
-    \item a
-    \item a
+    \item \emph{Go} support
+    \item \emph{ASLR}\footnote{Address Space Layout Randomization} turned off
+    \item Customizable template
+    \item Packaging
+    \item More algorithms
   \end{itemize}
 \end{frame}
 
@@ -162,7 +173,7 @@ xtamas01@fit.vutbr.cz}
 
 \appendix
 
-\begin{frame}\frametitle{Question}
+\begin{frame}\frametitle{Question for defense}
     Název vašeho algoritmu je Minmax nebo Minimax? (V BP je toto nekonzistentní, i ve zdrojových kódech). Dokážete vysvětlit rozdíl oproti existujícímu algoritmu Minimax?
 \end{frame}
 
