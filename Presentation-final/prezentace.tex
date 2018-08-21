@@ -50,7 +50,7 @@ xtamas01@fit.vutbr.cz}
   \end{column}
   \begin{column}{0.4\textwidth}
       \begin{center}
-        \includegraphics[width=1\textwidth]{img/Red_Hat_logo_RedHat}
+        \includegraphics[width=1\textwidth]{img/Logo_RH_BW_RGB}
       \end{center}
   \end{column}
 \end{columns}
@@ -83,38 +83,6 @@ xtamas01@fit.vutbr.cz}
   }
   % \caption{Architecture of strace2seccomp}
   \label{fig:tikz:architecture}
-\end{figure}
-\end{frame}
-
-\begin{frame}\frametitle{Inner Representation}
-  \begin{figure}[h]
-  \centering
-  \begin{tikzpicture}
-  \Tree [.root
-          [.read
-            [.fd1
-              [.buff1 42 ]
-              [.buff2 42 84 ]
-            ]
-            [.fd2
-              [.buff1 15 13 20 ]
-              [.buff2 20 ]
-            ]
-          ]
-          [.write
-            [.fd1
-              [.buff1 27 11 ]
-              [.buff2 13 15 ]
-            ]
-            [.fd2
-              [.buff1 11 31 ]
-              [.buff2 17 ]
-            ]
-          ]
-        ]
-  \end{tikzpicture}
-  % \caption{Visualized IDS as a tree}
-  \label{fig:tikz:IDStree}
 \end{figure}
 \end{frame}
 
@@ -171,12 +139,44 @@ xtamas01@fit.vutbr.cz}
 	\printbibliography
 \end{frame}
 
+\bluepage{Any questions?}
+
 \appendix
 
 \begin{frame}\frametitle{Question for defense}
     Název vašeho algoritmu je Minmax nebo Minimax? (V BP je toto nekonzistentní, i ve zdrojových kódech). Dokážete vysvětlit rozdíl oproti existujícímu algoritmu Minimax?
 \end{frame}
 
-\bluepage{Any questions?}
+\begin{frame}\frametitle{Inner Representation}
+  \begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+  \Tree [.root
+          [.read
+            [.fd1
+              [.buff1 42 ]
+              [.buff2 42 84 ]
+            ]
+            [.fd2
+              [.buff1 15 13 20 ]
+              [.buff2 20 ]
+            ]
+          ]
+          [.write
+            [.fd1
+              [.buff1 27 11 ]
+              [.buff2 13 15 ]
+            ]
+            [.fd2
+              [.buff1 11 31 ]
+              [.buff2 17 ]
+            ]
+          ]
+        ]
+  \end{tikzpicture}
+  % \caption{Visualized IDS as a tree}
+  \label{fig:tikz:IDStree}
+\end{figure}
+\end{frame}
 
 \end{document}
