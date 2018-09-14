@@ -32,4 +32,8 @@ namespace st2se {
         allowOnlySc = b;
     }
 
+    void Output::setFuncName(std::string fn) {
+    	funcName = fn;
+    }
+
 } // namespace st2se

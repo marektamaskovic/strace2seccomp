@@ -39,20 +39,21 @@
  */
 class Params {
   public:
-    int help {0};                           /**< help switch*/
-    int weak {0};                           /**< weak algorithm switch*/
-    int strict {0};                         /**< strict algorithm switch*/
-    int advanced {0};                       /**< advanced algorithm switch*/
-    int verbose {0};                        /**< verbose mode switch*/
-    int debug {0};                          /**< debug mode switch*/
-    int tracing {0};                        /**< tracing mode switch*/
-    int analysis {0};                       /**< analysis mode switch*/
-    int thread {0};                         /**< print thread support switch*/
-    int prolog {0};                         /**< print function wrapper around filter in output switch*/
-    int scOnly {0};                         /**< syscall only output switch*/
-    int showProgress {0};                   /**< syscall only output switch*/
-    std::string output {};                  /**< output file name */
-    std::vector<std::string> file_names {}; /**< input filenames */
+    int help {0};                                     /**< help switch*/
+    int weak {0};                                     /**< weak algorithm switch*/
+    int strict {0};                                   /**< strict algorithm switch*/
+    int advanced {0};                                 /**< advanced algorithm switch*/
+    int verbose {0};                                  /**< verbose mode switch*/
+    int debug {0};                                    /**< debug mode switch*/
+    int tracing {0};                                  /**< tracing mode switch*/
+    int analysis {0};                                 /**< analysis mode switch*/
+    int thread {0};                                   /**< print thread support switch*/
+    int prolog {0};                                   /**< print function wrapper around filter in output switch*/
+    int scOnly {0};                                   /**< syscall only output switch*/
+    int showProgress {0};                             /**< syscall only output switch*/
+    std::string output {};                            /**< output file name */
+    std::string funcName {"setup_seccomp_whitelist"}; /**< output function name */
+    std::vector<std::string> file_names {};           /**< input filenames */
 
     /**
      * Constructor

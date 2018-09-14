@@ -58,6 +58,17 @@ namespace st2se {
         }
     }
 
+    inline void outputCPP::writeFuncProlog() {
+        output_source << fmt::format("{0}int {1}(){2}\n", opt_indent, funcName,'{');
+        output_source << fmt::format("{0}{1}scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_KILL);\n", indent, opt_indent);
+        output_source << fmt::format("{0}{1}int ret = 0;\n", indent, opt_indent);
+    }
+
+    inline void outputCPP::writeFuncEpilog() {
+        output_source << fmt::format("{0}{1}\n",opt_indent,'}');
+    }
+
+
     inline void outputCPP::writeLastPart() {
         std::string line;
 
@@ -89,6 +100,8 @@ namespace st2se {
             writeFirstPart();
         }
 
+        writeFuncProlog();
+
         if (genThreading) {
             writeThreadPart();
         }
@@ -102,6 +115,11 @@ namespace st2se {
         if (genProlog) {
             writeLastPart();
         }
+        else{
+            output_source << fmt::format("{0}{1}return ret;\n",opt_indent, indent);
+        }
+
+        writeFuncEpilog();
 
         closeFiles();
 
@@ -178,7 +196,7 @@ namespace st2se {
             return std::string {""};
         }
 
-        std::string ret = fmt::format(",\n{}{}SCMP_A{}(", indent, opt_indent, pos);
+        std::string ret = fmt::format(",\n{0}{0}{1}SCMP_A{2}(", indent, opt_indent, pos);
 
         switch (arg.valueType) {
         case ValueType::INTEGER:
@@ -222,7 +240,7 @@ namespace st2se {
             return std::string {""};
         }
 
-        std::string ret = fmt::format(",\n{}{}SCMP_A{}(", indent, opt_indent, pos);
+        std::string ret = fmt::format(",\n{0}{0}{1}SCMP_A{2}(", indent, opt_indent, pos);
 
         switch (cluster.next.front().valueType) {
         case ValueType::INTEGER:
@@ -274,7 +292,8 @@ namespace st2se {
         std::string ret {""};
 
         ret = fmt::format(
-                "{0}ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS({1})",
+                "{0}{1}ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS({2})",
+                indent,
                 opt_indent,
                 sc.name
             );
@@ -293,10 +312,10 @@ namespace st2se {
                 buffer += fmt::format("{}", item);
             }
 
-            buffer += fmt::format("\n{0});\n", opt_indent);
+            buffer += fmt::format("\n{0}{1});\n", opt_indent, indent);
         }
         else {
-            buffer += fmt::format(");\n");
+            buffer += fmt::format("{0});\n", indent);
         }
 
         ready2Print.push_back(buffer);

@@ -73,6 +73,16 @@ namespace st2se {
          * Write template thread in output file
          */
         void writeThreadPart();
+        /**
+         * Write function name and how filter should behave
+         */
+        void writeFuncProlog();
+        /**
+         * Write function epilog
+         */
+        void writeFuncEpilog();
+
+
 
       public:
         /**
