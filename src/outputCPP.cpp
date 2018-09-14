@@ -255,7 +255,7 @@ namespace st2se {
 
             if (cluster.next.size() == 1) {
                 ret += fmt::format(
-                        "SCMP_CMP_EQ, {})",
+                        "SCMP_CMP_EQ, {}u)",
                         arg2str(cluster.next.front())
                     );
                 break;
@@ -327,9 +327,12 @@ namespace st2se {
         auto end = std::unique(ready2Print.begin(), ready2Print.end());
         ready2Print.erase(end, ready2Print.end());
 
+
         for (auto &item : ready2Print) {
             output_source << item;
         }
+
+        output_source.flush();
 
         ready2Print.clear();
 

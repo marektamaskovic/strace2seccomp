@@ -90,10 +90,10 @@ TEST_CASE("OutputCPP write methods", "[OutputCPP]") {
     cluster.next.clear();
     arg.valueType = st2se::ValueType::INTEGER;
     arg.valueFormat = st2se::ValueFormat::VALUE;
-    arg.value = 3;
+    arg.value = 5;
 
     cluster.next.push_back(arg);
-    arg.value = 5;
+    arg.value = 3;
     cluster.next.push_back(arg);
 
     sc.next.push_back(cluster);
@@ -115,13 +115,12 @@ TEST_CASE("OutputCPP write methods", "[OutputCPP]") {
     o->openFiles();
     o->generateScRules(item_sc);
 
-
     std::string buf {};
     std::ifstream output {"./source.cpp"};
     std::vector<std::string> lines {
-        {"    ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 2,"},
-        {"        SCMP_A0(SCMP_CMP_EQ, 1u),"},
-        {"        SCMP_A2(SCMP_CMP_IN_RANGE, 3u, 5u)"},
+        {"ret |= seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 2,"},
+        {"    SCMP_A0(SCMP_CMP_EQ, 1u),"},
+        {"    SCMP_A2(SCMP_CMP_IN_RANGE, 3u, 5u)"},
         {");"}
     };
 

@@ -67,7 +67,7 @@ check: $(OBJ_TEST)
 
 # static analysis
 clangTidy:
-	clang-tidy *.[ch]pp -checks=boost-*,bugprone-*,cert-*,cppcoreguidelines-*,clang-analyzer-*,hicpp-*,llvm-*,misc-*,modernize-*,performance-*,portability-*,readability-* -header-filter=.* -- -std=c++17 > lint.out
+	clang-tidy *.[ch]pp -checks=bugprone-*,cert-*,cppcoreguidelines-*,clang-analyzer-*,hicpp-*,llvm-*,misc-*,modernize-*,performance-*,portability-*,readability-* -header-filter=.* -- -std=c++17 > lint.out
 
 # Generate dependency tree for cpp files
 dep:

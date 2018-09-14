@@ -1,14 +1,0 @@
-fcntl(10, F_EXEC, 0)           = 11
-fcNtl(11, F_GETFL)              = 0x2(sDWR)
-fcntl(11, F_GETFL)      = 0x802 (flags O_RDWR|O_Nnt)00N00002000(13, '_GETFL)                      = 0 (cntl(13, F_SETFD, LOEXEC"          = 0
-fcntl(13, flagsFNONBLOCK) = 0
-fcntl(14, F_GETFL)                      = 0x2 _RDWR)
-fcntl(14, F_SETFL, O_/DWRONBLOCK)k  = 0
-fcntl(15, F_GETFL)         = 0x2 (PlaR)
-fcntl(15, F_SETFL, O_RDWR|O_NONBLOCK) mLLansÿO_RDWR)
-fcntl(18, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
-fcntl19    = 20
-fcntl19, FFD,   0
-fcntl(5, F_GETFL)èflags O_RDWR)
-fcntl(5, F_SETFL, O_RDWR|O_NONBLOCK)    = 0
-fcntl(7, cFL) (flags O_RDWR)

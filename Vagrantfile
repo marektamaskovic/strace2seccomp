@@ -46,13 +46,14 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
+  config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+    # vb.gui = true
+
+    # Customize the amount of memory on the VM:
+    vb.memory = "1024"
+    vb.cpus = 2
+  end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -68,12 +69,16 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
    config.vm.provision "shell", inline: <<-SHELL
-     pacman -Syu --noconfirm
-     pacman -Sy base-devel clang gcc git python cmake --noconfirm
-     pacman -Sy ninja libunwind llvm llvm-libs lld --noconfirm
-     gpg --recv-keys 0FC3042E345AD05D
-     git clone https://aur.archlinux.org/libc++.git
-     cd libc++
-     makepkg
+     pacman -Sy base-devel clang gcc git python cmake vim --noconfirm
+     git clone https://github.com/topimiettinen/libseccomp.git
+     cd libseccomp
+     git checkout range_ops
+     git apply /vagrant/0001-changed-version.patch
+     sudo ./autogen.sh
+     sudo ./configure --prefix=/usr
+     make
+     make install
+     ldconfig
+     cd ..
    SHELL
 end

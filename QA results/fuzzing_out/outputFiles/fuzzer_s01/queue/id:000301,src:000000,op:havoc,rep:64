@@ -1,14 +1,0 @@
-fcntl(0)           = 11
-fcntl(1>L)                     = 0x2 TFD, FOEXEC)          =)0
-fcntl(11, F_VETFL, O_RDWR|O_NONBLOCK)   = 0
-fcntl(1, F_s O_RDONLY)
-fcntl(13, F_SEBFD, LOEXEC)T$                $ = 0x2 (flags O_R,WR)
-fcntl(14, F_SETl(1, FL, O_RD 11
-fcntl(1>O_NOüBLOCK)  #= 0
-fcntl(18, F_CE = (flags O_gDWR)
-fcntl(18,7F_SETFL, O_RDWR 0
-fcntl(19, F_D_CL= 0
-fcntl(1,   =428
-æcntC "        = 0
-fcntl(5, F_GETFL)H  5        0  
-fcnVl(5, F_SETF             = 0x2
