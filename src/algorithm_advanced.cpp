@@ -445,8 +445,13 @@ namespace st2se {
         ) {
             // written this way for null pointer check 'cus get_if is
             // non-throwing function
+            #if __cplusplus < 201703L
+            auto _a = mpark::get_if<unsigned long>(&(left.value));
+            auto _b = mpark::get_if<unsigned long>(&(right.value));
+            #else
             auto _a = std::get_if<unsigned long>(&(left.value));
             auto _b = std::get_if<unsigned long>(&(right.value));
+            #endif
             unsigned long a {0};
             unsigned long b {0};
             if(_a != nullptr && _b != nullptr){
@@ -482,7 +487,12 @@ namespace st2se {
 
         std::string s;
 
-        if (auto _s = std::get_if<std::string>(&(in.value))) {
+        #if __cplusplus < 201703L
+        if (auto _s = mpark::get_if<std::string>(&(in.value)))
+        #else
+        if (auto _s = std::get_if<std::string>(&(in.value)))
+        #endif
+        {
             s = *_s;
         }
         else {

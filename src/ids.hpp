@@ -31,7 +31,14 @@
 #include <sstream>
 #include <string>
 #include <type_traits>
-#include <variant>
+
+#if __cplusplus < 201703L
+    #include "Mpark.Variant/variant.hpp"
+#else
+    #include <variant>
+#endif
+
+
 #include <vector>
 
 /**
@@ -82,7 +89,12 @@ namespace st2se {
      */
     struct _Argument;
     struct _Argument {
+    
+        #if __cplusplus < 201703L
+        using Value = mpark::variant<unsigned long, std::string>; /**< Alias for value type */
+        #else
         using Value = std::variant<unsigned long, std::string>; /**< Alias for value type */
+        #endif
         ValueFormat valueFormat {ValueFormat::EMPTY};           /**< value type */
         ValueType valueType {ValueType::EMPTY};                 /**< value format */
         NumberValues numbervalues {NumberValues::EMPTY};        /**< nubmer of values */
@@ -114,8 +126,13 @@ namespace st2se {
          * @param _value an value of argument
          * @param _vec arguments that are on next position after this argument
          */
+        #if __cplusplus < 201703L
+        _Argument(ValueFormat &_fmt, ValueType &_type, std::string &_key, mpark::variant<unsigned long, std::string> _value,
+            std::vector<_Argument> _next);
+        #else
         _Argument(ValueFormat &_fmt, ValueType &_type, std::string &_key, std::variant<unsigned long, std::string> _value,
             std::vector<_Argument> _next);
+        #endif
         /**
          * Print class variables.
          * This member will print all inner variables of this argument and much more.

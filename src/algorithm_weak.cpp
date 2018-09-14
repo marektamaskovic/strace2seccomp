@@ -151,11 +151,21 @@ namespace st2se {
 
         //merge every item into one string
         for (auto &item : vec) {
-            if (auto pval_int = std::get_if<unsigned long>(&item.value)) {
+            #if __cplusplus < 201703L
+            if (auto pval_int = mpark::get_if<unsigned long>(&item.value))
+            #else
+            if (auto pval_int = std::get_if<unsigned long>(&item.value))
+            #endif
+            {
                 unsigned long a = *pval_int;
                 text += std::to_string(a) + "|";
             }
-            else if (auto pval_str = std::get_if<std::string>(&item.value)) {
+            #if __cplusplus < 201703L
+            else if (auto pval_str = mpark::get_if<std::string>(&item.value))
+            #else
+            else if (auto pval_str = std::get_if<std::string>(&item.value))
+            #endif
+            {
                 std::string a = *pval_str;
                 text += a + "|";
             }

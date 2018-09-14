@@ -20,6 +20,10 @@
 
 template<class T> struct always_false : std::false_type {};
 
+#if __cplusplus < 201703L // C++14 version and bellow
+    #include "cpp14_support.hpp"
+#endif
+
 namespace st2se {
     void States::push_parsed_val(Argument &arg) {
         parsed_val.push_back(arg);
@@ -91,7 +95,11 @@ namespace st2se {
         std::string str {" "};
 
         for (auto &w : parsed_val) {
+            #if __cplusplus < 201703L // C++14 version and bellow
+            std::string tmp = mpark::visit([](auto &&arg) -> std::string {
+            #else
             std::string tmp = std::visit([](auto &&arg) -> std::string {
+            #endif
                 using T = std::decay_t<decltype(arg)>;
 
                 if constexpr(std::is_same_v<T, unsigned long>)

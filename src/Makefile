@@ -35,7 +35,7 @@ BIN=st2se
 BIN_TEST=module_tests
 LINK.o = $(LINK.cpp)
 DATASET=../testdata/dataset.reduced
-CXXFLAGS:=-Wall -Wextra -Wsuggest-override  -Wnull-dereference -Wshadow -Wold-style-cast -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
+CXXFLAGS:=-Wall -Wextra -Wsuggest-override  -Wnull-dereference -Wshadow -Wold-style-cast -pedantic -std=c++14 -Iinclude/ $(USER_DEFINES)
 # CXXFLAGS:=-Wall -Wextra -Wsuggest-override -Wshadow -Wold-style-cast -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
 
 
