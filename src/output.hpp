@@ -38,6 +38,7 @@ namespace st2se {
         bool genProlog {false};    /**< switch for filter wrapper generation*/
         bool bugSec {false};       /**< deprecated needs refactor*/
         bool allowOnlySc {false};  /**< switch for syscall only generation*/
+        std::string funcName {};   /**< filter function name*/
 
         /**
          * Constructor
@@ -78,6 +79,12 @@ namespace st2se {
          * @param b output filename
          */
         void setAllowOnlySc(bool b);
+        /**
+         * Set filter function name
+         * @param fn std::string function name
+         */
+        void setFuncName(std::string fn);
+
     };
 
 } // namespace st2se

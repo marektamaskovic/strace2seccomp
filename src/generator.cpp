@@ -52,6 +52,8 @@ namespace st2se {
         if (p.scOnly != 0) {
             setAllowOnlySc(/*turn on =*/true);
         }
+
+        setFuncName(p.funcName);
     }
 
     inline void Generator::threadSupport(bool b) {
@@ -68,6 +70,10 @@ namespace st2se {
 
     inline void Generator::setAllowOnlySc(bool b) {
         gnrt->setAllowOnlySc(b);
+    }
+
+    inline void Generator::setFuncName(std::string fn) {
+        gnrt->setFuncName(fn);
     }
 
 

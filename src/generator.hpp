@@ -103,6 +103,11 @@ namespace st2se {
          * @param b bool variable
          */
         void setAllowOnlySc(bool b);
+        /**
+         * Set filter function name
+         * @param fn std::string function name
+         */
+        void setFuncName(std::string fn);
 
     };
 } // namespace st2se

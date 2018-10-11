@@ -38,6 +38,7 @@ std::ostream &operator<< (std::ostream &os, const Params &a) {
         << "\n-d: " << a.debug
         << "\n-A: " << a.analysis
         << "\n-o: " << a.output
+        << "\n-f: " << a.funcName
         << "\n--prolog: " << a.prolog
         << "\n--thread: " << a.thread
         << "\n--scOnly: " << a.scOnly
@@ -60,6 +61,7 @@ void Params::printHelp() {
     std::cout << s4 << "-t [--tracing]\t\t: turn on tracing mode\n";
     std::cout << s4 << "-A [--analyze-grammar] \t: analyze grammar\n";
     std::cout << s4 << "-o FILE [--output=FILE]\t: set output file\n";
+    std::cout << s4 << "-f FUNCTION_NAME [--funcName=FUNCTION_NAME]\t: set filter function name\n";
     std::cout << s4 << "--status\t\t\t: show progress\n";
 
     std::cout << "Configuration options:\n";
@@ -91,13 +93,14 @@ Params::Params(int argc, char *argv[]) {
             {"scOnly",           no_argument, &this->scOnly,   1},
             {"status",           no_argument, &this->showProgress, 1},
             {"output",     optional_argument, nullptr,       'o'},
+            {"funcName",   optional_argument, nullptr,       'f'},
             {"help",       optional_argument, nullptr,       'h'},
             {nullptr,                      0, nullptr,         0}
         };
         /* getopt_long stores the option index here. */
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "wsavdtAo:ph",
+        c = getopt_long(argc, argv, "wsavdtAo:phf:",
                 long_options, &option_index);
 
         /* Detect the end of the options. */
@@ -156,6 +159,10 @@ Params::Params(int argc, char *argv[]) {
 
         case 'o':
             this->output = std::string(optarg);
+            break;
+
+        case 'f':
+            this->funcName = std::string(optarg);
             break;
 
         case 'p':
