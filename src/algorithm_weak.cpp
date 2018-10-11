@@ -26,6 +26,7 @@ namespace st2se {
 
     std::vector<std::string> string_to_vector(std::string str, char delimeter) {
         std::vector<std::string> strings;
+
         if (str.empty()) {
             return strings;
         }

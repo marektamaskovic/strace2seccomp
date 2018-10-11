@@ -33,7 +33,7 @@ namespace st2se {
     }
 
     void Output::setFuncName(std::string fn) {
-    	funcName = fn;
+        funcName = fn;
     }
 
 } // namespace st2se

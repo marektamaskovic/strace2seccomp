@@ -32,7 +32,7 @@
 
 template<typename Algo>
 // FIXME change name of the function
-int callOptimize(st2se::Ids &in, st2se::Ids &out){
+int callOptimize(st2se::Ids &in, st2se::Ids &out) {
     int ret_val {0}; // return value
 
     // create optimizer and pass pointer to Algorithm in a constructor
@@ -52,7 +52,7 @@ int callOptimize(st2se::Ids &in, st2se::Ids &out){
 
 template<typename Gen>
 // FIXME change name of the function
-int callGenerator(Params &params, st2se::Ids &out){
+int callGenerator(Params &params, st2se::Ids &out) {
 
     st2se::Generator gen;
 
@@ -70,13 +70,13 @@ int callGenerator(Params &params, st2se::Ids &out){
     return 0;
 }
 
-int checkParams(Params &params){
+int checkParams(Params &params) {
     if (params.debug) {
         std::cout << params << std::endl;
     }
 
     // print usage when no algorithm was emitted
-    if (!params.strict && !params.weak && !params.advanced){
+    if (!params.strict && !params.weak && !params.advanced) {
         params.printHelp();
         exit(0);
     }
@@ -115,29 +115,32 @@ int main(int argc, char *argv[]) {
     }
 
     // optimize IDS
-    switch(params.algorithm){
-        case algo_e::WEAK:
-            ret_val = callOptimize<st2se::Algo_weak>(in, out);
-            break;
+    switch (params.algorithm) {
+    case algo::WEAK:
+        ret_val = callOptimize<st2se::Algo_weak>(in, out);
+        break;
 
-        case algo_e::STRICT:
-            ret_val = callOptimize<st2se::Algo_strict>(in, out);
-            break;
+    case algo::STRICT:
+        ret_val = callOptimize<st2se::Algo_strict>(in, out);
+        break;
 
-        case algo_e::ADVANCED:
-            ret_val = callOptimize<st2se::Algo_advanced>(in, out);
-            break;
-        default:
-            std::cerr << "Algorithm not used" << std::endl;
-            break;
+    case algo::ADVANCED:
+        ret_val = callOptimize<st2se::Algo_advanced>(in, out);
+        break;
+
+    default:
+        std::cerr << "Algorithm not used" << std::endl;
+        break;
     }
 
-    if(ret_val) return ret_val;
+    if (ret_val) {
+        return ret_val;
+    }
 
     // Call generator for specific language
-    switch(params.language){
-        default:
-            callGenerator<st2se::outputCPP>(params, out);
+    switch (params.language) {
+    default:
+        callGenerator<st2se::outputCPP>(params, out);
     }
 
     return ret_val;

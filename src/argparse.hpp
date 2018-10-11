@@ -33,8 +33,7 @@
 #include <string>
 #include <vector>
 
-enum class algo_e
-{
+enum class algo {
     WEAK,    /**< Weak algorithm switch*/
     STRICT,  /**< Strict algorithm switch*/
     ADVANCED /**< Advanced algorithm switch*/
@@ -62,7 +61,7 @@ class Params {
     int prolog {0};                                   /**< print function wrapper around filter in output switch*/
     int scOnly {0};                                   /**< syscall only output switch*/
     int showProgress {0};                             /**< syscall only output switch*/
-    algo_e algorithm {0};                             /**< holds enum value about used algorithm*/
+    algo algorithm {0};                               /**< holds enum value about used algorithm*/
     language_e language {language_e::CPP};            /**< holds information about output languages*/
     std::string output {};                            /**< output file name */
     std::string funcName {"setup_seccomp_whitelist"}; /**< output function name */
