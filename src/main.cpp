@@ -30,12 +30,47 @@
 #include "algorithm_advanced.hpp"
 #include "generator.hpp"
 
-int main(int argc, char *argv[]) {
+template<typename Algo>
+// FIXME change name of the function
+int callOptimize(st2se::Ids &in, st2se::Ids &out){
+    int ret_val {0}; // return value
 
-    int ret_val {0};
+    // create optimizer and pass pointer to Algorithm in a constructor
+    st2se::Optimizer opti(std::make_unique<Algo>().get());
 
-    Params params(argc, argv);
+    try {
+        opti.optimize(in, out);
+    }
+    catch (std::runtime_error &e) {
+        std::cerr << e.what() << std::endl
+            << "Exiting with error ..." << std::endl;
+        ret_val = 1;
+    }
 
+    return ret_val;
+}
+
+template<typename Gen>
+// FIXME change name of the function
+int callGenerator(Params &params, st2se::Ids &out){
+
+    st2se::Generator gen;
+
+    std::unique_ptr<st2se::Output> cpp = std::make_unique<Gen>();
+
+    // initialize and configure generator
+    gen.initialize(cpp.get());
+    gen.configure(params);
+
+    gen.generate(out);
+
+    // remove and dealloc output generator
+    gen.removeOutput();
+
+    return 0;
+}
+
+int checkParams(Params &params){
     if (params.debug) {
         std::cout << params << std::endl;
     }
@@ -45,6 +80,17 @@ int main(int argc, char *argv[]) {
         params.printHelp();
         exit(0);
     }
+
+    return 0;
+}
+
+int main(int argc, char *argv[]) {
+
+    int ret_val {0};
+
+    Params params(argc, argv);
+
+    checkParams(params);
 
     st2se::Ids in {};
     st2se::Ids out {};
@@ -69,43 +115,30 @@ int main(int argc, char *argv[]) {
     }
 
     // optimize IDS
-    std::unique_ptr<st2se::Algorithm> algo;
+    switch(params.algorithm){
+        case algo_e::WEAK:
+            ret_val = callOptimize<st2se::Algo_weak>(in, out);
+            break;
 
-    if (params.weak != 0) {
-        algo = std::make_unique<st2se::Algo_weak>();
-    }
-    else if (params.strict != 0) {
-        algo = std::make_unique<st2se::Algo_strict>();
-    }
-    else {
-        algo = std::make_unique<st2se::Algo_advanced>();
-    }
+        case algo_e::STRICT:
+            ret_val = callOptimize<st2se::Algo_strict>(in, out);
+            break;
 
-    st2se::Optimizer opti;
-
-    opti.useAlgorithm(algo.get());
-
-    try {
-        opti.optimize(in, out);
-    }
-    catch (std::runtime_error &e) {
-        std::cerr << e.what() << std::endl
-            << "Exiting with error ..." << std::endl;
-        ret_val = 1;
+        case algo_e::ADVANCED:
+            ret_val = callOptimize<st2se::Algo_advanced>(in, out);
+            break;
+        default:
+            std::cerr << "Algorithm not used" << std::endl;
+            break;
     }
 
-    st2se::Generator gen;
+    if(ret_val) return ret_val;
 
-    std::unique_ptr<st2se::Output> cpp = std::make_unique<st2se::outputCPP>();
-
-    // initialize and configure generator
-    gen.initialize(cpp.get());
-    gen.configure(params);
-
-    gen.generate(out);
-
-    // remove and dealloc output generator
-    gen.removeOutput();
+    // Call generator for specific language
+    switch(params.language){
+        default:
+            callGenerator<st2se::outputCPP>(params, out);
+    }
 
     return ret_val;
 
