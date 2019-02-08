@@ -62,31 +62,17 @@ namespace st2se {
 
         bool b_val = false;
 
-        #if __cplusplus < 201703L // C++14 version and bellow
-            if (auto lval = mpark::get_if<unsigned long>(&lhs.value))
-                if (auto rval = mpark::get_if<unsigned long>(&rhs.value))
-                    if (*lval == *rval) {
-                        b_val = true;
-                    }
+        if (auto lval = variant_ns::get_if<unsigned long>(&lhs.value))
+            if (auto rval = variant_ns::get_if<unsigned long>(&rhs.value))
+                if (*lval == *rval) {
+                    b_val = true;
+                }
 
-            if (auto lval = mpark::get_if<std::string>(&lhs.value))
-                if (auto rval = mpark::get_if<std::string>(&rhs.value))
-                    if (!lval->compare(*rval)) {
-                        b_val = true;
-                    }
-        #else // C++17 version
-            if (auto lval = std::get_if<unsigned long>(&lhs.value))
-                if (auto rval = std::get_if<unsigned long>(&rhs.value))
-                    if (*lval == *rval) {
-                        b_val = true;
-                    }
-
-            if (auto lval = std::get_if<std::string>(&lhs.value))
-                if (auto rval = std::get_if<std::string>(&rhs.value))
-                    if (!lval->compare(*rval)) {
-                        b_val = true;
-                    }
-        #endif
+        if (auto lval = variant_ns::get_if<std::string>(&lhs.value))
+            if (auto rval = variant_ns::get_if<std::string>(&rhs.value))
+                if (!lval->compare(*rval)) {
+                    b_val = true;
+                }
 
         // std::cout << "\tb_val:" << b_val << std::endl;
 
@@ -163,17 +149,10 @@ namespace st2se {
         : valueFormat(_fmt), valueType(_type), next(_vec) {
     }
 
-    #if __cplusplus < 201703L
     _Argument::_Argument(ValueFormat &_fmt, ValueType &_type, std::string &_key,
-        mpark::variant<unsigned long, std::string> _value, std::vector<_Argument> _next)
+        variant_ns::variant<unsigned long, std::string> _value, std::vector<_Argument> _next)
         : valueFormat(_fmt), valueType(_type), key(_key), value(_value), next(_next) {
     }
-    #else
-    _Argument::_Argument(ValueFormat &_fmt, ValueType &_type, std::string &_key,
-        std::variant<unsigned long, std::string> _value, std::vector<_Argument> _next)
-        : valueFormat(_fmt), valueType(_type), key(_key), value(_value), next(_next) {
-    }
-    #endif
 
     _Argument::_Argument():
         valueFormat(ValueFormat::EMPTY),

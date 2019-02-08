@@ -34,8 +34,10 @@
 
 #if __cplusplus < 201703L
     #include <mpark/variant.hpp>
+    namespace variant_ns = mpark;
 #else
     #include <variant>
+    namespace variant_ns = std;
 #endif
 
 
@@ -126,13 +128,8 @@ namespace st2se {
          * @param _value an value of argument
          * @param _vec arguments that are on next position after this argument
          */
-        #if __cplusplus < 201703L
-        _Argument(ValueFormat &_fmt, ValueType &_type, std::string &_key, mpark::variant<unsigned long, std::string> _value,
+        _Argument(ValueFormat &_fmt, ValueType &_type, std::string &_key, variant_ns::variant<unsigned long, std::string> _value,
             std::vector<_Argument> _next);
-        #else
-        _Argument(ValueFormat &_fmt, ValueType &_type, std::string &_key, std::variant<unsigned long, std::string> _value,
-            std::vector<_Argument> _next);
-        #endif
         /**
          * Print class variables.
          * This member will print all inner variables of this argument and much more.
