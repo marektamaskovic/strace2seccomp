@@ -33,7 +33,7 @@
 #include <type_traits>
 
 #if __cplusplus < 201703L
-    #include "Mpark.Variant/variant.hpp"
+    #include <mpark/variant.hpp>
 #else
     #include <variant>
 #endif
@@ -89,7 +89,7 @@ namespace st2se {
      */
     struct _Argument;
     struct _Argument {
-    
+
         #if __cplusplus < 201703L
         using Value = mpark::variant<unsigned long, std::string>; /**< Alias for value type */
         #else

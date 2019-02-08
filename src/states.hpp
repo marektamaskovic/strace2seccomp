@@ -30,7 +30,7 @@
 #include <type_traits>
 
 #if __cplusplus < 201703L
-    #include "Mpark.Variant/variant.hpp"
+    #include <mpark/variant.hpp>
 #else
     #include <variant>
 #endif
@@ -58,7 +58,7 @@ namespace st2se {
 
       public:
         unsigned arg_num {0}; /**< number of parsed arguments */
-        
+
         #if __cplusplus < 201703L
         mpark::variant<unsigned long, std::string> value; /**< value */
         #else

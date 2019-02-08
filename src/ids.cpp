@@ -20,8 +20,12 @@
 
 template<class T> struct always_false : std::false_type {};
 
+
 #if __cplusplus < 201703L // C++14 version and bellow
     #include "cpp14_support.hpp"
+    namespace variant_ns = mpark;
+#else // C++17
+    namespace variant_ns = std;
 #endif
 
 namespace st2se {
@@ -164,7 +168,7 @@ namespace st2se {
         mpark::variant<unsigned long, std::string> _value, std::vector<_Argument> _next)
         : valueFormat(_fmt), valueType(_type), key(_key), value(_value), next(_next) {
     }
-    #else    
+    #else
     _Argument::_Argument(ValueFormat &_fmt, ValueType &_type, std::string &_key,
         std::variant<unsigned long, std::string> _value, std::vector<_Argument> _next)
         : valueFormat(_fmt), valueType(_type), key(_key), value(_value), next(_next) {
@@ -332,73 +336,34 @@ namespace st2se {
     // move this function to utilities
     std::string arg2str(const Argument &arg) {
         // *INDENT-OFF*
-        std::string ret;
-        // TODO make lambda
+        std::string ret {""};
         const bool pointer = arg.valueType == ValueType::POINTER;
-        #if __cplusplus < 201703L // C++14 version and bellow
-        ret = mpark::visit(
-        #else // C++17
-        ret = std::visit(
-        #endif
-            [pointer](auto &&val) -> std::string {
-                using T = std::decay_t<decltype(val)>;
 
-                if constexpr(std::is_same_v<T, unsigned long>){
-                    if(pointer){
-                        std::stringstream ss;
-                        std::string ret_val;
+        #define ARGVALUE2STRING(FOO) do{                                        \
+            if (arg.valueType == ValueType::INTEGER){                           \
+                if(pointer){                                                    \
+                    std::stringstream ss;                                       \
+                    std::string ret_val;                                        \
+                    ss << std::hex << variant_ns::get<unsigned long>((FOO));    \
+                    ss >> ret_val;                                              \
+                    ret += "0x" + ret_val;                                      \
+                }                                                               \
+                ret += std::to_string(variant_ns::get<unsigned long>((FOO)));   \
+            }                                                                   \
+            else if (arg.valueType == ValueType::STRING)                        \
+                ret += variant_ns::get<std::string>(arg.value);                 \
+            else {                                                              \
+                std::cerr << "Error: Variant is empty";                         \
+                return "";                                                      \
+            }                                                                   \
+        } while(0)
 
-                        ss << std::hex << val;
-                        ss >> ret_val;
-
-                        return "0x" + ret_val;
-                    }
-                    return std::to_string(val);
-                }
-                else if constexpr(std::is_same_v<T, std::string>)
-                    return val;
-                else {
-                    static_assert(always_false<T>::value, "non-exhaustive visitor!");
-                    return "Error: Variant is empty";
-                }
-            },
-            arg.value
-        );
+        ARGVALUE2STRING(arg.value);
 
         if(arg.numbervalues == NumberValues::RANGE){
-            ret += "u, " +
-                #if __cplusplus < 201703L // C++14 version and bellow
-                    mpark::visit(
-                #else // C++17
-                    std::visit(
-                #endif
-                [pointer](auto &&val) -> std::string {
-                    using T = std::decay_t<decltype(val)>;
-
-                    if constexpr(std::is_same_v<T, unsigned long>){
-                        if(pointer){
-                            std::stringstream ss;
-                            std::string ret_val;
-
-                            ss << std::hex << val;
-                            ss >> ret_val;
-
-                            return "0x" + ret_val;
-                        }
-                        return std::to_string(val);
-                    }
-                    else if constexpr(std::is_same_v<T, std::string>)
-                        return val;
-                    else {
-                        static_assert(always_false<T>::value, "non-exhaustive visitor!");
-                        return "Error: Variant is empty";
-                    }
-                },
-                arg.value_b
-            );
-            ret += "u";
+            ret += "u, ";
+            ARGVALUE2STRING(arg.value_b);
         }
-
         return ret;
         // *INDENT-ON*
     }

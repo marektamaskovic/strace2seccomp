@@ -31,7 +31,7 @@
 #include <unordered_set>
 
 #if __cplusplus < 201703L
-    #include "Mpark.Variant/variant.hpp"
+    #include <mpark/variant.hpp>
 #else
     #include <variant>
 #endif
