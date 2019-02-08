@@ -35,7 +35,7 @@ BIN=st2se
 BIN_TEST=module_tests
 LINK.o = $(LINK.cpp)
 DATASET=../testdata/dataset.reduced
-CXXFLAGS:=-Wall -Wextra -Wsuggest-override  -Wnull-dereference -Wshadow -Wold-style-cast -pedantic -std=c++14 -Iinclude/ -Iinclude/variant/include $(USER_DEFINES)
+CXXFLAGS:=-Wall -Wextra -Wsuggest-override  -Wnull-dereference -Wshadow -Wold-style-cast -pedantic -std=c++11 -Iinclude/ -Iinclude/variant/include $(USER_DEFINES)
 # CXXFLAGS:=-Wall -Wextra -Wsuggest-override -Wshadow -Wold-style-cast -pedantic -std=c++17 -Iinclude/ $(USER_DEFINES)
 
 
@@ -109,21 +109,21 @@ clean:
 # DEPS: generated with 'dep' recipe
 # ---------------------------------
 algorithm_advanced.o: algorithm_advanced.cpp algorithm_advanced.hpp \
- ids.hpp algorithm.hpp
+ algorithm.hpp ids.hpp cpp11_support.hpp
 algorithm.o: algorithm.cpp algorithm.hpp ids.hpp
-algorithm_strict.o: algorithm_strict.cpp algorithm_strict.hpp ids.hpp \
- algorithm.hpp
-algorithm_weak.o: algorithm_weak.cpp algorithm_weak.hpp ids.hpp \
- algorithm.hpp
+algorithm_strict.o: algorithm_strict.cpp algorithm_strict.hpp \
+ algorithm.hpp ids.hpp
+algorithm_weak.o: algorithm_weak.cpp algorithm_weak.hpp algorithm.hpp \
+ ids.hpp cpp11_support.hpp
 argparse.o: argparse.cpp argparse.hpp
 argparse_test.o: argparse_test.cpp include/catch2/catch.hpp argparse.hpp
-generator.o: generator.cpp generator.hpp ids.hpp outputCPP.hpp \
- include/fmt/core.h include/fmt/format.h include/fmt/core.h output.hpp \
- argparse.hpp
+generator.o: generator.cpp generator.hpp argparse.hpp ids.hpp \
+ outputCPP.hpp include/fmt/core.h include/fmt/format.h include/fmt/core.h \
+ output.hpp
 generator_test.o: generator_test.cpp include/catch2/catch.hpp \
- generator.hpp ids.hpp outputCPP.hpp include/fmt/core.h \
- include/fmt/format.h include/fmt/core.h output.hpp argparse.hpp
-ids.o: ids.cpp ids.hpp
+ generator.hpp argparse.hpp ids.hpp outputCPP.hpp include/fmt/core.h \
+ include/fmt/format.h include/fmt/core.h output.hpp
+ids.o: ids.cpp ids.hpp cpp11_support.hpp
 ids_test.o: ids_test.cpp include/catch2/catch.hpp ids.hpp
 main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
  include/tao/pegtl/version.hpp include/tao/pegtl/ascii.hpp \
@@ -260,19 +260,20 @@ main.o: main.cpp include/tao/pegtl.hpp include/tao/pegtl/config.hpp \
  include/tao/pegtl/analysis/analyze_cycles.hpp \
  include/tao/pegtl/analysis/../config.hpp \
  include/tao/pegtl/analysis/grammar_info.hpp \
- include/tao/pegtl/analysis/insert_guard.hpp straceparser_actions.hpp \
+ include/tao/pegtl/analysis/insert_guard.hpp include/fmt/core.h \
+ include/fmt/format.h include/fmt/core.h straceparser_actions.hpp \
  straceparser_grammar.hpp algorithm_weak.hpp algorithm_strict.hpp \
- algorithm_advanced.hpp generator.hpp outputCPP.hpp include/fmt/core.h \
- include/fmt/format.h include/fmt/core.h output.hpp
+ algorithm_advanced.hpp generator.hpp outputCPP.hpp output.hpp \
+ cpp11_support.hpp
 optimizer.o: optimizer.cpp optimizer.hpp algorithm.hpp ids.hpp
 output.o: output.cpp output.hpp ids.hpp
 outputCPP.o: outputCPP.cpp outputCPP.hpp include/fmt/core.h \
- include/fmt/format.h include/fmt/core.h output.hpp ids.hpp
+ include/fmt/format.h include/fmt/core.h ids.hpp output.hpp
 outputCPP_test.o: outputCPP_test.cpp include/catch2/catch.hpp ids.hpp \
  outputCPP.hpp include/fmt/core.h include/fmt/format.h include/fmt/core.h \
  output.hpp
 params_test.o: params_test.cpp include/../../src/argparse.hpp
-states.o: states.cpp states.hpp ids.hpp
+states.o: states.cpp states.hpp ids.hpp cpp11_support.hpp
 states_test.o: states_test.cpp include/catch2/catch.hpp ids.hpp \
  states.hpp
 straceparser.o: straceparser.cpp straceparser.hpp include/tao/pegtl.hpp \
@@ -408,6 +409,7 @@ straceparser.o: straceparser.cpp straceparser.hpp include/tao/pegtl.hpp \
  include/tao/pegtl/analysis/analyze_cycles.hpp \
  include/tao/pegtl/analysis/../config.hpp \
  include/tao/pegtl/analysis/grammar_info.hpp \
- include/tao/pegtl/analysis/insert_guard.hpp straceparser_actions.hpp \
- straceparser_grammar.hpp argparse.hpp states.hpp ids.hpp
+ include/tao/pegtl/analysis/insert_guard.hpp include/fmt/core.h \
+ include/fmt/format.h include/fmt/core.h straceparser_actions.hpp \
+ argparse.hpp states.hpp ids.hpp straceparser_grammar.hpp
 test_main.o: test_main.cpp include/catch2/catch.hpp
