@@ -17,6 +17,7 @@
 // along with strace2seccomp tool.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <memory>
 
 #include "tao/pegtl.hpp"
 
@@ -29,6 +30,7 @@
 #include "algorithm_strict.hpp"
 #include "algorithm_advanced.hpp"
 #include "generator.hpp"
+#include "cpp11_support.hpp"
 
 int main(int argc, char *argv[]) {
 
