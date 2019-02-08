@@ -28,7 +28,13 @@
 #include <string>
 #include <unordered_set>
 #include <utility>
-#include <variant>
+
+#if __cplusplus < 201703L
+    #include <mpark/variant.hpp>
+#else
+    #include <variant>
+#endif
+
 #include <vector>
 
 #include "algorithm.hpp"

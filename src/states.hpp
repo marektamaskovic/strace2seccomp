@@ -28,7 +28,13 @@
 #include <sstream>
 #include <string>
 #include <type_traits>
-#include <variant>
+
+#if __cplusplus < 201703L
+    #include <mpark/variant.hpp>
+#else
+    #include <variant>
+#endif
+
 #include <vector>
 
 #include "ids.hpp"
@@ -52,7 +58,12 @@ namespace st2se {
 
       public:
         unsigned arg_num {0}; /**< number of parsed arguments */
+
+        #if __cplusplus < 201703L
+        mpark::variant<unsigned long, std::string> value; /**< value */
+        #else
         std::variant<unsigned long, std::string> value; /**< value */
+        #endif
 
         void push_parsed_val(Argument &arg);
         void pop_parsed_val();

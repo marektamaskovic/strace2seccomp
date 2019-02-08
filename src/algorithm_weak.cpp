@@ -18,6 +18,14 @@
 
 #include "algorithm_weak.hpp"
 
+#if __cplusplus < 201703L // C++14 version and bellow
+    #include "cpp14_support.hpp"
+    namespace variant_ns = mpark;
+#else // C++17
+    namespace variant_ns = std;
+#endif
+
+
 #define checkVecEndsForType(vec, type) \
     (((vec).front().valueType == type) && ((vec).back().valueType == type))
 
@@ -151,11 +159,13 @@ namespace st2se {
 
         //merge every item into one string
         for (auto &item : vec) {
-            if (auto pval_int = std::get_if<unsigned long>(&item.value)) {
+            if (auto pval_int = variant_ns::get_if<unsigned long>(&item.value))
+            {
                 unsigned long a = *pval_int;
                 text += std::to_string(a) + "|";
             }
-            else if (auto pval_str = std::get_if<std::string>(&item.value)) {
+            else if (auto pval_str = variant_ns::get_if<std::string>(&item.value))
+            {
                 std::string a = *pval_str;
                 text += a + "|";
             }

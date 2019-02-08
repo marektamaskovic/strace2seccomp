@@ -62,6 +62,10 @@ Here will be shown how to compile the project
   * C++ parser library
   * _This library is already bundled in project._
 
+2. [MPark.Variant](https://github.com/mpark/variant)
+  * C++14 variant implementation
+  * _This library is already bundled in project._
+
 3. [fmtlib](https://github.com/fmtlib/fmt)
   * C++ formating library
   * _This library is already bundled in project._

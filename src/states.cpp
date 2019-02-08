@@ -20,6 +20,13 @@
 
 template<class T> struct always_false : std::false_type {};
 
+#if __cplusplus < 201703L // C++14 version and bellow
+    #include "cpp14_support.hpp"
+    namespace variant_ns = mpark;
+#else // C++17
+    namespace variant_ns = std;
+#endif
+
 namespace st2se {
     void States::push_parsed_val(Argument &arg) {
         parsed_val.push_back(arg);
@@ -91,18 +98,19 @@ namespace st2se {
         std::string str {" "};
 
         for (auto &w : parsed_val) {
-            std::string tmp = std::visit([](auto &&arg) -> std::string {
-                using T = std::decay_t<decltype(arg)>;
+            std::string tmp;
 
-                if constexpr(std::is_same_v<T, unsigned long>)
-                    return std::to_string(arg);
-                else if constexpr(std::is_same_v<T, std::string>)
-                    return arg;
-                else {
-                    static_assert(always_false<T>::value, "non-exhaustive visitor!");
-                    return "Error: Variant is empty";
-                }
-            }, w.value);
+            if (w.valueType == ValueType::INTEGER) {
+                    tmp = std::to_string(variant_ns::get<unsigned long>(w.value));
+            }
+            else if (w.valueType == ValueType::STRING) {
+                tmp = variant_ns::get<std::string>(w.value);
+            }
+            else {
+                std::cerr << "Error: Variant is empty";
+                tmp = "";
+            }
+
             str.append(tmp + ",\n ");
         }
 

@@ -18,6 +18,13 @@
 
 #include "algorithm_advanced.hpp"
 
+#if __cplusplus < 201703L // C++14 version and bellow
+    #include "cpp14_support.hpp"
+    namespace variant_ns = mpark;
+#else // C++17
+    namespace variant_ns = std;
+#endif
+
 namespace st2se {
     bool Algo_advanced::optimize(Ids &in, Ids &out) {
         std::cout << "Algo_advanced optimize emitted." << std::endl;
@@ -445,8 +452,8 @@ namespace st2se {
         ) {
             // written this way for null pointer check 'cus get_if is
             // non-throwing function
-            auto _a = std::get_if<unsigned long>(&(left.value));
-            auto _b = std::get_if<unsigned long>(&(right.value));
+            auto _a = variant_ns::get_if<unsigned long>(&(left.value));
+            auto _b = variant_ns::get_if<unsigned long>(&(right.value));
             unsigned long a {0};
             unsigned long b {0};
             if(_a != nullptr && _b != nullptr){
@@ -482,7 +489,12 @@ namespace st2se {
 
         std::string s;
 
-        if (auto _s = std::get_if<std::string>(&(in.value))) {
+        #if __cplusplus < 201703L
+        if (auto _s = mpark::get_if<std::string>(&(in.value)))
+        #else
+        if (auto _s = std::get_if<std::string>(&(in.value)))
+        #endif
+        {
             s = *_s;
         }
         else {

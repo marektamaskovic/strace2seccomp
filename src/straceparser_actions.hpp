@@ -147,362 +147,364 @@ const std::map<std::string, int> signal_map {
     } while(0)
 // *INDENT-ON*
 
-namespace st2se::grammar {
-    template< typename Rule >
-    struct action : tao::TAOCPP_PEGTL_NAMESPACE::nothing< Rule > {};
+namespace st2se{
+    namespace grammar {
+        template< typename Rule >
+        struct action : tao::TAOCPP_PEGTL_NAMESPACE::nothing< Rule > {};
 
-    template<>
-    struct action< pointer > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
+        template<>
+        struct action< pointer > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
 
-            states.set_val_type(ValueType::POINTER);
+                states.set_val_type(ValueType::POINTER);
 
-            if (params.debug) {
-                std::cout << "pointer: " << in.string() << std::endl;
-            }
-        }
-    };
-
-    template<>
-    struct action< str_nullpointer > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
-
-            states.set_val_type(ValueType::POINTER);
-
-            if (params.debug) {
-                std::cout << "pointer: " << in.string() << std::endl;
-            }
-        }
-    };
-
-    template<>
-    struct action< integer > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
-
-            states.set_val_type(ValueType::INTEGER);
-
-            if (params.debug) {
-                std::cout << "integer: " << in.string() << std::endl;
-            }
-        }
-    };
-    template<>
-    struct action< string > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
-
-            states.set_val_type(ValueType::STRING);
-
-            if (params.debug) {
-                std::cout << "string: " << in.string() << std::endl;
-            }
-        }
-    };
-
-    template<>
-    struct action< constants > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
-
-            states.set_val_type(ValueType::CONSTANT);
-
-
-            std::string s = in.string();
-            std::string delim = "|";
-            std::vector<std::string> bitfields;
-
-            auto start = 0U;
-            auto end = s.find(delim);
-
-            while (end != std::string::npos) {
-                states.set_val_type(ValueType::BITFIELD);
-                bitfields.push_back(s.substr(start, end - start));
-                start = end + delim.length();
-                end = s.find(delim, start);
-            }
-
-            bitfields.push_back(s.substr(start, end));
-            std::sort(bitfields.begin(), bitfields.end());
-
-            std::string merge;
-
-            for (unsigned i = 0; i < bitfields.size(); i++) {
-                merge += bitfields[i] + "|";
-            }
-
-            merge.resize(merge.size() - 1);
-
-            if (params.debug) {
-                std::cout << "constants: " << merge << std::endl;
-            }
-
-            states.value = merge;
-            states.set_bitfields(true);
-        }
-    };
-
-    template<>
-    struct action< array > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
-
-            states.set_val_type(ValueType::ARRAY);
-
-            if (params.debug) {
-                std::cout << "array: " << in.string() << std::endl;
-            }
-        }
-    };
-
-    template<>
-    struct action< structure > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
-
-            states.set_val_type(ValueType::STRUCTURE);
-
-            if (params.debug) {
-                std::cout << "structure: " << in.string() << std::endl;
-            }
-        }
-    };
-
-    template<>
-    struct action< value > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
-
-            states.set_val_format(ValueFormat::VALUE);
-
-            if (states.get_val_type() == ValueType::INTEGER) {
-                CONVERT(states.value, in, 10);
-            }
-            else if (states.get_val_type() == ValueType::POINTER) {
-                if (!in.string().compare("NULL") || !in.string().compare("nullptr")) {
-                    states.value = 0;
-                }
-                else {
-                    CONVERT(states.value, in, 16);
+                if (params.debug) {
+                    std::cout << "pointer: " << in.string() << std::endl;
                 }
             }
-            else {
-                if (!states.get_bitfields()) {
-                    states.value = in.string();
-                }
-                else {
-                    // std::cout << "It's maybe a bitfield" << std::endl;
-                    auto search = signal_map.find(in.string());
+        };
 
-                    if (search != signal_map.end()) {
-                        // std::cout << "Found " << search->first << " " << search->second << '\n';
-                        states.value = search->second;
+        template<>
+        struct action< str_nullpointer > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
+
+                states.set_val_type(ValueType::POINTER);
+
+                if (params.debug) {
+                    std::cout << "pointer: " << in.string() << std::endl;
+                }
+            }
+        };
+
+        template<>
+        struct action< integer > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
+
+                states.set_val_type(ValueType::INTEGER);
+
+                if (params.debug) {
+                    std::cout << "integer: " << in.string() << std::endl;
+                }
+            }
+        };
+        template<>
+        struct action< string > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
+
+                states.set_val_type(ValueType::STRING);
+
+                if (params.debug) {
+                    std::cout << "string: " << in.string() << std::endl;
+                }
+            }
+        };
+
+        template<>
+        struct action< constants > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
+
+                states.set_val_type(ValueType::CONSTANT);
+
+
+                std::string s = in.string();
+                std::string delim = "|";
+                std::vector<std::string> bitfields;
+
+                auto start = 0U;
+                auto end = s.find(delim);
+
+                while (end != std::string::npos) {
+                    states.set_val_type(ValueType::BITFIELD);
+                    bitfields.push_back(s.substr(start, end - start));
+                    start = end + delim.length();
+                    end = s.find(delim, start);
+                }
+
+                bitfields.push_back(s.substr(start, end));
+                std::sort(bitfields.begin(), bitfields.end());
+
+                std::string merge;
+
+                for (unsigned i = 0; i < bitfields.size(); i++) {
+                    merge += bitfields[i] + "|";
+                }
+
+                merge.resize(merge.size() - 1);
+
+                if (params.debug) {
+                    std::cout << "constants: " << merge << std::endl;
+                }
+
+                states.value = merge;
+                states.set_bitfields(true);
+            }
+        };
+
+        template<>
+        struct action< array > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
+
+                states.set_val_type(ValueType::ARRAY);
+
+                if (params.debug) {
+                    std::cout << "array: " << in.string() << std::endl;
+                }
+            }
+        };
+
+        template<>
+        struct action< structure > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
+
+                states.set_val_type(ValueType::STRUCTURE);
+
+                if (params.debug) {
+                    std::cout << "structure: " << in.string() << std::endl;
+                }
+            }
+        };
+
+        template<>
+        struct action< value > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
+
+                states.set_val_format(ValueFormat::VALUE);
+
+                if (states.get_val_type() == ValueType::INTEGER) {
+                    CONVERT(states.value, in, 10);
+                }
+                else if (states.get_val_type() == ValueType::POINTER) {
+                    if (!in.string().compare("NULL") || !in.string().compare("nullptr")) {
+                        states.value = 0;
                     }
                     else {
-                        states.value = in.string();
+                        CONVERT(states.value, in, 16);
                     }
                 }
+                else {
+                    if (!states.get_bitfields()) {
+                        states.value = in.string();
+                    }
+                    else {
+                        // std::cout << "It's maybe a bitfield" << std::endl;
+                        auto search = signal_map.find(in.string());
+
+                        if (search != signal_map.end()) {
+                            // std::cout << "Found " << search->first << " " << search->second << '\n';
+                            states.value = search->second;
+                        }
+                        else {
+                            states.value = in.string();
+                        }
+                    }
+                }
+
+                // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+                // WARNING
+                // this should be removed when you want to cluster addresses or
+                // structures
+                switch (states.get_val_type()) {
+                case ValueType::POINTER:
+                case ValueType::STRUCTURE:
+                    states.value = 0;
+
+                default:
+                    break;
+                }
+
+                // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+                if (params.debug) {
+                    std::cout << "value: " << in.string() << "  ?" << std::endl;
+                }
             }
+        };
 
-            // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-            // WARNING
-            // this should be removed when you want to cluster addresses or
-            // structures
-            switch (states.get_val_type()) {
-            case ValueType::POINTER:
-            case ValueType::STRUCTURE:
-                states.value = 0;
+        template<>
+        struct action< key_value > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
 
-            default:
-                break;
+                states.set_val_format(ValueFormat::KEY_VALUE);
+
+                if (params.debug) {
+                    std::cout << "key_value: " << in.string() << std::endl;
+                }
             }
+        };
 
-            // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        template<>
+        struct action< syscall_name > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
 
-            if (params.debug) {
-                std::cout << "value: " << in.string() << "  ?" << std::endl;
+                // clear states
+                states.clear();
+
+                states.set_name(in.string());
+
+                if (params.debug) {
+                    std::cout << "\n\nsyscall_name: " << in.string() << std::endl;
+                }
             }
-        }
-    };
+        };
 
-    template<>
-    struct action< key_value > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
+        template<>
+        struct action< syscall_line > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
 
-            states.set_val_format(ValueFormat::KEY_VALUE);
+                // process
+                states.process_val(out);
 
-            if (params.debug) {
-                std::cout << "key_value: " << in.string() << std::endl;
+                if (params.debug) {
+                    std::cout << "syscall_line: " << in.string() << std::endl;
+                }
             }
-        }
-    };
+        };
 
-    template<>
-    struct action< syscall_name > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
+        template<>
+        struct action< argument > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
 
-            // clear states
-            states.clear();
+                std::string key;
+                std::string val;
+                states.arg_num++;
+                divideKV(in, key, val);
 
-            states.set_name(in.string());
+                ValueType _type = states.get_val_type();
+                ValueFormat _fmt = states.get_val_format();
 
-            if (params.debug) {
-                std::cout << "\n\nsyscall_name: " << in.string() << std::endl;
+
+                Argument arg(_fmt, _type, key, states.value, {});
+                states.push_parsed_val(arg);
+
+                if (params.debug) {
+                    std::cout << "argument: " << in.string() << std::endl;
+                }
             }
-        }
-    };
+        };
 
-    template<>
-    struct action< syscall_line > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
+        template<>
+        struct action< strace_line > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
+                (void) in;
+                (void) params;
 
-            // process
-            states.process_val(out);
+                ::syscalls++;
 
-            if (params.debug) {
-                std::cout << "syscall_line: " << in.string() << std::endl;
+                // if (params.debug) {
+                //     std::cout
+                //     //     << "strace_line: "
+                //     << in.string()            << std::endl
+                //     << "------------------"   << std::endl
+                //     << " pushed arguments: "  << std::endl
+                //     << states.argsStr()       << std::endl
+                //     << "------------------"   << std::endl
+                //             << std::endl << std::endl << std::endl;
+                // }
             }
-        }
-    };
+        };
 
-    template<>
-    struct action< argument > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
+        template<>
+        struct action< return_value > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
 
-            std::string key;
-            std::string val;
-            states.arg_num++;
-            divideKV(in, key, val);
-
-            ValueType _type = states.get_val_type();
-            ValueFormat _fmt = states.get_val_format();
-
-
-            Argument arg(_fmt, _type, key, states.value, {});
-            states.push_parsed_val(arg);
-
-            if (params.debug) {
-                std::cout << "argument: " << in.string() << std::endl;
+                if (params.debug) {
+                    std::cout << "return_value: '" << in.string() << "'" << std::endl;
+                }
             }
-        }
-    };
+        };
 
-    template<>
-    struct action< strace_line > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-            (void) in;
-            (void) params;
+        template<>
+        struct action< inline_comment > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
 
-            ::syscalls++;
-
-            // if (params.debug) {
-            //     std::cout
-            //     //     << "strace_line: "
-            //     << in.string()            << std::endl
-            //     << "------------------"   << std::endl
-            //     << " pushed arguments: "  << std::endl
-            //     << states.argsStr()       << std::endl
-            //     << "------------------"   << std::endl
-            //             << std::endl << std::endl << std::endl;
-            // }
-        }
-    };
-
-    template<>
-    struct action< return_value > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-
-            if (params.debug) {
-                std::cout << "return_value: '" << in.string() << "'" << std::endl;
+                if (params.debug) {
+                    std::cout << "inline_comment: '" << in.string() << "'" << std::endl;
+                }
             }
-        }
-    };
+        };
 
-    template<>
-    struct action< inline_comment > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
+        template<>
+        struct action< exit_line > {
+            template < typename Input >
+            static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
+                (void) states;
+                (void) out;
 
-            if (params.debug) {
-                std::cout << "inline_comment: '" << in.string() << "'" << std::endl;
+                if (params.debug) {
+                    std::cout << "exit_line: '" << in.string() << "'" << std::endl;
+                }
             }
-        }
-    };
-
-    template<>
-    struct action< exit_line > {
-        template < typename Input >
-        static void apply(const Input &in, st2se::Ids &out, Params &params, States &states) {
-            (void) states;
-            (void) out;
-
-            if (params.debug) {
-                std::cout << "exit_line: '" << in.string() << "'" << std::endl;
-            }
-        }
-    };
-} // namespace st2se::grammar
+        };
+    } // namespace grammar
+} // namespace st2se
 
 #endif
