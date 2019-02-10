@@ -1,5 +1,5 @@
-#ifndef cpp14_support
-#define cpp14_support
+#ifndef cpp11_support
+#define cpp11_support
 
 #include <memory>
 
