@@ -95,3 +95,8 @@ Information about testsuite and how to run tests is located
 - implement other algorithms,
 - interactive allowance of rules combined with testsuite,
 - switch between usage of local or system libraries.
+
+## Troubleshoot
+- Problems with includes typicaly <mpark/variant> means that you haven't initialized submodules.
+
+	Solution = `$ git submodule update --init --recursive`
