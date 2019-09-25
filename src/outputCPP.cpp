@@ -59,13 +59,13 @@ namespace st2se {
     }
 
     inline void outputCPP::writeFuncProlog() {
-        output_source << fmt::format("{0}int {1}(){2}\n", opt_indent, funcName,'{');
+        output_source << fmt::format("{0}int {1}(){2}\n", opt_indent, funcName, '{');
         output_source << fmt::format("{0}{1}scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_KILL);\n", indent, opt_indent);
         output_source << fmt::format("{0}{1}int ret = 0;\n", indent, opt_indent);
     }
 
     inline void outputCPP::writeFuncEpilog() {
-        output_source << fmt::format("{0}{1}\n",opt_indent,'}');
+        output_source << fmt::format("{0}{1}\n", opt_indent, '}');
     }
 
 
@@ -115,8 +115,8 @@ namespace st2se {
         if (genProlog) {
             writeLastPart();
         }
-        else{
-            output_source << fmt::format("{0}{1}return ret;\n",opt_indent, indent);
+        else {
+            output_source << fmt::format("{0}{1}return ret;\n", opt_indent, indent);
         }
 
         writeFuncEpilog();

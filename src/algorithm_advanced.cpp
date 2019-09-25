@@ -124,13 +124,13 @@ namespace st2se {
 
 
             #ifndef NDEBUG
-                unsigned clusters = this->cluster(v, clustered_v);
-                std::cout << "arg_pos: " << arg_pos << " v:" << std::endl;
-                std::cout << "\targ no." << arg_pos << " is ";
-                std::cout << clustered_v.size() << " items long" << std::endl;
-                std::cout << "\t\tclusters: " << clusters << std::endl;
+            unsigned clusters = this->cluster(v, clustered_v);
+            std::cout << "arg_pos: " << arg_pos << " v:" << std::endl;
+            std::cout << "\targ no." << arg_pos << " is ";
+            std::cout << clustered_v.size() << " items long" << std::endl;
+            std::cout << "\t\tclusters: " << clusters << std::endl;
             #else
-                this->cluster(v, clustered_v);
+            this->cluster(v, clustered_v);
             #endif
 
             out.data[sc.name].next.emplace_back(ValueFormat::EMPTY,
@@ -141,13 +141,13 @@ namespace st2se {
             out.data[sc.name].clustered = true;
 
             #ifndef NDEBUG
-                std::cout << "out...next.size()" << out.data[sc.name].next.size() << std::endl;
-                std::cout << "\n" << std::endl;
+            std::cout << "out...next.size()" << out.data[sc.name].next.size() << std::endl;
+            std::cout << "\n" << std::endl;
             #endif
         }
 
         #ifndef NDEBUG
-            std::cout << "\n\n" << std::endl;
+        std::cout << "\n\n" << std::endl;
         #endif
 
     }
@@ -456,11 +456,12 @@ namespace st2se {
             auto _b = variant_ns::get_if<unsigned long>(&(right.value));
             unsigned long a {0};
             unsigned long b {0};
-            if(_a != nullptr && _b != nullptr){
+
+            if (_a != nullptr && _b != nullptr) {
                 a = *_a;
                 b = *_b;
             }
-            else{
+            else {
                 return ret_val;
             }
 

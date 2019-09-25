@@ -130,14 +130,17 @@ Params::Params(int argc, char *argv[]) {
             exit(0);
 
         case 'w':
+            this->algorithm = algo::WEAK;
             this->weak = 1;
             break;
 
         case 's':
+            this->algorithm = algo::STRICT;
             this->strict = 1;
             break;
 
         case 'a':
+            this->algorithm = algo::ADVANCED;
             this->advanced = 1;
             break;
 
